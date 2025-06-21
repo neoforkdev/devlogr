@@ -1,6 +1,6 @@
 {
   "name": "@neofork/devlogr",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "A simple, maintainable TypeScript logger with emoji support, themes, and multiple output formats",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -62,4 +62,4 @@
   "publishConfig": {
     "access": "public"
   }
-} 
+}
