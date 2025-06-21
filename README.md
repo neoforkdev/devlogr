@@ -2,7 +2,7 @@
 
 > Because dev tools deserve better than sad `console.log()`s.
 
-![devlogr demo animation](./github/demo.gif)
+![devlogr demo animation](./.github/demo.gif)
 
 <div align="center"><strong>⚡ UX-first logger for modern CLI tools ⚡</strong><br/>Clean visuals, emoji joy, animated spinners, and smart formatting—<em>zero config required</em>.</div>
 
