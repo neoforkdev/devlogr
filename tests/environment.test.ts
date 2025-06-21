@@ -18,7 +18,7 @@ describe('Logger Environment Variables', () => {
       DEVLOGR_UNICODE: process.env.DEVLOGR_UNICODE,
       NO_EMOJI: process.env.NO_EMOJI,
       DEVLOGR_NO_EMOJI: process.env.DEVLOGR_NO_EMOJI,
-      DEVLOGR_SHOW_TIMESTAMP: process.env.DEVLOGR_SHOW_TIMESTAMP
+      DEVLOGR_SHOW_TIMESTAMP: process.env.DEVLOGR_SHOW_TIMESTAMP,
     };
 
     // Clear environment variables for clean slate
@@ -48,12 +48,12 @@ describe('Logger Environment Variables', () => {
     it('should respect DEVLOGR_LOG_LEVEL=error', () => {
       process.env.DEVLOGR_LOG_LEVEL = 'error';
       const logger = createLogger('TEST');
-      
+
       const consoleSpy = {
         log: vi.spyOn(console, 'log').mockImplementation(() => {}),
         error: vi.spyOn(console, 'error').mockImplementation(() => {}),
         warn: vi.spyOn(console, 'warn').mockImplementation(() => {}),
-        debug: vi.spyOn(console, 'debug').mockImplementation(() => {})
+        debug: vi.spyOn(console, 'debug').mockImplementation(() => {}),
       };
 
       logger.trace('Should not appear');
@@ -73,12 +73,12 @@ describe('Logger Environment Variables', () => {
     it('should respect DEVLOGR_LOG_LEVEL=warning', () => {
       process.env.DEVLOGR_LOG_LEVEL = 'warning';
       const logger = createLogger('TEST');
-      
+
       const consoleSpy = {
         log: vi.spyOn(console, 'log').mockImplementation(() => {}),
         error: vi.spyOn(console, 'error').mockImplementation(() => {}),
         warn: vi.spyOn(console, 'warn').mockImplementation(() => {}),
-        debug: vi.spyOn(console, 'debug').mockImplementation(() => {})
+        debug: vi.spyOn(console, 'debug').mockImplementation(() => {}),
       };
 
       logger.trace('Should not appear');
@@ -98,12 +98,12 @@ describe('Logger Environment Variables', () => {
     it('should respect DEVLOGR_LOG_LEVEL=trace', () => {
       process.env.DEVLOGR_LOG_LEVEL = 'trace';
       const logger = createLogger('TEST');
-      
+
       const consoleSpy = {
         log: vi.spyOn(console, 'log').mockImplementation(() => {}),
         error: vi.spyOn(console, 'error').mockImplementation(() => {}),
         warn: vi.spyOn(console, 'warn').mockImplementation(() => {}),
-        debug: vi.spyOn(console, 'debug').mockImplementation(() => {})
+        debug: vi.spyOn(console, 'debug').mockImplementation(() => {}),
       };
 
       logger.trace('Should appear');
@@ -123,12 +123,12 @@ describe('Logger Environment Variables', () => {
     it('should handle invalid log levels gracefully', () => {
       process.env.DEVLOGR_LOG_LEVEL = 'invalid';
       const logger = createLogger('TEST');
-      
+
       const consoleSpy = {
         log: vi.spyOn(console, 'log').mockImplementation(() => {}),
         error: vi.spyOn(console, 'error').mockImplementation(() => {}),
         warn: vi.spyOn(console, 'warn').mockImplementation(() => {}),
-        debug: vi.spyOn(console, 'debug').mockImplementation(() => {})
+        debug: vi.spyOn(console, 'debug').mockImplementation(() => {}),
       };
 
       // Should default to INFO level
@@ -151,23 +151,23 @@ describe('Logger Environment Variables', () => {
     it('should enable JSON logging when DEVLOGR_OUTPUT_JSON=true', () => {
       process.env.DEVLOGR_OUTPUT_JSON = 'true';
       const logger = createLogger('TEST');
-      
+
       const consoleSpy = vi.spyOn(console, 'log').mockImplementation(() => {});
 
       logger.info('Test message', { key: 'value' });
 
       expect(consoleSpy).toHaveBeenCalled();
       const loggedMessage = consoleSpy.mock.calls[0][0];
-      
+
       // Should be valid JSON
       expect(() => JSON.parse(loggedMessage)).not.toThrow();
-      
+
       const parsed = JSON.parse(loggedMessage);
       expect(parsed).toMatchObject({
         level: 'info',
         prefix: 'TEST',
         message: 'Test message',
-        key: 'value'
+        key: 'value',
       });
       expect(parsed.timestamp).toBeDefined();
 
@@ -178,12 +178,12 @@ describe('Logger Environment Variables', () => {
       process.env.DEVLOGR_OUTPUT_JSON = 'true';
       process.env.DEVLOGR_LOG_LEVEL = 'trace'; // Enable all levels
       const logger = createLogger('TEST');
-      
+
       const consoleSpy = {
         log: vi.spyOn(console, 'log').mockImplementation(() => {}),
         error: vi.spyOn(console, 'error').mockImplementation(() => {}),
         warn: vi.spyOn(console, 'warn').mockImplementation(() => {}),
-        debug: vi.spyOn(console, 'debug').mockImplementation(() => {})
+        debug: vi.spyOn(console, 'debug').mockImplementation(() => {}),
       };
 
       logger.info('Info message');
@@ -211,14 +211,14 @@ describe('Logger Environment Variables', () => {
     it('should disable JSON logging when DEVLOGR_OUTPUT_JSON is not set', () => {
       // DEVLOGR_OUTPUT_JSON not set (should default to false)
       const logger = createLogger('TEST');
-      
+
       const consoleSpy = vi.spyOn(console, 'log').mockImplementation(() => {});
 
       logger.info('Test message');
 
       expect(consoleSpy).toHaveBeenCalled();
       const loggedMessage = consoleSpy.mock.calls[0][0];
-      
+
       // Should NOT be JSON (should be formatted text)
       expect(loggedMessage).not.toMatch(/^\{.*\}$/);
       expect(loggedMessage).toContain('Test message');
@@ -229,7 +229,7 @@ describe('Logger Environment Variables', () => {
     it('should not output spacers and separators in JSON mode', () => {
       process.env.DEVLOGR_OUTPUT_JSON = 'true';
       const logger = createLogger('TEST');
-      
+
       const consoleSpy = vi.spyOn(console, 'log').mockImplementation(() => {});
 
       logger.spacer();
@@ -243,24 +243,46 @@ describe('Logger Environment Variables', () => {
     });
 
     it('should output spacers and separators in non-JSON mode', () => {
-      process.env.DEVLOGR_OUTPUT_JSON = 'false';
-      const logger = createLogger('TEST');
-      
-      const consoleSpy = vi.spyOn(console, 'log').mockImplementation(() => {});
+      // Save and clean environment to test without colors
+      const originalEnv = {
+        FORCE_COLOR: process.env.FORCE_COLOR,
+        DEVLOGR_FORCE_COLOR: process.env.DEVLOGR_FORCE_COLOR,
+      };
 
-      logger.spacer();
-      logger.separator();
-      logger.separator('Title');
+      try {
+        delete process.env.FORCE_COLOR;
+        delete process.env.DEVLOGR_FORCE_COLOR;
+        process.env.NO_COLOR = 'true';
+        process.env.DEVLOGR_OUTPUT_JSON = 'false';
 
-      // Should have made 3 console.log calls
-      expect(consoleSpy).toHaveBeenCalledTimes(3);
+        const logger = createLogger('TEST');
 
-      // Check calls: spacer (no args), separator (dashes), separator with title
-      expect(consoleSpy.mock.calls[0]).toEqual([]); // spacer() calls console.log() with no args
-      expect(consoleSpy.mock.calls[1][0]).toMatch(/^-+$/);
-      expect(consoleSpy.mock.calls[2][0]).toMatch(/^-+ Title -+$/);
+        const consoleSpy = vi.spyOn(console, 'log').mockImplementation(() => {});
 
-      consoleSpy.mockRestore();
+        logger.spacer();
+        logger.separator();
+        logger.separator('Title');
+
+        // Should have made 3 console.log calls
+        expect(consoleSpy).toHaveBeenCalledTimes(3);
+
+        // Check calls: spacer (no args), separator (dashes), separator with title
+        expect(consoleSpy.mock.calls[0]).toEqual([]); // spacer() calls console.log() with no args
+        expect(consoleSpy.mock.calls[1][0]).toMatch(/^-+$/);
+        expect(consoleSpy.mock.calls[2][0]).toMatch(/^-+ Title -+$/);
+
+        consoleSpy.mockRestore();
+      } finally {
+        Object.entries(originalEnv).forEach(([key, value]) => {
+          if (value !== undefined) {
+            process.env[key] = value;
+          } else {
+            delete process.env[key];
+          }
+        });
+        delete process.env.NO_COLOR;
+        delete process.env.DEVLOGR_OUTPUT_JSON;
+      }
     });
   });
 
@@ -302,14 +324,14 @@ describe('Logger Environment Variables', () => {
     it('should respect NO_EMOJI environment variable', () => {
       process.env.NO_EMOJI = '1';
       const logger = createLogger('TEST');
-      
+
       const consoleSpy = vi.spyOn(console, 'log').mockImplementation(() => {});
 
       logger.info('Test with emoji 🚀');
 
       expect(consoleSpy).toHaveBeenCalled();
       const loggedMessage = consoleSpy.mock.calls[0][0];
-      
+
       // Should not contain emoji
       expect(loggedMessage).not.toContain('🚀');
       expect(loggedMessage).toContain('Test with emoji');
@@ -320,14 +342,14 @@ describe('Logger Environment Variables', () => {
     it('should respect DEVLOGR_NO_EMOJI environment variable', () => {
       process.env.DEVLOGR_NO_EMOJI = '1';
       const logger = createLogger('TEST');
-      
+
       const consoleSpy = vi.spyOn(console, 'log').mockImplementation(() => {});
 
       logger.info('Test with emoji 🚀');
 
       expect(consoleSpy).toHaveBeenCalled();
       const loggedMessage = consoleSpy.mock.calls[0][0];
-      
+
       // Should not contain emoji
       expect(loggedMessage).not.toContain('🚀');
       expect(loggedMessage).toContain('Test with emoji');
@@ -340,14 +362,14 @@ describe('Logger Environment Variables', () => {
     it('should show timestamps when DEVLOGR_SHOW_TIMESTAMP=true', () => {
       process.env.DEVLOGR_SHOW_TIMESTAMP = 'true';
       const logger = createLogger('TEST');
-      
+
       const consoleSpy = vi.spyOn(console, 'log').mockImplementation(() => {});
 
       logger.info('Test message');
 
       expect(consoleSpy).toHaveBeenCalled();
       const loggedMessage = consoleSpy.mock.calls[0][0];
-      
+
       // Should contain timestamp pattern [HH:MM:SS]
       expect(loggedMessage).toMatch(/\[\d{2}:\d{2}:\d{2}\]/);
       expect(loggedMessage).toContain('Test message');
@@ -357,14 +379,14 @@ describe('Logger Environment Variables', () => {
 
     it('should not show timestamps when DEVLOGR_SHOW_TIMESTAMP is not set', () => {
       const logger = createLogger('TEST');
-      
+
       const consoleSpy = vi.spyOn(console, 'log').mockImplementation(() => {});
 
       logger.info('Test message');
 
       expect(consoleSpy).toHaveBeenCalled();
       const loggedMessage = consoleSpy.mock.calls[0][0];
-      
+
       // Should NOT contain timestamp pattern
       expect(loggedMessage).not.toMatch(/\[\d{2}:\d{2}:\d{2}\]/);
       expect(loggedMessage).toContain('Test message');
@@ -375,14 +397,14 @@ describe('Logger Environment Variables', () => {
     it('should not show timestamps when DEVLOGR_SHOW_TIMESTAMP=false', () => {
       process.env.DEVLOGR_SHOW_TIMESTAMP = 'false';
       const logger = createLogger('TEST');
-      
+
       const consoleSpy = vi.spyOn(console, 'log').mockImplementation(() => {});
 
       logger.info('Test message');
 
       expect(consoleSpy).toHaveBeenCalled();
       const loggedMessage = consoleSpy.mock.calls[0][0];
-      
+
       // Should NOT contain timestamp pattern
       expect(loggedMessage).not.toMatch(/\[\d{2}:\d{2}:\d{2}\]/);
       expect(loggedMessage).toContain('Test message');
@@ -396,7 +418,7 @@ describe('Logger Environment Variables', () => {
       process.env.DEVLOGR_LOG_LEVEL = 'debug';
       process.env.DEVLOGR_OUTPUT_JSON = 'true';
       process.env.NO_COLOR = '1';
-      
+
       const logger = createLogger('TEST');
       const consoleSpy = vi.spyOn(console, 'debug').mockImplementation(() => {}); // debug uses console.debug
 
@@ -404,13 +426,13 @@ describe('Logger Environment Variables', () => {
 
       expect(consoleSpy).toHaveBeenCalled();
       const loggedMessage = consoleSpy.mock.calls[0][0];
-      
+
       // Should be JSON
       const parsed = JSON.parse(loggedMessage);
       expect(parsed).toMatchObject({
         level: 'debug',
         prefix: 'TEST',
-        message: 'Debug message'
+        message: 'Debug message',
       });
 
       consoleSpy.mockRestore();
@@ -420,7 +442,7 @@ describe('Logger Environment Variables', () => {
       process.env.DEVLOGR_LOG_LEVEL = 'info';
       process.env.DEVLOGR_SHOW_TIMESTAMP = 'true';
       process.env.DEVLOGR_FORCE_COLOR = '1';
-      
+
       const logger = createLogger('TEST');
       const consoleSpy = vi.spyOn(console, 'log').mockImplementation(() => {});
 
@@ -428,7 +450,7 @@ describe('Logger Environment Variables', () => {
 
       expect(consoleSpy).toHaveBeenCalled();
       const loggedMessage = consoleSpy.mock.calls[0][0];
-      
+
       // Should contain timestamp and message
       expect(loggedMessage).toMatch(/\[\d{2}:\d{2}:\d{2}\]/);
       expect(loggedMessage).toContain('Test message with timestamp');
@@ -440,36 +462,36 @@ describe('Logger Environment Variables', () => {
   describe('Global Environment Variable Standards', () => {
     it('should respect NO_COLOR global standard', () => {
       process.env.NO_COLOR = '1';
-      
+
       const logger = createLogger('test');
       const consoleSpy = vi.spyOn(console, 'log').mockImplementation(() => {});
-      
+
       logger.info('Test message');
-      
+
       expect(consoleSpy).toHaveBeenCalled();
       consoleSpy.mockRestore();
     });
 
     it('should respect NO_EMOJI global standard', () => {
       process.env.NO_EMOJI = '1';
-      
+
       const logger = createLogger('test');
       const consoleSpy = vi.spyOn(console, 'log').mockImplementation(() => {});
-      
+
       logger.info('Test message 🚀');
-      
+
       expect(consoleSpy).toHaveBeenCalled();
       consoleSpy.mockRestore();
     });
 
     it('should respect NO_UNICODE global standard', () => {
       process.env.NO_UNICODE = '1';
-      
+
       const logger = createLogger('test');
       const consoleSpy = vi.spyOn(console, 'log').mockImplementation(() => {});
-      
+
       logger.info('Test message ℹ');
-      
+
       expect(consoleSpy).toHaveBeenCalled();
       consoleSpy.mockRestore();
     });
@@ -477,12 +499,12 @@ describe('Logger Environment Variables', () => {
     it('should prioritize global standards over devlogr-specific settings', () => {
       process.env.NO_COLOR = '1';
       process.env.DEVLOGR_FORCE_COLOR = 'true';
-      
+
       const logger = createLogger('test');
       const consoleSpy = vi.spyOn(console, 'log').mockImplementation(() => {});
-      
+
       logger.info('Test message');
-      
+
       expect(consoleSpy).toHaveBeenCalled();
       consoleSpy.mockRestore();
     });
@@ -491,14 +513,14 @@ describe('Logger Environment Variables', () => {
       process.env.NO_COLOR = '1';
       process.env.NO_EMOJI = '1';
       process.env.NO_UNICODE = '1';
-      
+
       const logger = createLogger('test');
       const consoleSpy = vi.spyOn(console, 'log').mockImplementation(() => {});
-      
+
       logger.info('Test message 🚀 ℹ');
-      
+
       expect(consoleSpy).toHaveBeenCalled();
       consoleSpy.mockRestore();
     });
   });
-}); 
+});

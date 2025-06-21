@@ -5,6 +5,7 @@ This guide explains how to manage versions when using the `0.0.x` versioning sch
 ## 🎯 **0.0.x Version Philosophy**
 
 The `0.0.x` versioning indicates:
+
 - **Early Development**: Package is in initial development phase
 - **Rapid Iteration**: Frequent changes and improvements expected
 - **Breaking Changes**: May occur without major version bumps
@@ -13,11 +14,14 @@ The `0.0.x` versioning indicates:
 ## 📋 **Version Increment Rules**
 
 ### **0.0.x → 0.0.y (Patch)**
+
 ```bash
 npm version patch
 # 0.0.1 → 0.0.2
 ```
+
 **Use for:**
+
 - Bug fixes
 - Small improvements
 - Documentation updates
@@ -25,22 +29,28 @@ npm version patch
 - Performance improvements
 
 ### **0.0.x → 0.1.0 (Minor)**
+
 ```bash
 npm version minor
 # 0.0.15 → 0.1.0
 ```
+
 **Use for:**
+
 - Significant feature additions
 - API stabilization
 - Major improvements
 - When ready for broader testing
 
 ### **0.x.y → 1.0.0 (Major)**
+
 ```bash
 npm version major
 # 0.5.2 → 1.0.0
 ```
+
 **Use for:**
+
 - Stable, production-ready release
 - API is finalized
 - Breaking changes are minimal going forward
@@ -49,6 +59,7 @@ npm version major
 ## 🚀 **Practical Examples**
 
 ### **Starting Development**
+
 ```bash
 # Initial release
 git tag v0.0.1
@@ -57,12 +68,13 @@ git push --follow-tags
 ```
 
 ### **Regular Development Cycle**
+
 ```bash
 # Small improvements/fixes
 npm version patch        # 0.0.1 → 0.0.2
 git push --follow-tags
 
-npm version patch        # 0.0.2 → 0.0.3  
+npm version patch        # 0.0.2 → 0.0.3
 git push --follow-tags
 
 # Significant feature
@@ -71,6 +83,7 @@ git push --follow-tags
 ```
 
 ### **Pre-1.0 Development**
+
 ```bash
 # Continue iterating
 npm version patch        # 0.1.0 → 0.1.1
@@ -90,7 +103,7 @@ You can still use prereleases with 0.0.x:
 npm version prerelease --preid=alpha
 # 0.0.1 → 0.0.2-alpha.0
 
-# Beta testing  
+# Beta testing
 npm version prerelease --preid=beta
 # 0.0.1 → 0.0.2-beta.0
 
@@ -110,6 +123,7 @@ All your existing GitHub Actions workflows work perfectly with `0.0.x` versionin
 ## 🎯 **Migration Path Examples**
 
 ### **Current State → 0.0.x**
+
 ```bash
 # Reset to early development
 npm version 0.0.1 --no-git-tag-version
@@ -120,6 +134,7 @@ git push --follow-tags
 ```
 
 ### **0.0.x → Production Ready**
+
 ```bash
 # When ready for production
 npm version major        # 0.0.15 → 1.0.0
@@ -129,14 +144,17 @@ git push --follow-tags
 ## 🏷️ **NPM Tag Strategy**
 
 ### **Stable Releases**
+
 - `0.0.1`, `0.0.2`, etc. → Published to `latest` tag
 - Users install with: `npm install @neofork/devlogr`
 
 ### **Prereleases**
+
 - `0.0.2-beta.0` → Published to `beta` tag
 - Users install with: `npm install @neofork/devlogr@beta`
 
 ### **Development Versions**
+
 - `0.0.2-alpha.0` → Published to `alpha` tag
 - Users install with: `npm install @neofork/devlogr@alpha`
 
@@ -158,18 +176,21 @@ git push --follow-tags
 ## ⚠️ **Important Notes**
 
 ### **Breaking Changes in 0.0.x**
+
 - Breaking changes are **expected** in `0.0.x`
 - Users understand the package is experimental
 - Document breaking changes in release notes
 - Consider deprecation warnings when possible
 
 ### **Semantic Versioning Relaxed**
+
 - `0.0.x` doesn't follow strict semver
 - Focus on iteration speed over strict compatibility
 - Patch versions can include new features
 - Minor versions can include breaking changes
 
 ### **Communication**
+
 - Clearly document that package is in `0.0.x` (experimental)
 - Use GitHub releases to communicate changes
 - Consider using prerelease versions for testing
@@ -195,4 +216,4 @@ npm version prerelease --preid=beta && git push --follow-tags
 4. **Document changes** in GitHub releases
 5. **Test with prereleases** before stable releases
 6. **Communicate status** clearly to users
-7. **Move to 1.0.0** when API is stable 
+7. **Move to 1.0.0** when API is stable

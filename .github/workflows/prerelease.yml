@@ -11,30 +11,30 @@ jobs:
     permissions:
       contents: read
       id-token: write
-    
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
-      
+
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: '20'
           registry-url: 'https://registry.npmjs.org'
           cache: 'npm'
-      
+
       - name: Install dependencies
         run: npm ci
-      
+
       - name: Run linter
         run: npm run lint
-      
+
       - name: Run tests
         run: npm test
-      
+
       - name: Build project
         run: npm run build
-      
+
       - name: Determine prerelease tag
         id: tag
         run: |
@@ -48,12 +48,12 @@ jobs:
           else
             echo "tag=beta" >> $GITHUB_OUTPUT
           fi
-      
+
       - name: Publish prerelease to NPM
         run: npm publish --provenance --access public --tag ${{ steps.tag.outputs.tag }}
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
-      
+
       - name: Create GitHub prerelease summary
         run: |
           echo "## 🚀 Prerelease Published Successfully!" >> $GITHUB_STEP_SUMMARY
@@ -66,4 +66,4 @@ jobs:
           echo "### Install Command" >> $GITHUB_STEP_SUMMARY
           echo "\`\`\`bash" >> $GITHUB_STEP_SUMMARY
           echo "npm install @neofork/devlogr@${{ steps.tag.outputs.tag }}" >> $GITHUB_STEP_SUMMARY
-          echo "\`\`\`" >> $GITHUB_STEP_SUMMARY 
+          echo "\`\`\`" >> $GITHUB_STEP_SUMMARY

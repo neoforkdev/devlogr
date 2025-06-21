@@ -11,23 +11,27 @@ export class TerminalUtils {
     const locale = process.env.LC_ALL || process.env.LC_CTYPE || process.env.LANG || '';
     const term = process.env.TERM || '';
     const termProgram = process.env.TERM_PROGRAM || '';
-    
+
     // Check for global NO_UNICODE (not an official standard but some tools use it)
     // or explicit devlogr-specific disable
     if (process.env.NO_UNICODE !== undefined || process.env.DEVLOGR_NO_UNICODE === 'true') {
       return false;
     }
-    
+
     // If explicitly enabled
-    if (process.env.DEVLOGR_UNICODE === 'true') {
+    if (
+      process.env.DEVLOGR_UNICODE === 'true' ||
+      process.env.DEVLOGR_FORCE_COLOR ||
+      process.env.FORCE_COLOR
+    ) {
       return true;
     }
-    
+
     // Check for UTF-8 in locale
     if (locale.toLowerCase().includes('utf-8') || locale.toLowerCase().includes('utf8')) {
       return true;
     }
-    
+
     // Known Unicode-supporting terminals
     const unicodeTerminals = [
       'iTerm.app',
@@ -38,26 +42,26 @@ export class TerminalUtils {
       'warp',
       'alacritty',
       'kitty',
-      'ghostty'
+      'ghostty',
     ];
-    
+
     if (unicodeTerminals.includes(termProgram)) {
       return true;
     }
-    
+
     // Known Unicode-supporting TERM values
     const unicodeTerms = [
       'xterm-256color',
       'screen-256color',
       'tmux-256color',
       'alacritty',
-      'kitty'
+      'kitty',
     ];
-    
+
     if (unicodeTerms.some(t => term.includes(t))) {
       return true;
     }
-    
+
     // Windows Terminal and PowerShell
     if (process.platform === 'win32') {
       if (termProgram === 'Windows Terminal' || process.env.WT_SESSION) {
@@ -68,7 +72,12 @@ export class TerminalUtils {
         return true;
       }
     }
-    
+
+    // CI environments often support Unicode
+    if (this.isCI()) {
+      return true;
+    }
+
     // Default to false for maximum compatibility
     return false;
   }
@@ -82,25 +91,26 @@ export class TerminalUtils {
     if (process.env.NO_COLOR !== undefined) {
       return false;
     }
-    
+
     // Check devlogr-specific disable flag
     if (process.env.DEVLOGR_NO_COLOR) {
       return false;
     }
-    
+
+    const term = process.env.TERM || '';
+
+    // Check TERM variable for dumb terminal (always disables colors, even if forced)
+    if (term === 'dumb') {
+      return false;
+    }
+
     // Check if explicitly enabled (global standards first)
     if (process.env.FORCE_COLOR || process.env.DEVLOGR_FORCE_COLOR) {
       return true;
     }
-    
-    // Check if we're in a TTY
-    if (!process.stdout.isTTY) {
-      return false;
-    }
-    
-    const term = process.env.TERM || '';
+
     const termProgram = process.env.TERM_PROGRAM || '';
-    
+
     // Known color-supporting terminals
     const colorTerminals = [
       'iTerm.app',
@@ -111,32 +121,19 @@ export class TerminalUtils {
       'warp',
       'alacritty',
       'kitty',
-      'ghostty'
+      'ghostty',
     ];
-    
+
     if (colorTerminals.includes(termProgram)) {
       return true;
     }
-    
-    // Check TERM variable for color support
-    if (term === 'dumb') {
-      return false;
-    }
-    
-    const colorTerms = [
-      'color',
-      '256color',
-      'truecolor',
-      'xterm',
-      'screen',
-      'tmux',
-      'ansi'
-    ];
-    
+
+    const colorTerms = ['color', '256color', 'truecolor', 'xterm', 'screen', 'tmux', 'ansi'];
+
     if (colorTerms.some(t => term.includes(t))) {
       return true;
     }
-    
+
     // Windows-specific checks
     if (process.platform === 'win32') {
       // Windows Terminal
@@ -153,9 +150,37 @@ export class TerminalUtils {
         return true; // Modern Windows likely supports colors
       }
     }
-    
+
+    // CI environments often support colors even without TTY (but respect dumb terminal)
+    if (this.isCI() && term !== 'dumb') {
+      return true;
+    }
+
+    // Check if we're in a TTY
+    if (!process.stdout.isTTY) {
+      return false;
+    }
+
     // Default to true for most modern terminals
     return true;
+  }
+
+  /**
+   * Detects if we're running in a CI environment
+   */
+  private static isCI(): boolean {
+    return !!(
+      process.env.CI ||
+      process.env.CONTINUOUS_INTEGRATION ||
+      process.env.BUILD_NUMBER ||
+      process.env.GITHUB_ACTIONS ||
+      process.env.GITLAB_CI ||
+      process.env.CIRCLECI ||
+      process.env.TRAVIS ||
+      process.env.JENKINS_URL ||
+      process.env.BUILDKITE ||
+      process.env.DRONE
+    );
   }
 
   /**
@@ -174,4 +199,4 @@ export class TerminalUtils {
       plain: '',
     };
   }
-} 
+}

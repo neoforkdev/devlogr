@@ -5,14 +5,14 @@
 export enum LogLevel {
   ERROR = 'error',
   WARNING = 'warn',
-  INFO = 'info', 
+  INFO = 'info',
   DEBUG = 'debug',
   TRACE = 'trace',
 }
 
 export enum TimestampFormat {
-  TIME = 'time',    // HH:MM:SS (default)
-  ISO = 'iso',      // ISO 8601 format
+  TIME = 'time', // HH:MM:SS (default)
+  ISO = 'iso', // ISO 8601 format
 }
 
 export interface LogTheme {
@@ -29,7 +29,3 @@ export interface LogConfig {
   readonly showTimestamp: boolean;
   readonly timestampFormat: TimestampFormat;
 }
-
-
-
- 

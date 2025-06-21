@@ -9,6 +9,7 @@ assignees: ''
 ## Release Information
 
 **Release Type:**
+
 - [ ] Patch (bug fixes)
 - [ ] Minor (new features)
 - [ ] Major (breaking changes)
@@ -19,19 +20,24 @@ assignees: ''
 ## Changes Included
 
 ### 🚀 New Features
-- 
+
+-
 
 ### 🐛 Bug Fixes
-- 
+
+-
 
 ### 💥 Breaking Changes
-- 
+
+-
 
 ### 📚 Documentation
-- 
+
+-
 
 ### 🧪 Tests
-- 
+
+-
 
 ## Pre-Release Checklist
 
@@ -45,22 +51,25 @@ assignees: ''
 ## Release Process
 
 1. **Update version:**
+
    ```bash
    # For 0.0.x development
    npm version patch          # 0.0.1 → 0.0.2 (most common)
    npm version minor          # 0.0.5 → 0.1.0 (significant features)
    npm version major          # 0.5.0 → 1.0.0 (production ready)
-   
+
    # For prerelease testing
    npm version prerelease --preid=beta  # 0.0.1 → 0.0.2-beta.0
    ```
 
 2. **Push tags:**
+
    ```bash
    git push --follow-tags
    ```
 
 3. **Create GitHub Release:**
+
    - Go to [Releases](https://github.com/neofork/devlogr/releases)
    - Click "Create a new release"
    - Select the version tag
@@ -73,4 +82,4 @@ assignees: ''
 
 ## Additional Notes
 
-<!-- Add any additional context or notes about this release --> 
+<!-- Add any additional context or notes about this release -->

@@ -43,24 +43,24 @@ export class SpinnerUtils {
       prefixText = MessageFormatter.formatSpinnerPrefixWithLevel(
         options.level,
         options.theme,
-        options.prefix, 
-        maxPrefixLength, 
-        options.showTimestamp || false, 
+        options.prefix,
+        maxPrefixLength,
+        options.showTimestamp || false,
         options.useColors ?? true,
         options.timestampFormat || TimestampFormat.TIME
       );
     } else if (options.prefix && options.showTimestamp) {
       const maxPrefixLength = PrefixTracker.getMaxLength();
       prefixText = MessageFormatter.formatBasicPrefix(
-        options.prefix, 
-        maxPrefixLength, 
-        options.showTimestamp || false, 
+        options.prefix,
+        maxPrefixLength,
+        options.showTimestamp || false,
         options.useColors ?? true,
         options.timestampFormat || TimestampFormat.TIME
       );
     }
 
-    const spinnerOptions: any = {
+    const spinnerOptions: Record<string, unknown> = {
       text: options.text || '',
       color: options.color || 'cyan',
       prefixText: prefixText,
@@ -76,13 +76,13 @@ export class SpinnerUtils {
       // Use Unicode spinner for emoji-capable terminals
       spinnerOptions.spinner = {
         interval: 80,
-        frames: ['⠋', '⠙', '⠹', '⠸', '⠼', '⠴', '⠦', '⠧', '⠇', '⠏']
+        frames: ['⠋', '⠙', '⠹', '⠸', '⠼', '⠴', '⠦', '⠧', '⠇', '⠏'],
       };
     } else {
       // Fallback to ASCII spinner
       spinnerOptions.spinner = {
         interval: 80,
-        frames: ['|', '/', '-', '\\']
+        frames: ['|', '/', '-', '\\'],
       };
     }
 
@@ -95,10 +95,10 @@ export class SpinnerUtils {
   static start(key: string, options: SpinnerOptions = {}): Ora {
     // Stop any existing spinner with this key
     SpinnerUtils.stop(key);
-    
+
     const spinner = SpinnerUtils.create(options);
     spinner.start();
-    
+
     SpinnerUtils.activeSpinners.set(key, spinner);
     return spinner;
   }
@@ -192,6 +192,8 @@ export class SpinnerUtils {
    * Check if spinners are supported in current environment
    */
   static supportsSpinners(): boolean {
-    return TerminalUtils.supportsColor() && process.stdout.isTTY && !process.env.DEVLOGR_OUTPUT_JSON;
+    return (
+      TerminalUtils.supportsColor() && process.stdout.isTTY && !process.env.DEVLOGR_OUTPUT_JSON
+    );
   }
-} 
+}

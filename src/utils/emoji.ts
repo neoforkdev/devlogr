@@ -6,64 +6,64 @@ export class EmojiUtils {
   // Comprehensive Unicode emoji detection based on Unicode 15.1 specification
   private static readonly EMOJI_RANGES = [
     // Emoticons (U+1F600-1F64F)
-    [0x1F600, 0x1F64F],
+    [0x1f600, 0x1f64f],
     // Miscellaneous Symbols and Pictographs (U+1F300-1F5FF)
-    [0x1F300, 0x1F5FF],
+    [0x1f300, 0x1f5ff],
     // Transport and Map Symbols (U+1F680-1F6FF)
-    [0x1F680, 0x1F6FF],
+    [0x1f680, 0x1f6ff],
     // Alchemical Symbols (U+1F700-1F77F)
-    [0x1F700, 0x1F77F],
+    [0x1f700, 0x1f77f],
     // Geometric Shapes Extended (U+1F780-1F7FF)
-    [0x1F780, 0x1F7FF],
+    [0x1f780, 0x1f7ff],
     // Supplemental Arrows-C (U+1F800-1F8FF)
-    [0x1F800, 0x1F8FF],
+    [0x1f800, 0x1f8ff],
     // Supplemental Symbols and Pictographs (U+1F900-1F9FF)
-    [0x1F900, 0x1F9FF],
+    [0x1f900, 0x1f9ff],
     // Chess Symbols (U+1FA00-1FA6F)
-    [0x1FA00, 0x1FA6F],
+    [0x1fa00, 0x1fa6f],
     // Symbols and Pictographs Extended-A (U+1FA70-1FAFF)
-    [0x1FA70, 0x1FAFF],
+    [0x1fa70, 0x1faff],
     // Miscellaneous Symbols (U+2600-26FF)
-    [0x2600, 0x26FF],
+    [0x2600, 0x26ff],
     // Dingbats (U+2700-27BF)
-    [0x2700, 0x27BF],
+    [0x2700, 0x27bf],
     // Miscellaneous Technical (partial, contains some emoji)
-    [0x2300, 0x23FF],
+    [0x2300, 0x23ff],
     // Enclosed Alphanumerics (U+2460-24FF)
-    [0x2460, 0x24FF],
+    [0x2460, 0x24ff],
     // Geometric Shapes (U+25A0-25FF)
-    [0x25A0, 0x25FF],
+    [0x25a0, 0x25ff],
     // Miscellaneous Symbols and Arrows (U+2B00-2BFF)
-    [0x2B00, 0x2BFF],
+    [0x2b00, 0x2bff],
     // CJK Symbols and Punctuation (partial)
     [0x3030, 0x3030], // 〰️
-    [0x303D, 0x303D], // 〽️
+    [0x303d, 0x303d], // 〽️
     // Enclosed CJK Letters and Months (U+3200-32FF)
-    [0x3200, 0x32FF],
+    [0x3200, 0x32ff],
     // Enclosed Ideographic Supplement (U+1F200-1F2FF)
-    [0x1F200, 0x1F2FF],
+    [0x1f200, 0x1f2ff],
     // Regional Indicator Symbols (U+1F1E6-1F1FF) - for flags
-    [0x1F1E6, 0x1F1FF],
+    [0x1f1e6, 0x1f1ff],
     // Tags (U+E0020-E007F) - for emoji tag sequences
-    [0xE0020, 0xE007F],
+    [0xe0020, 0xe007f],
   ];
 
   // Skin tone modifiers
   private static readonly SKIN_TONE_MODIFIERS = [
-    0x1F3FB, // Light skin tone
-    0x1F3FC, // Medium-light skin tone
-    0x1F3FD, // Medium skin tone
-    0x1F3FE, // Medium-dark skin tone
-    0x1F3FF, // Dark skin tone
+    0x1f3fb, // Light skin tone
+    0x1f3fc, // Medium-light skin tone
+    0x1f3fd, // Medium skin tone
+    0x1f3fe, // Medium-dark skin tone
+    0x1f3ff, // Dark skin tone
   ];
 
   // Zero Width Joiner and Variation Selectors
-  private static readonly ZWJ = 0x200D; // Zero Width Joiner
-  private static readonly VARIATION_SELECTOR_15 = 0xFE0E; // Text presentation
-  private static readonly VARIATION_SELECTOR_16 = 0xFE0F; // Emoji presentation
-  
+  private static readonly ZWJ = 0x200d; // Zero Width Joiner
+  private static readonly VARIATION_SELECTOR_15 = 0xfe0e; // Text presentation
+  private static readonly VARIATION_SELECTOR_16 = 0xfe0f; // Emoji presentation
+
   // Keycap sequence components
-  private static readonly KEYCAP_COMBINING_MARK = 0x20E3;
+  private static readonly KEYCAP_COMBINING_MARK = 0x20e3;
 
   /**
    * Checks if a code point is in any emoji range
@@ -95,7 +95,10 @@ export class EmojiUtils {
    * - Keycap sequences
    * - Regional indicator sequences (flags)
    */
-  private static isEmojiSequence(text: string, startIndex: number): { isEmoji: boolean; length: number } {
+  private static isEmojiSequence(
+    text: string,
+    startIndex: number
+  ): { isEmoji: boolean; length: number } {
     let index = startIndex;
     let hasEmoji = false;
     let sequenceLength = 0;
@@ -109,7 +112,7 @@ export class EmojiUtils {
     // Helper to advance by code point
     const advanceByCodePoint = (pos: number): number => {
       const cp = text.codePointAt(pos);
-      return pos + (cp && cp > 0xFFFF ? 2 : 1);
+      return pos + (cp && cp > 0xffff ? 2 : 1);
     };
 
     while (index < text.length) {
@@ -140,12 +143,12 @@ export class EmojiUtils {
       }
 
       // Regional indicator sequences (flags)
-      if (codePoint >= 0x1F1E6 && codePoint <= 0x1F1FF) {
+      if (codePoint >= 0x1f1e6 && codePoint <= 0x1f1ff) {
         const nextIndex = advanceByCodePoint(index);
         const nextCodePoint = getCodePoint(nextIndex);
-        
+
         // Check if this is a valid flag sequence (two regional indicators)
-        if (nextCodePoint && nextCodePoint >= 0x1F1E6 && nextCodePoint <= 0x1F1FF) {
+        if (nextCodePoint && nextCodePoint >= 0x1f1e6 && nextCodePoint <= 0x1f1ff) {
           hasEmoji = true;
           sequenceLength = advanceByCodePoint(nextIndex) - startIndex;
           break;
@@ -153,15 +156,19 @@ export class EmojiUtils {
       }
 
       // Keycap sequences (like 1️⃣, 2️⃣, etc.)
-      if ((codePoint >= 0x30 && codePoint <= 0x39) || // 0-9
-          codePoint === 0x23 || codePoint === 0x2A) { // # or *
+      if (
+        (codePoint >= 0x30 && codePoint <= 0x39) || // 0-9
+        codePoint === 0x23 ||
+        codePoint === 0x2a
+      ) {
+        // # or *
         const nextIndex = advanceByCodePoint(index);
         const nextCodePoint = getCodePoint(nextIndex);
-        
+
         if (nextCodePoint === this.VARIATION_SELECTOR_16) {
           const thirdIndex = advanceByCodePoint(nextIndex);
           const thirdCodePoint = getCodePoint(thirdIndex);
-          
+
           if (thirdCodePoint === this.KEYCAP_COMBINING_MARK) {
             hasEmoji = true;
             sequenceLength = advanceByCodePoint(thirdIndex) - startIndex;
@@ -191,7 +198,7 @@ export class EmojiUtils {
 
     while (index < input.length) {
       const emojiCheck = this.isEmojiSequence(input, index);
-      
+
       if (emojiCheck.isEmoji) {
         // Skip the entire emoji sequence
         index += emojiCheck.length;
@@ -204,7 +211,7 @@ export class EmojiUtils {
         const codePoint = input.codePointAt(index);
         if (codePoint) {
           result += String.fromCodePoint(codePoint);
-          index += codePoint > 0xFFFF ? 2 : 1;
+          index += codePoint > 0xffff ? 2 : 1;
         } else {
           result += input[index];
           index++;
@@ -225,17 +232,22 @@ export class EmojiUtils {
     if (process.env.NO_COLOR !== undefined || process.env.NO_EMOJI !== undefined) {
       return false;
     }
-    
+
     // Check devlogr-specific disable flags
     if (process.env.DEVLOGR_NO_COLOR || process.env.DEVLOGR_NO_EMOJI) {
       return false;
+    }
+
+    // Explicit force enable for testing and CI environments
+    if (process.env.DEVLOGR_FORCE_COLOR || process.env.FORCE_COLOR) {
+      return true;
     }
 
     // Check terminal capabilities
     const term = process.env.TERM || '';
     const termProgram = process.env.TERM_PROGRAM || '';
     const colorTerm = process.env.COLORTERM || '';
-    
+
     // Known emoji-supporting terminals
     const emojiTerminals = [
       'iTerm.app',
@@ -247,7 +259,7 @@ export class EmojiUtils {
       'alacritty',
       'kitty',
       'ghostty',
-      'Windows Terminal'
+      'Windows Terminal',
     ];
 
     if (emojiTerminals.includes(termProgram)) {
@@ -271,6 +283,11 @@ export class EmojiUtils {
       }
     }
 
+    // CI environments often support emojis even without TTY
+    if (this.isCI()) {
+      return true;
+    }
+
     // Check if we're in a TTY (emoji makes sense in interactive contexts)
     if (!process.stdout.isTTY) {
       return false;
@@ -278,6 +295,24 @@ export class EmojiUtils {
 
     // Default to true for modern environments
     return true;
+  }
+
+  /**
+   * Detects if we're running in a CI environment
+   */
+  private static isCI(): boolean {
+    return !!(
+      process.env.CI ||
+      process.env.CONTINUOUS_INTEGRATION ||
+      process.env.BUILD_NUMBER ||
+      process.env.GITHUB_ACTIONS ||
+      process.env.GITLAB_CI ||
+      process.env.CIRCLECI ||
+      process.env.TRAVIS ||
+      process.env.JENKINS_URL ||
+      process.env.BUILDKITE ||
+      process.env.DRONE
+    );
   }
 
   static emoji(strings: TemplateStringsArray, ...values: unknown[]): string {
@@ -296,4 +331,4 @@ export class EmojiUtils {
   static forceStripEmojis(text: string): string {
     return this.stripEmojisAndFixSpaces(text);
   }
-} 
+}

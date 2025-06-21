@@ -6,13 +6,19 @@ import { createLogger } from '../src/logger';
 describe('Global Environment Variable Standards', () => {
   // Store original environment variables
   const originalEnv: Record<string, string | undefined> = {};
-  
+
   beforeEach(() => {
     // Save current environment variables
     [
-      'NO_COLOR', 'NO_EMOJI', 'NO_UNICODE', 'FORCE_COLOR',
-      'DEVLOGR_NO_COLOR', 'DEVLOGR_NO_EMOJI', 'DEVLOGR_NO_UNICODE', 
-      'DEVLOGR_FORCE_COLOR', 'DEVLOGR_UNICODE'
+      'NO_COLOR',
+      'NO_EMOJI',
+      'NO_UNICODE',
+      'FORCE_COLOR',
+      'DEVLOGR_NO_COLOR',
+      'DEVLOGR_NO_EMOJI',
+      'DEVLOGR_NO_UNICODE',
+      'DEVLOGR_FORCE_COLOR',
+      'DEVLOGR_UNICODE',
     ].forEach(key => {
       originalEnv[key] = process.env[key];
       delete process.env[key];
@@ -34,10 +40,10 @@ describe('Global Environment Variable Standards', () => {
     it('should disable colors when NO_COLOR is set to any value', () => {
       process.env.NO_COLOR = '1';
       expect(TerminalUtils.supportsColor()).toBe(false);
-      
+
       process.env.NO_COLOR = 'true';
       expect(TerminalUtils.supportsColor()).toBe(false);
-      
+
       process.env.NO_COLOR = 'anything';
       expect(TerminalUtils.supportsColor()).toBe(false);
     });
@@ -64,10 +70,10 @@ describe('Global Environment Variable Standards', () => {
     it('should disable emojis when NO_EMOJI is set', () => {
       process.env.NO_EMOJI = '1';
       expect(EmojiUtils.supportsEmoji()).toBe(false);
-      
+
       process.env.NO_EMOJI = 'true';
       expect(EmojiUtils.supportsEmoji()).toBe(false);
-      
+
       process.env.NO_EMOJI = 'anything';
       expect(EmojiUtils.supportsEmoji()).toBe(false);
     });
@@ -91,10 +97,10 @@ describe('Global Environment Variable Standards', () => {
     it('should disable Unicode when NO_UNICODE is set', () => {
       process.env.NO_UNICODE = '1';
       expect(TerminalUtils.supportsUnicode()).toBe(false);
-      
+
       process.env.NO_UNICODE = 'true';
       expect(TerminalUtils.supportsUnicode()).toBe(false);
-      
+
       process.env.NO_UNICODE = 'anything';
       expect(TerminalUtils.supportsUnicode()).toBe(false);
     });
@@ -119,7 +125,7 @@ describe('Global Environment Variable Standards', () => {
     it('should enable colors when FORCE_COLOR is set', () => {
       process.env.FORCE_COLOR = '1';
       expect(TerminalUtils.supportsColor()).toBe(true);
-      
+
       process.env.FORCE_COLOR = 'true';
       expect(TerminalUtils.supportsColor()).toBe(true);
     });
@@ -133,7 +139,7 @@ describe('Global Environment Variable Standards', () => {
     it('should work alongside devlogr-specific settings', () => {
       process.env.FORCE_COLOR = '1';
       expect(TerminalUtils.supportsColor()).toBe(true);
-      
+
       // Should also work with DEVLOGR_FORCE_COLOR
       delete process.env.FORCE_COLOR;
       process.env.DEVLOGR_FORCE_COLOR = 'true';
@@ -163,7 +169,7 @@ describe('Global Environment Variable Standards', () => {
       process.env.NO_COLOR = '1';
       process.env.NO_EMOJI = '1';
       process.env.NO_UNICODE = '1';
-      
+
       expect(TerminalUtils.supportsColor()).toBe(false);
       expect(EmojiUtils.supportsEmoji()).toBe(false);
       expect(TerminalUtils.supportsUnicode()).toBe(false);
@@ -173,7 +179,7 @@ describe('Global Environment Variable Standards', () => {
       // Global disables color, devlogr enables emoji
       process.env.NO_COLOR = '1';
       process.env.DEVLOGR_NO_EMOJI = 'false';
-      
+
       expect(TerminalUtils.supportsColor()).toBe(false);
       expect(EmojiUtils.supportsEmoji()).toBe(false); // Should be false due to NO_COLOR
     });
@@ -183,7 +189,7 @@ describe('Global Environment Variable Standards', () => {
       process.env.NO_COLOR = '';
       process.env.NO_EMOJI = '';
       process.env.NO_UNICODE = '';
-      
+
       expect(TerminalUtils.supportsColor()).toBe(false);
       expect(EmojiUtils.supportsEmoji()).toBe(false);
       expect(TerminalUtils.supportsUnicode()).toBe(false);
@@ -194,20 +200,20 @@ describe('Global Environment Variable Standards', () => {
     it('should respect global standards in actual logging', () => {
       process.env.NO_COLOR = '1';
       process.env.NO_EMOJI = '1';
-      
+
       const logger = createLogger('test');
-      
+
       // Mock console to capture output
       const consoleSpy = vi.spyOn(console, 'log').mockImplementation(() => {});
-      
+
       logger.info('Test message 🚀');
-      
+
       // Should have been called (message should be logged)
       expect(consoleSpy).toHaveBeenCalled();
-      
+
       // The actual formatting would strip colors and emojis
       // but we can't easily test the exact output here without more complex mocking
-      
+
       consoleSpy.mockRestore();
     });
 
@@ -215,15 +221,15 @@ describe('Global Environment Variable Standards', () => {
       process.env.NO_COLOR = '1';
       process.env.NO_EMOJI = '1';
       process.env.DEVLOGR_OUTPUT_JSON = 'true';
-      
+
       const logger = createLogger('test');
-      
+
       const consoleSpy = vi.spyOn(console, 'log').mockImplementation(() => {});
-      
+
       logger.info('Test message 🚀');
-      
+
       expect(consoleSpy).toHaveBeenCalled();
-      
+
       consoleSpy.mockRestore();
     });
   });
@@ -234,7 +240,7 @@ describe('Global Environment Variable Standards', () => {
       const supportsColor = TerminalUtils.supportsColor();
       const supportsEmoji = EmojiUtils.supportsEmoji();
       const supportsUnicode = TerminalUtils.supportsUnicode();
-      
+
       // These should be boolean values (not undefined/null)
       expect(typeof supportsColor).toBe('boolean');
       expect(typeof supportsEmoji).toBe('boolean');
@@ -244,10 +250,10 @@ describe('Global Environment Variable Standards', () => {
     it('should allow devlogr-specific overrides when no global standards are set', () => {
       process.env.DEVLOGR_NO_COLOR = 'true';
       expect(TerminalUtils.supportsColor()).toBe(false);
-      
+
       delete process.env.DEVLOGR_NO_COLOR;
       process.env.DEVLOGR_FORCE_COLOR = 'true';
       expect(TerminalUtils.supportsColor()).toBe(true);
     });
   });
-}); 
+});

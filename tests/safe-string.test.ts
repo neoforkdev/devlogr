@@ -24,7 +24,7 @@ describe('SafeStringUtils', () => {
     it('should respect color support detection', () => {
       process.env.DEVLOGR_FORCE_COLOR = 'true';
       SafeStringUtils.resetCache();
-      
+
       const result = SafeStringUtils.color('test', chalk.red);
       // In test environment, color may or may not be applied based on TTY detection
       expect(typeof result).toBe('string');
@@ -34,7 +34,7 @@ describe('SafeStringUtils', () => {
     it('should not apply colors when NO_COLOR is set', () => {
       process.env.NO_COLOR = 'true';
       SafeStringUtils.resetCache();
-      
+
       const result = SafeStringUtils.color('test', chalk.red);
       expect(result).toBe('test');
     });
@@ -42,7 +42,7 @@ describe('SafeStringUtils', () => {
     it('should not apply colors when DEVLOGR_NO_COLOR is set', () => {
       process.env.DEVLOGR_NO_COLOR = 'true';
       SafeStringUtils.resetCache();
-      
+
       const result = SafeStringUtils.color('test', chalk.red);
       expect(result).toBe('test');
     });
@@ -52,7 +52,7 @@ describe('SafeStringUtils', () => {
     it('should use Unicode symbols when supported', () => {
       process.env.DEVLOGR_UNICODE = 'true';
       SafeStringUtils.resetCache();
-      
+
       const result = SafeStringUtils.symbol('✓', '+');
       expect(result).toBe('✓');
     });
@@ -60,7 +60,7 @@ describe('SafeStringUtils', () => {
     it('should use fallback when Unicode not supported', () => {
       process.env.DEVLOGR_NO_UNICODE = 'true';
       SafeStringUtils.resetCache();
-      
+
       const result = SafeStringUtils.symbol('✓', '+');
       expect(result).toBe('+');
     });
@@ -70,7 +70,7 @@ describe('SafeStringUtils', () => {
     it('should preserve text without emojis when emojis are supported', () => {
       process.env.DEVLOGR_UNICODE = 'true';
       SafeStringUtils.resetCache();
-      
+
       const result = SafeStringUtils.emoji('Simple text');
       expect(result).toBe('Simple text');
     });
@@ -78,7 +78,7 @@ describe('SafeStringUtils', () => {
     it('should strip emojis when not supported', () => {
       process.env.NO_EMOJI = 'true';
       SafeStringUtils.resetCache();
-      
+
       const result = SafeStringUtils.emoji('Text with 🚀 emoji');
       expect(result).not.toContain('🚀');
     });
@@ -89,7 +89,7 @@ describe('SafeStringUtils', () => {
       process.env.DEVLOGR_NO_UNICODE = 'true';
       process.env.DEVLOGR_FORCE_COLOR = 'true';
       SafeStringUtils.resetCache();
-      
+
       const result = SafeStringUtils.coloredSymbol('✓', '+', chalk.green);
       expect(result).toBe(chalk.green('+'));
     });
@@ -98,7 +98,7 @@ describe('SafeStringUtils', () => {
       process.env.DEVLOGR_NO_UNICODE = 'true';
       process.env.NO_COLOR = 'true';
       SafeStringUtils.resetCache();
-      
+
       const result = SafeStringUtils.coloredSymbol('✓', '+', chalk.green);
       expect(result).toBe('+');
     });
@@ -108,7 +108,7 @@ describe('SafeStringUtils', () => {
     it('should create safe strings that respect terminal capabilities', () => {
       process.env.DEVLOGR_FORCE_COLOR = 'true';
       SafeStringUtils.resetCache();
-      
+
       const result = SafeStringUtils.safe('test message', chalk.blue);
       expect(typeof result).toBe('string');
       expect(result).toContain('test message');
@@ -117,7 +117,7 @@ describe('SafeStringUtils', () => {
     it('should create safe strings without color when not supported', () => {
       process.env.NO_COLOR = 'true';
       SafeStringUtils.resetCache();
-      
+
       const result = SafeStringUtils.safe('test message', chalk.blue);
       expect(result).toBe('test message');
     });
@@ -125,25 +125,71 @@ describe('SafeStringUtils', () => {
 
   describe('Error formatting', () => {
     it('should format errors consistently', () => {
-      const result = SafeStringUtils.formatError('test error', 'Something went wrong');
-      
-      expect(result).toContain('error:');
-      expect(result).toContain('test error');
-      expect(result).toContain('Something went wrong');
+      // Save and clean environment to test without colors
+      const originalEnv = {
+        FORCE_COLOR: process.env.FORCE_COLOR,
+        DEVLOGR_FORCE_COLOR: process.env.DEVLOGR_FORCE_COLOR,
+      };
+
+      try {
+        delete process.env.FORCE_COLOR;
+        delete process.env.DEVLOGR_FORCE_COLOR;
+        process.env.NO_COLOR = 'true';
+        SafeStringUtils.resetCache();
+
+        const result = SafeStringUtils.formatError('test error', 'Something went wrong');
+
+        expect(result).toContain('error:');
+        expect(result).toContain('test error');
+        expect(result).toContain('Something went wrong');
+      } finally {
+        Object.entries(originalEnv).forEach(([key, value]) => {
+          if (value !== undefined) {
+            process.env[key] = value;
+          } else {
+            delete process.env[key];
+          }
+        });
+        delete process.env.NO_COLOR;
+        SafeStringUtils.resetCache();
+      }
     });
 
     it('should include suggestions in error formatting', () => {
-      const result = SafeStringUtils.formatError(
-        'validation error',
-        'Invalid configuration',
-        'Check your config file'
-      );
-      
-      expect(result).toContain('error:');
-      expect(result).toContain('validation error');
-      expect(result).toContain('Invalid configuration');
-      expect(result).toContain('help:');
-      expect(result).toContain('Check your config file');
+      // Save and clean environment to test without colors
+      const originalEnv = {
+        FORCE_COLOR: process.env.FORCE_COLOR,
+        DEVLOGR_FORCE_COLOR: process.env.DEVLOGR_FORCE_COLOR,
+      };
+
+      try {
+        delete process.env.FORCE_COLOR;
+        delete process.env.DEVLOGR_FORCE_COLOR;
+        process.env.NO_COLOR = 'true';
+        SafeStringUtils.resetCache();
+
+        const result = SafeStringUtils.formatError(
+          'validation error',
+          'Invalid configuration',
+          'Check your config file'
+        );
+
+        expect(result).toContain('error:');
+        expect(result).toContain('validation error');
+        expect(result).toContain('Invalid configuration');
+        expect(result).toContain('help:');
+        expect(result).toContain('Check your config file');
+      } finally {
+        Object.entries(originalEnv).forEach(([key, value]) => {
+          if (value !== undefined) {
+            process.env[key] = value;
+          } else {
+            delete process.env[key];
+          }
+        });
+        delete process.env.NO_COLOR;
+        SafeStringUtils.resetCache();
+      }
     });
   });
 
@@ -157,7 +203,7 @@ describe('SafeStringUtils', () => {
         chalk.yellow.bold,
         'Test message'
       );
-      
+
       expect(result).toContain('WARNING');
       expect(result).toContain('Test message');
     });
@@ -166,11 +212,11 @@ describe('SafeStringUtils', () => {
   describe('Log symbols', () => {
     it('should provide consistent log symbols', () => {
       const symbols = SafeStringUtils.getLogSymbols();
-      
+
       expect(symbols.error).toBeDefined();
       expect(symbols.error.unicode).toBe('✗');
       expect(symbols.error.fallback).toBe('X');
-      
+
       expect(symbols.warn).toBeDefined();
       expect(symbols.info).toBeDefined();
       expect(symbols.debug).toBeDefined();
@@ -184,16 +230,16 @@ describe('SafeStringUtils', () => {
     it('should cache capability detection results', () => {
       // Use environment variables that definitely change behavior
       process.env.DEVLOGR_NO_UNICODE = 'true';
-      
+
       // First call should set cache
       const result1 = SafeStringUtils.symbol('✓', '+');
-      
+
       // Change environment but don't reset cache
       process.env.DEVLOGR_UNICODE = 'true';
-      
+
       // Should still use cached result
       const result2 = SafeStringUtils.symbol('✓', '+');
-      
+
       expect(result1).toBe(result2);
       expect(result1).toBe('+'); // Cached fallback result
     });
@@ -202,13 +248,13 @@ describe('SafeStringUtils', () => {
       process.env.NO_COLOR = 'true';
       SafeStringUtils.resetCache();
       const result1 = SafeStringUtils.color('test', chalk.red);
-      
+
       delete process.env.NO_COLOR;
       process.env.DEVLOGR_FORCE_COLOR = 'true';
       SafeStringUtils.resetCache(); // Reset cache
-      
+
       const result2 = SafeStringUtils.color('test', chalk.red);
-      
+
       // Results may be different depending on capabilities
       expect(typeof result1).toBe('string');
       expect(typeof result2).toBe('string');
@@ -216,4 +262,4 @@ describe('SafeStringUtils', () => {
       expect(result2).toContain('test');
     });
   });
-}); 
+});

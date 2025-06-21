@@ -22,10 +22,14 @@ export class ThemeProvider {
   /**
    * Gets theme for specified log level with optional customization
    */
-  static getTheme(level: string, customThemes?: Record<string, Partial<LogTheme>>, supportsUnicode = true): LogTheme {
+  static getTheme(
+    level: string,
+    customThemes?: Record<string, Partial<LogTheme>>,
+    supportsUnicode = true
+  ): LogTheme {
     const defaultTheme = this.DEFAULT_THEMES[level];
     const customTheme = customThemes?.[level];
-    
+
     if (!defaultTheme) {
       throw new Error(`Unknown log level: ${level}`);
     }
@@ -73,4 +77,4 @@ export class ThemeProvider {
   static getFallbackTheme(level: string): LogTheme {
     return this.getTheme(level, undefined, false);
   }
-} 
+}

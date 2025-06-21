@@ -27,7 +27,7 @@ const tests = [
   {
     name: 'Default behavior (no env vars)',
     setup: () => clearEnv(),
-    expected: 'Colors, emojis, and Unicode should be enabled'
+    expected: 'Colors, emojis, and Unicode should be enabled',
   },
   {
     name: 'NO_COLOR=1',
@@ -35,7 +35,7 @@ const tests = [
       clearEnv();
       process.env.NO_COLOR = '1';
     },
-    expected: 'Colors and emojis should be disabled'
+    expected: 'Colors and emojis should be disabled',
   },
   {
     name: 'NO_EMOJI=1',
@@ -43,7 +43,7 @@ const tests = [
       clearEnv();
       process.env.NO_EMOJI = '1';
     },
-    expected: 'Only emojis should be disabled'
+    expected: 'Only emojis should be disabled',
   },
   {
     name: 'NO_UNICODE=1',
@@ -51,7 +51,7 @@ const tests = [
       clearEnv();
       process.env.NO_UNICODE = '1';
     },
-    expected: 'Only Unicode should be disabled'
+    expected: 'Only Unicode should be disabled',
   },
   {
     name: 'NO_COLOR="" (empty string)',
@@ -59,7 +59,7 @@ const tests = [
       clearEnv();
       process.env.NO_COLOR = '';
     },
-    expected: 'Colors and emojis should be disabled (empty string counts)'
+    expected: 'Colors and emojis should be disabled (empty string counts)',
   },
   {
     name: 'Precedence test: NO_COLOR=1 + DEVLOGR_FORCE_COLOR=true',
@@ -68,7 +68,7 @@ const tests = [
       process.env.NO_COLOR = '1';
       process.env.DEVLOGR_FORCE_COLOR = 'true';
     },
-    expected: 'Global NO_COLOR should override devlogr setting'
+    expected: 'Global NO_COLOR should override devlogr setting',
   },
   {
     name: 'All global standards disabled',
@@ -78,8 +78,8 @@ const tests = [
       process.env.NO_EMOJI = '1';
       process.env.NO_UNICODE = '1';
     },
-    expected: 'Everything should be disabled'
-  }
+    expected: 'Everything should be disabled',
+  },
 ];
 
 console.log('🧪 Testing Global Environment Variable Standards\n');
@@ -87,15 +87,17 @@ console.log('🧪 Testing Global Environment Variable Standards\n');
 tests.forEach((test, index) => {
   console.log(`\n${index + 1}. ${test.name}`);
   console.log(`   Expected: ${test.expected}`);
-  
+
   test.setup();
-  
+
   const supportsColor = TerminalUtils.supportsColor();
   const supportsEmoji = EmojiUtils.supportsEmoji();
   const supportsUnicode = TerminalUtils.supportsUnicode();
-  
-  console.log(`   Results: Color=${supportsColor}, Emoji=${supportsEmoji}, Unicode=${supportsUnicode}`);
-  
+
+  console.log(
+    `   Results: Color=${supportsColor}, Emoji=${supportsEmoji}, Unicode=${supportsUnicode}`
+  );
+
   // Create a logger and test actual output
   const logger = createLogger('TEST');
   console.log(`   Sample output:`);
@@ -110,4 +112,4 @@ console.log('\n📝 Notes:');
 console.log('   - NO_COLOR and NO_EMOJI are official global standards');
 console.log('   - NO_UNICODE is a convenience feature (not an official standard)');
 console.log('   - Global standards always take precedence over devlogr-specific settings');
-console.log('   - Empty string values should disable features (per NO_COLOR standard)'); 
+console.log('   - Empty string values should disable features (per NO_COLOR standard)');

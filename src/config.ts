@@ -17,7 +17,7 @@ export class LogConfiguration {
    */
   static getConfig(): LogConfig {
     const timestampConfig = this.getTimestampConfig();
-    
+
     return {
       level: this.getLogLevel(),
       useJson: this.shouldUseJson(),
@@ -69,19 +69,19 @@ export class LogConfiguration {
    */
   private static getTimestampConfig(): { show: boolean; format: TimestampFormat } {
     const timestampValue = process.env[this.ENV_SHOW_TIMESTAMP];
-    
+
     if (!timestampValue || timestampValue === 'false') {
       return { show: false, format: TimestampFormat.TIME };
     }
-    
+
     if (timestampValue === 'true') {
       return { show: true, format: TimestampFormat.TIME };
     }
-    
+
     if (timestampValue === 'iso') {
       return { show: true, format: TimestampFormat.ISO };
     }
-    
+
     // Default to TIME format for any other truthy value
     return { show: true, format: TimestampFormat.TIME };
   }
@@ -93,4 +93,4 @@ export class LogConfiguration {
   private static shouldShowTimestamp(): boolean {
     return this.getTimestampConfig().show;
   }
-} 
+}

@@ -74,7 +74,7 @@ describe('StringUtils', () => {
       const obj = { name: 'test', id: 123, active: true };
       const result = StringUtils.safeJsonStringify(obj);
       const parsed = JSON.parse(result);
-      
+
       expect(parsed.name).toBe('test');
       expect(parsed.id).toBe(123);
       expect(parsed.active).toBe(true);
@@ -83,10 +83,10 @@ describe('StringUtils', () => {
     it('should handle circular references', () => {
       const obj: any = { name: 'test' };
       obj.self = obj;
-      
+
       const result = StringUtils.safeJsonStringify(obj);
       const parsed = JSON.parse(result);
-      
+
       expect(parsed.name).toBe('test');
       expect(parsed.self).toBe('[Circular Reference]');
     });
@@ -95,7 +95,7 @@ describe('StringUtils', () => {
       const error = new Error('Test error');
       const result = StringUtils.safeJsonStringify(error);
       const parsed = JSON.parse(result);
-      
+
       expect(parsed.name).toBe('Error');
       expect(parsed.message).toBe('Test error');
       expect(parsed.stack).toContain('Test error');
@@ -104,7 +104,7 @@ describe('StringUtils', () => {
     it('should handle Date objects', () => {
       const date = new Date('2024-01-01T00:00:00.000Z');
       const result = StringUtils.safeJsonStringify(date);
-      
+
       expect(result).toBe('"2024-01-01T00:00:00.000Z"');
     });
 
@@ -118,7 +118,7 @@ describe('StringUtils', () => {
     it('should use custom indentation', () => {
       const obj = { name: 'test', id: 123 };
       const result = StringUtils.safeJsonStringify(obj, 4);
-      
+
       expect(result).toContain('    "name": "test"');
       expect(result).toContain('    "id": 123');
     });
@@ -191,7 +191,7 @@ describe('TerminalUtils', () => {
 
     it('should respect DEVLOGR_NO_UNICODE environment variable', () => {
       const originalEnv = process.env.DEVLOGR_NO_UNICODE;
-      
+
       try {
         process.env.DEVLOGR_NO_UNICODE = 'true';
         const result = TerminalUtils.supportsUnicode();
@@ -207,7 +207,7 @@ describe('TerminalUtils', () => {
 
     it('should respect DEVLOGR_UNICODE environment variable', () => {
       const originalEnv = process.env.DEVLOGR_UNICODE;
-      
+
       try {
         process.env.DEVLOGR_UNICODE = 'true';
         const result = TerminalUtils.supportsUnicode();
@@ -227,12 +227,12 @@ describe('TerminalUtils', () => {
         DEVLOGR_NO_UNICODE: process.env.DEVLOGR_NO_UNICODE,
         DEVLOGR_UNICODE: process.env.DEVLOGR_UNICODE,
       };
-      
+
       try {
         delete process.env.DEVLOGR_NO_UNICODE;
         delete process.env.DEVLOGR_UNICODE;
         process.env.LC_ALL = 'en_US.UTF-8';
-        
+
         const result = TerminalUtils.supportsUnicode();
         expect(result).toBe(true);
       } finally {
@@ -255,7 +255,7 @@ describe('TerminalUtils', () => {
 
     it('should respect NO_COLOR environment variable', () => {
       const originalEnv = process.env.NO_COLOR;
-      
+
       try {
         process.env.NO_COLOR = '1';
         const result = TerminalUtils.supportsColor();
@@ -274,7 +274,7 @@ describe('TerminalUtils', () => {
         FORCE_COLOR: process.env.FORCE_COLOR,
         NO_COLOR: process.env.NO_COLOR,
       };
-      
+
       try {
         delete process.env.NO_COLOR;
         process.env.FORCE_COLOR = '1';
@@ -295,14 +295,20 @@ describe('TerminalUtils', () => {
       const originalEnv = {
         TERM: process.env.TERM,
         FORCE_COLOR: process.env.FORCE_COLOR,
+        DEVLOGR_FORCE_COLOR: process.env.DEVLOGR_FORCE_COLOR,
         NO_COLOR: process.env.NO_COLOR,
+        CI: process.env.CI,
+        GITHUB_ACTIONS: process.env.GITHUB_ACTIONS,
       };
-      
+
       try {
         delete process.env.FORCE_COLOR;
+        delete process.env.DEVLOGR_FORCE_COLOR;
         delete process.env.NO_COLOR;
+        delete process.env.CI;
+        delete process.env.GITHUB_ACTIONS;
         process.env.TERM = 'dumb';
-        
+
         const result = TerminalUtils.supportsColor();
         expect(result).toBe(false);
       } finally {
@@ -330,5 +336,3 @@ describe('TerminalUtils', () => {
     });
   });
 });
-
- 

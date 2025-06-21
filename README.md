@@ -112,6 +112,32 @@ SpinnerUtils.succeed('build', 'Build done!');
 
 ---
 
+## 🛠️ Development Scripts
+
+The package includes useful development commands:
+
+```bash
+# Check code formatting
+npm run format
+
+# Fix formatting issues
+npm run format:fix
+
+# Run linter
+npm run lint
+
+# Fix linting issues
+npm run lint:fix
+
+# Run all checks (format + lint + build + test)
+npm run check
+
+# Fix all issues automatically
+npm run fix
+```
+
+---
+
 ## 🧠 Smart Defaults, Powerful Options
 
 - **Automatically detects** terminal features and disables bells and whistles when needed

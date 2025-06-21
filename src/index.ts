@@ -10,11 +10,5 @@ export { MessageFormatter } from './formatters';
 export { PrefixTracker } from './tracker';
 
 // Utility classes
-export { 
-  StringUtils, 
-  TerminalUtils, 
-  EmojiUtils, 
-  SafeStringUtils,
-  SpinnerUtils
-} from './utils';
+export { StringUtils, TerminalUtils, EmojiUtils, SafeStringUtils, SpinnerUtils } from './utils';
 export type { SpinnerOptions } from './utils';

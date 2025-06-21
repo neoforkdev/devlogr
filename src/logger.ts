@@ -23,7 +23,7 @@ export class Logger {
   constructor(prefix: string) {
     this.prefix = prefix;
     this.config = LogConfiguration.getConfig();
-    
+
     PrefixTracker.register(prefix);
   }
 
@@ -97,7 +97,7 @@ export class Logger {
       this.task(text || 'Processing...');
       return;
     }
-    
+
     const theme = ThemeProvider.getTheme('task', undefined, this.config.supportsUnicode);
     const spinnerOptions: SpinnerOptions = {
       text: text || 'Processing...',
@@ -107,9 +107,9 @@ export class Logger {
       timestampFormat: this.config.timestampFormat,
       level: 'task',
       theme: theme,
-      ...options
+      ...options,
     };
-    
+
     SpinnerUtils.start(this.prefix, spinnerOptions);
   }
 
@@ -120,7 +120,7 @@ export class Logger {
     if (this.config.useJson || !SpinnerUtils.supportsSpinners()) {
       return;
     }
-    
+
     SpinnerUtils.updateText(this.prefix, text);
   }
 
@@ -131,7 +131,7 @@ export class Logger {
     if (this.config.useJson || !SpinnerUtils.supportsSpinners()) {
       return;
     }
-    
+
     SpinnerUtils.stop(this.prefix);
   }
 
@@ -143,7 +143,7 @@ export class Logger {
       this.success(text || 'Done');
       return;
     }
-    
+
     const message = SpinnerUtils.succeed(this.prefix, text);
     if (message !== undefined) {
       this.success(message);
@@ -160,7 +160,7 @@ export class Logger {
       this.error(text || 'Failed');
       return;
     }
-    
+
     const message = SpinnerUtils.fail(this.prefix, text);
     if (message !== undefined) {
       this.error(message);
@@ -177,7 +177,7 @@ export class Logger {
       this.warning(text || 'Warning');
       return;
     }
-    
+
     const message = SpinnerUtils.warn(this.prefix, text);
     if (message !== undefined) {
       this.warning(message);
@@ -194,7 +194,7 @@ export class Logger {
       this.info(text || 'Info');
       return;
     }
-    
+
     const message = SpinnerUtils.info(this.prefix, text);
     if (message !== undefined) {
       this.info(message);
@@ -257,9 +257,9 @@ export class Logger {
     if (this.config.useJson) {
       return;
     }
-    
+
     const width = 50;
-    
+
     if (title) {
       const sideLength = Math.max(1, Math.floor((width - title.length - 2) / 2));
       const leftSide = '-'.repeat(sideLength);
@@ -281,7 +281,13 @@ export class Logger {
   }
 
   private shouldLog(level: LogLevel): boolean {
-    const levels = [LogLevel.ERROR, LogLevel.WARNING, LogLevel.INFO, LogLevel.DEBUG, LogLevel.TRACE];
+    const levels = [
+      LogLevel.ERROR,
+      LogLevel.WARNING,
+      LogLevel.INFO,
+      LogLevel.DEBUG,
+      LogLevel.TRACE,
+    ];
     const currentLevelIndex = levels.indexOf(this.getEffectiveLevel());
     const messageLevelIndex = levels.indexOf(level);
     return messageLevelIndex <= currentLevelIndex;
@@ -292,7 +298,7 @@ export class Logger {
     if (this.config.useJson) {
       return false;
     }
-    
+
     // Use centralized emoji support detection
     return EmojiUtils.supportsEmoji();
   }
@@ -306,7 +312,7 @@ export class Logger {
     if (!this.shouldLog(level)) {
       return;
     }
-    
+
     if (this.config.useJson) {
       this.logJson(level, message, args);
     } else {
@@ -315,13 +321,13 @@ export class Logger {
   }
 
   private logJson(level: LogLevel, message: string, args: unknown[]): void {
-    const logData: Record<string, unknown> = { 
-      level, 
+    const logData: Record<string, unknown> = {
+      level,
       prefix: this.prefix,
       message: this.stripEmojis(message), // Strip emojis from message
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     };
-    
+
     args.forEach((arg, index) => {
       if (typeof arg === 'object' && arg !== null) {
         // For objects, try to merge properties, but handle circular references
@@ -339,7 +345,7 @@ export class Logger {
         logData[`arg${index}`] = argValue;
       }
     });
-    
+
     // Use safe JSON stringify to handle circular references
     const safeJson = StringUtils.safeJsonStringify(logData, 0); // No indentation for logs
     this.outputToConsole(level, safeJson);
@@ -353,10 +359,27 @@ export class Logger {
   private formatMessage(level: string, message: string, args: unknown[]): string {
     const theme = ThemeProvider.getTheme(level, undefined, this.config.supportsUnicode);
     const shouldStripEmojis = !this.supportsEmoji();
-    
-    return this.config.showTimestamp ?
-      MessageFormatter.formatCompleteLogMessage(level, theme, message, args, this.prefix, PrefixTracker.getMaxLength(), this.config.useColors, this.config.timestampFormat, shouldStripEmojis) :
-      MessageFormatter.formatSimpleMessage(level, theme, message, args, this.config.useColors, shouldStripEmojis);
+
+    return this.config.showTimestamp
+      ? MessageFormatter.formatCompleteLogMessage(
+          level,
+          theme,
+          message,
+          args,
+          this.prefix,
+          PrefixTracker.getMaxLength(),
+          this.config.useColors,
+          this.config.timestampFormat,
+          shouldStripEmojis
+        )
+      : MessageFormatter.formatSimpleMessage(
+          level,
+          theme,
+          message,
+          args,
+          this.config.useColors,
+          shouldStripEmojis
+        );
   }
 
   private outputToConsole(level: LogLevel, message: string): void {

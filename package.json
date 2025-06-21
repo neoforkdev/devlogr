@@ -17,6 +17,11 @@
     "test:coverage": "vitest --coverage",
     "lint": "eslint src/**/*.ts",
     "lint:fix": "eslint src/**/*.ts --fix",
+    "format": "prettier --check .",
+    "format:fix": "prettier --write .",
+    "format:check": "prettier --check .",
+    "check": "npm run format && npm run lint && npm run build && npm test",
+    "fix": "npm run format:fix && npm run lint:fix",
     "playground": "npm run build && node playground.js",
     "test:global-standards": "npm run build && node scripts/test-global-standards.js",
     "clean": "rm -rf dist",
@@ -44,17 +49,20 @@
   },
   "homepage": "https://github.com/neofork/devlogr#readme",
   "devDependencies": {
+    "@eslint/js": "^9.29.0",
     "@types/node": "^20.0.0",
-    "@typescript-eslint/eslint-plugin": "^6.0.0",
-    "@typescript-eslint/parser": "^6.0.0",
-    "eslint": "^8.0.0",
+    "@typescript-eslint/eslint-plugin": "^8.34.1",
+    "@typescript-eslint/parser": "^8.34.1",
+    "@vitest/coverage-v8": "^1.0.0",
+    "eslint": "^8.57.1",
+    "globals": "^16.2.0",
+    "prettier": "^3.5.3",
     "typescript": "^5.0.0",
-    "vitest": "^1.0.0",
-    "@vitest/coverage-v8": "^1.0.0"
+    "vitest": "^1.0.0"
   },
   "dependencies": {
-    "chalk": "^5.3.0",
-    "ora": "^8.0.1"
+    "chalk": "^4.1.2",
+    "ora": "^5.4.1"
   },
   "engines": {
     "node": ">=16.0.0"

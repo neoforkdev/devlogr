@@ -25,4 +25,4 @@ export class PrefixTracker {
   static reset(): void {
     this.maxLength = 0;
   }
-} 
+}

@@ -26,24 +26,24 @@ describe('Logger Themes and Configuration', () => {
 
     it('should filter logs based on level', () => {
       Logger.setLevel(LogLevel.WARNING);
-      
+
       const logger = new Logger('TEST');
-      
+
       // These should not throw regardless of level
       expect(() => {
         logger.debug('Debug message'); // Should be filtered
-        logger.info('Info message');   // Should be filtered
+        logger.info('Info message'); // Should be filtered
         logger.warning('Warning message'); // Should appear
-        logger.error('Error message');     // Should appear
+        logger.error('Error message'); // Should appear
       }).not.toThrow();
     });
 
     it('should handle level changes dynamically', () => {
       const logger = new Logger('TEST');
-      
+
       Logger.setLevel(LogLevel.ERROR);
       expect(() => logger.info('Filtered')).not.toThrow();
-      
+
       Logger.setLevel(LogLevel.DEBUG);
       expect(() => logger.debug('Not filtered')).not.toThrow();
     });
@@ -51,7 +51,7 @@ describe('Logger Themes and Configuration', () => {
     it('should reset to default level', () => {
       Logger.setLevel(LogLevel.ERROR);
       Logger.resetLevel();
-      
+
       const logger = new Logger('TEST');
       expect(() => logger.info('Should work')).not.toThrow();
     });
@@ -60,7 +60,7 @@ describe('Logger Themes and Configuration', () => {
   describe('Logger method availability', () => {
     it('should have all standard log methods', () => {
       const logger = new Logger('TEST');
-      
+
       expect(typeof logger.debug).toBe('function');
       expect(typeof logger.info).toBe('function');
       expect(typeof logger.warning).toBe('function');
@@ -73,7 +73,7 @@ describe('Logger Themes and Configuration', () => {
 
     it('should handle method calls with various arguments', () => {
       const logger = new Logger('TEST');
-      
+
       expect(() => {
         logger.info('Simple message');
         logger.error('Error with object', { key: 'value' });
@@ -86,14 +86,14 @@ describe('Logger Themes and Configuration', () => {
   describe('Prefix tracking and alignment', () => {
     it('should handle multiple loggers with different prefix lengths', () => {
       Logger.setLevel(LogLevel.DEBUG);
-      
+
       const loggers = [
         new Logger('A'),
         new Logger('MEDIUM'),
         new Logger('VERYLONGPREFIX'),
         new Logger('X'),
       ];
-      
+
       expect(() => {
         loggers.forEach((logger, index) => {
           logger.info(`Message ${index}`);
@@ -103,10 +103,10 @@ describe('Logger Themes and Configuration', () => {
 
     it('should maintain alignment across different log calls', () => {
       Logger.setLevel(LogLevel.DEBUG);
-      
+
       const shortLogger = new Logger('CLI');
       const longLogger = new Logger('INFRASTRUCTURE');
-      
+
       expect(() => {
         shortLogger.info('First message');
         longLogger.info('Second message');
@@ -117,7 +117,7 @@ describe('Logger Themes and Configuration', () => {
 
     it('should handle rapid prefix changes', () => {
       Logger.setLevel(LogLevel.DEBUG);
-      
+
       expect(() => {
         for (let i = 0; i < 10; i++) {
           const logger = new Logger(`PREFIX${i}`);
@@ -130,11 +130,11 @@ describe('Logger Themes and Configuration', () => {
   describe('Environment variable handling', () => {
     it('should respect DEVLOGR_LOG_LEVEL=debug', () => {
       const originalEnv = process.env.DEVLOGR_LOG_LEVEL;
-      
+
       try {
         process.env.DEVLOGR_LOG_LEVEL = 'debug';
         Logger.resetLevel();
-        
+
         const logger = new Logger('TEST');
         expect(() => logger.debug('Debug message')).not.toThrow();
       } finally {
@@ -149,11 +149,11 @@ describe('Logger Themes and Configuration', () => {
 
     it('should respect DEVLOGR_LOG_LEVEL=error', () => {
       const originalEnv = process.env.DEVLOGR_LOG_LEVEL;
-      
+
       try {
         process.env.DEVLOGR_LOG_LEVEL = 'error';
         Logger.resetLevel();
-        
+
         const logger = new Logger('TEST');
         expect(() => {
           logger.debug('Should be filtered');
@@ -172,10 +172,10 @@ describe('Logger Themes and Configuration', () => {
 
     it('should handle invalid log levels gracefully', () => {
       const originalEnv = process.env.DEVLOGR_LOG_LEVEL;
-      
+
       try {
         process.env.DEVLOGR_LOG_LEVEL = 'invalid';
-        
+
         expect(() => {
           Logger.resetLevel();
           const logger = new Logger('TEST');
@@ -196,7 +196,7 @@ describe('Logger Themes and Configuration', () => {
     it('should use consistent symbols across log levels', () => {
       Logger.setLevel(LogLevel.DEBUG);
       const logger = new Logger('TEST');
-      
+
       // Test that symbols are consistently applied
       expect(() => {
         logger.debug('Debug with ?');
@@ -212,7 +212,7 @@ describe('Logger Themes and Configuration', () => {
     it('should maintain formatting consistency', () => {
       Logger.setLevel(LogLevel.DEBUG);
       const logger = new Logger('CONSISTENT');
-      
+
       expect(() => {
         // Test consistent formatting across different types
         logger.info('String message');
@@ -227,15 +227,15 @@ describe('Logger Themes and Configuration', () => {
     it('should handle high-frequency logging efficiently', () => {
       Logger.setLevel(LogLevel.DEBUG);
       const logger = new Logger('PERF');
-      
+
       const startTime = Date.now();
-      
+
       expect(() => {
         for (let i = 0; i < 100; i++) {
           logger.info(`High frequency message ${i}`);
         }
       }).not.toThrow();
-      
+
       const duration = Date.now() - startTime;
       expect(duration).toBeLessThan(2000); // Should complete within 2 seconds
     });
@@ -243,19 +243,29 @@ describe('Logger Themes and Configuration', () => {
     it('should handle mixed log levels efficiently', () => {
       Logger.setLevel(LogLevel.DEBUG);
       const logger = new Logger('MIXED');
-      
+
       expect(() => {
         for (let i = 0; i < 50; i++) {
           const methodIndex = i % 5;
           switch (methodIndex) {
-            case 0: logger.debug(`Mixed level message ${i}`); break;
-            case 1: logger.info(`Mixed level message ${i}`); break;
-            case 2: logger.warning(`Mixed level message ${i}`); break;
-            case 3: logger.error(`Mixed level message ${i}`); break;
-            case 4: logger.success(`Mixed level message ${i}`); break;
+            case 0:
+              logger.debug(`Mixed level message ${i}`);
+              break;
+            case 1:
+              logger.info(`Mixed level message ${i}`);
+              break;
+            case 2:
+              logger.warning(`Mixed level message ${i}`);
+              break;
+            case 3:
+              logger.error(`Mixed level message ${i}`);
+              break;
+            case 4:
+              logger.success(`Mixed level message ${i}`);
+              break;
           }
         }
       }).not.toThrow();
     });
   });
-}); 
+});

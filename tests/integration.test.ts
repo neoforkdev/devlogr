@@ -10,13 +10,13 @@ describe('Logger Integration', () => {
   describe('Console output verification', () => {
     it('should call appropriate console methods for different log levels', () => {
       const logger = new Logger('TEST');
-      
+
       // Mock console methods
       const consoleSpy = {
         log: vi.spyOn(console, 'log').mockImplementation(() => {}),
         error: vi.spyOn(console, 'error').mockImplementation(() => {}),
         warn: vi.spyOn(console, 'warn').mockImplementation(() => {}),
-        debug: vi.spyOn(console, 'debug').mockImplementation(() => {})
+        debug: vi.spyOn(console, 'debug').mockImplementation(() => {}),
       };
 
       Logger.setLevel(LogLevel.TRACE);
@@ -38,19 +38,19 @@ describe('Logger Integration', () => {
 
     it('should respect log level filtering with console output', () => {
       const logger = new Logger('TEST');
-      
+
       const consoleSpy = {
         log: vi.spyOn(console, 'log').mockImplementation(() => {}),
         error: vi.spyOn(console, 'error').mockImplementation(() => {}),
         warn: vi.spyOn(console, 'warn').mockImplementation(() => {}),
-        debug: vi.spyOn(console, 'debug').mockImplementation(() => {})
+        debug: vi.spyOn(console, 'debug').mockImplementation(() => {}),
       };
 
       Logger.setLevel(LogLevel.ERROR);
 
       logger.trace('Should not appear');
       logger.debug('Should not appear');
-      logger.info('Should not appear');  
+      logger.info('Should not appear');
       logger.warning('Should not appear');
       logger.error('Should appear');
 
@@ -65,12 +65,12 @@ describe('Logger Integration', () => {
 
     it('should test trace level filtering specifically', () => {
       const logger = new Logger('TEST');
-      
+
       const consoleSpy = {
         log: vi.spyOn(console, 'log').mockImplementation(() => {}),
         error: vi.spyOn(console, 'error').mockImplementation(() => {}),
         warn: vi.spyOn(console, 'warn').mockImplementation(() => {}),
-        debug: vi.spyOn(console, 'debug').mockImplementation(() => {})
+        debug: vi.spyOn(console, 'debug').mockImplementation(() => {}),
       };
 
       // Test DEBUG level - should not show trace, only debug
@@ -79,7 +79,7 @@ describe('Logger Integration', () => {
       logger.debug('Should appear');
 
       expect(consoleSpy.debug).toHaveBeenCalledTimes(1);
-      
+
       // Reset spies
       consoleSpy.debug.mockClear();
 
@@ -98,7 +98,7 @@ describe('Logger Integration', () => {
   describe('Basic functionality', () => {
     it('should create logger with all methods', () => {
       const logger = new Logger('TEST');
-      
+
       expect(logger).toBeDefined();
       expect(typeof logger.info).toBe('function');
       expect(typeof logger.error).toBe('function');
@@ -109,7 +109,7 @@ describe('Logger Integration', () => {
 
     it('should respect log level filtering', () => {
       const logger = new Logger('TEST');
-      
+
       expect(() => {
         Logger.setLevel(LogLevel.ERROR);
         logger.trace('Should be filtered');
@@ -150,11 +150,11 @@ describe('Logger Integration', () => {
   describe('Environment configuration', () => {
     it('should handle DEVLOGR_LOG_LEVEL environment variable', () => {
       const originalEnv = process.env.DEVLOGR_LOG_LEVEL;
-      
+
       try {
         process.env.DEVLOGR_LOG_LEVEL = 'debug';
         Logger.resetLevel();
-        
+
         const logger = new Logger('TEST');
         expect(() => {
           logger.debug('Debug message');
@@ -175,13 +175,13 @@ describe('Logger Integration', () => {
       Logger.setLevel(LogLevel.DEBUG);
 
       const startTime = Date.now();
-      
+
       expect(() => {
         for (let i = 0; i < 50; i++) {
           logger.info(`Message ${i}`);
         }
       }).not.toThrow();
-      
+
       const duration = Date.now() - startTime;
       expect(duration).toBeLessThan(1000); // Should complete within 1 second
     });
@@ -194,7 +194,7 @@ describe('Logger Integration', () => {
         logger.info(''); // empty message
         logger.info('Very long message: ' + 'A'.repeat(1000));
         logger.info('Special chars: émojis 🚀 unicode ℹ✓');
-        
+
         // Circular reference
         const circular: any = { name: 'test' };
         circular.self = circular;
@@ -202,4 +202,4 @@ describe('Logger Integration', () => {
       }).not.toThrow();
     });
   });
-}); 
+});

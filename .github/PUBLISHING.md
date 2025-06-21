@@ -1,6 +1,5 @@
 # Publishing Guide for @neofork/devlogr
 
-
 This document explains how to set up and use the automated publishing pipeline for the `@neofork/devlogr` npm package.
 
 ## 🚀 GitHub Actions Workflows
@@ -8,6 +7,7 @@ This document explains how to set up and use the automated publishing pipeline f
 We have three automated workflows:
 
 ### 1. **CI Workflow** (`.github/workflows/ci.yml`)
+
 - **Triggers:** Push/PR to `main` or `develop` branches
 - **Purpose:** Continuous integration testing
 - **Actions:**
@@ -17,6 +17,7 @@ We have three automated workflows:
   - Uploads coverage to Codecov
 
 ### 2. **Release Workflow** (`.github/workflows/release.yml`)
+
 - **Triggers:** When a GitHub release is published
 - **Purpose:** Publish stable versions to npm
 - **Actions:**
@@ -25,6 +26,7 @@ We have three automated workflows:
   - Creates release summary
 
 ### 3. **Prerelease Workflow** (`.github/workflows/prerelease.yml`)
+
 - **Triggers:** When a GitHub prerelease is created
 - **Purpose:** Publish beta/alpha versions
 - **Actions:**
@@ -56,6 +58,7 @@ We have three automated workflows:
 ### Publishing a Stable Release
 
 1. **Update version** in `package.json`:
+
    ```bash
    npm version patch  # for bug fixes (1.0.0 → 1.0.1)
    npm version minor  # for new features (1.0.0 → 1.1.0)
@@ -63,11 +66,13 @@ We have three automated workflows:
    ```
 
 2. **Push the version tag**:
+
    ```bash
    git push --follow-tags
    ```
 
 3. **Create GitHub Release**:
+
    - Go to your repository → **Releases** → **"Create a new release"**
    - Choose the version tag you just pushed
    - Fill in release notes
@@ -82,6 +87,7 @@ We have three automated workflows:
 ### Publishing a Prerelease (Beta/Alpha)
 
 1. **Update version** with prerelease identifier:
+
    ```bash
    npm version prerelease --preid=beta   # 1.0.0 → 1.0.1-beta.0
    npm version prerelease --preid=alpha  # 1.0.0 → 1.0.1-alpha.0
@@ -89,11 +95,13 @@ We have three automated workflows:
    ```
 
 2. **Push the version tag**:
+
    ```bash
    git push --follow-tags
    ```
 
 3. **Create GitHub Prerelease**:
+
    - Go to your repository → **Releases** → **"Create a new release"**
    - Choose the version tag
    - **Check "This is a pre-release"**
@@ -108,11 +116,13 @@ We have three automated workflows:
 ## 🔍 Monitoring
 
 ### Check Workflow Status
+
 - Go to **Actions** tab in your repository
 - View workflow runs and their status
 - Check logs for any errors
 
 ### Verify NPM Publication
+
 - Visit: https://www.npmjs.com/package/@neofork/devlogr
 - Check version and publication time
 - Verify installation: `npm install @neofork/devlogr`
@@ -127,16 +137,19 @@ We have three automated workflows:
 ## 📋 Version Management Best Practices
 
 ### Semantic Versioning
+
 - **Patch** (1.0.1): Bug fixes, no breaking changes
 - **Minor** (1.1.0): New features, backward compatible
 - **Major** (2.0.0): Breaking changes
 
 ### Prerelease Versions
+
 - **Alpha** (`1.0.0-alpha.1`): Early development, unstable
 - **Beta** (`1.0.0-beta.1`): Feature complete, testing phase
 - **RC** (`1.0.0-rc.1`): Release candidate, final testing
 
 ### Example Workflow
+
 ```bash
 # Development cycle
 npm version prerelease --preid=alpha
@@ -144,7 +157,7 @@ git push --follow-tags
 # Create prerelease on GitHub
 
 # Feature complete
-npm version prerelease --preid=beta  
+npm version prerelease --preid=beta
 git push --follow-tags
 # Create prerelease on GitHub
 
@@ -159,11 +172,13 @@ git push --follow-tags
 ### Common Issues
 
 1. **"npm publish failed"**
+
    - Check if version already exists on npm
    - Verify NPM_TOKEN secret is set correctly
    - Ensure package.json version is updated
 
 2. **"Tests failed"**
+
    - All tests must pass before publishing
    - Check the Actions tab for detailed error logs
    - Fix issues and push again
@@ -184,11 +199,12 @@ git push --follow-tags
 ## 📝 Quick Reference
 
 ### Essential Commands
+
 ```bash
 # Patch release (bug fixes)
 npm version patch && git push --follow-tags
 
-# Minor release (new features)  
+# Minor release (new features)
 npm version minor && git push --follow-tags
 
 # Major release (breaking changes)
@@ -199,7 +215,8 @@ npm version prerelease --preid=beta && git push --follow-tags
 ```
 
 ### Links
+
 - **NPM Package**: https://www.npmjs.com/package/@neofork/devlogr
 - **GitHub Repository**: https://github.com/neofork/devlogr
 - **GitHub Actions**: https://github.com/neofork/devlogr/actions
-- **Releases**: https://github.com/neofork/devlogr/releases 
+- **Releases**: https://github.com/neofork/devlogr/releases
