@@ -6,6 +6,8 @@
 
 <div align="center"><strong>⚡ UX-first logger for modern CLI tools ⚡</strong><br/>Clean visuals, emoji joy, animated spinners, and smart formatting—<em>zero config required</em>.</div>
 
+> **🚧 Early Development**: This package is in active development (v0.0.x). API may change based on feedback. Perfect for testing and early adoption!
+
 ---
 
 ## 🎯 Made for CLI tools. Seriously.

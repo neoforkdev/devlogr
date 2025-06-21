@@ -14,7 +14,7 @@ assignees: ''
 - [ ] Major (breaking changes)
 - [ ] Prerelease (alpha/beta/rc)
 
-**Target Version:** `v1.0.0`
+**Target Version:** `v0.0.2` (or desired version)
 
 ## Changes Included
 
@@ -46,7 +46,13 @@ assignees: ''
 
 1. **Update version:**
    ```bash
-   npm version [patch|minor|major|prerelease --preid=beta]
+   # For 0.0.x development
+   npm version patch          # 0.0.1 → 0.0.2 (most common)
+   npm version minor          # 0.0.5 → 0.1.0 (significant features)
+   npm version major          # 0.5.0 → 1.0.0 (production ready)
+   
+   # For prerelease testing
+   npm version prerelease --preid=beta  # 0.0.1 → 0.0.2-beta.0
    ```
 
 2. **Push tags:**
