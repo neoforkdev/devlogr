@@ -7,10 +7,6 @@ config:
   # or powershell.exe for Windows
   command: bash -l
   
-  # Specify the current working directory path
-  # the default is the current working directory path
-  cwd: /home/sofiane/Documents/pulumi-aws-lambify/devlogr
-  
   # Export additional ENV variables
   env:
     recording: true
@@ -33,7 +29,7 @@ config:
   
   # Quality
   # 1 - 100
-  quality: 70
+  quality: 100
   
   # Delay between frames in ms
   # If the value is `auto` use the actual recording delays
@@ -50,7 +46,7 @@ config:
   # Don't forget to add a backgroundColor style with a null as type
   frameBox:
     type: floating
-    title: Terminalizer
+    title: "@neofork/devlogr"
     style:
       border: 0px black solid
       # boxShadow: none
