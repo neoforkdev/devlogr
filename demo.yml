@@ -1,0 +1,878 @@
+# The configurations that used for the recording, feel free to edit them
+config:
+
+  # Specify a command to be executed
+  # like `/bin/bash -l`, `ls`, or any other commands
+  # the default is bash for Linux
+  # or powershell.exe for Windows
+  command: bash -l
+  
+  # Specify the current working directory path
+  # the default is the current working directory path
+  cwd: /home/sofiane/Documents/pulumi-aws-lambify/devlogr
+  
+  # Export additional ENV variables
+  env:
+    recording: true
+  
+  # Explicitly set the number of columns
+  # or use `auto` to take the current
+  # number of columns of your shell
+  cols: 100
+  
+  # Explicitly set the number of rows
+  # or use `auto` to take the current
+  # number of rows of your shell
+  rows: 25
+  
+  # Amount of times to repeat GIF
+  # If value is -1, play once
+  # If value is 0, loop indefinitely
+  # If value is a positive number, loop n times
+  repeat: 0
+  
+  # Quality
+  # 1 - 100
+  quality: 100
+  
+  # Delay between frames in ms
+  # If the value is `auto` use the actual recording delays
+  frameDelay: auto
+  
+  # Maximum delay between frames in ms
+  # Ignored if the `frameDelay` isn't set to `auto`
+  # Set to `auto` to prevent limiting the max idle time
+  maxIdleTime: 2000
+  
+  # The surrounding frame box
+  # The `type` can be null, window, floating, or solid`
+  # To hide the title use the value null
+  # Don't forget to add a backgroundColor style with a null as type
+  frameBox:
+    type: floating
+    title: Terminalizer
+    style:
+      border: 0px black solid
+      # boxShadow: none
+      # margin: 0px
+  
+  # Add a watermark image to the rendered gif
+  # You need to specify an absolute path for
+  # the image on your machine or a URL, and you can also
+  # add your own CSS styles
+  watermark:
+    imagePath: null
+    style:
+      position: absolute
+      right: 15px
+      bottom: 15px
+      width: 100px
+      opacity: 0.9
+  
+  # Cursor style can be one of
+  # `block`, `underline`, or `bar`
+  cursorStyle: block
+  
+  # Font family
+  # You can use any font that is installed on your machine
+  # in CSS-like syntax
+  fontFamily: "Monaco, Lucida Console, Ubuntu Mono, Monospace"
+  
+  # The size of the font
+  fontSize: 14
+  
+  # The height of lines
+  lineHeight: 1
+  
+  # The spacing between letters
+  letterSpacing: 0
+  
+  # Theme
+  theme:
+    background: "transparent"
+    foreground: "#cdd6f4"       # text
+    cursor: "#f5e0dc"           # rosewater
+    black: "#45475a"            # surface1
+    red: "#f38ba8"              # red
+    green: "#a6e3a1"            # green
+    yellow: "#f9e2af"           # yellow
+    blue: "#89b4fa"             # blue
+    magenta: "#f5c2e7"          # pink
+    cyan: "#94e2d5"             # teal
+    white: "#bac2de"            # subtext1
+    brightBlack: "#585b70"      # surface2
+    brightRed: "#f38ba8"        # red
+    brightGreen: "#a6e3a1"      # green
+    brightYellow: "#f9e2af"     # yellow
+    brightBlue: "#89b4fa"       # blue
+    brightMagenta: "#f5c2e7"    # pink
+    brightCyan: "#94e2d5"       # teal
+    brightWhite: "#a6adc8"      # subtext0
+
+  
+# Records, feel free to edit them
+records:
+  - delay: 1126
+    content: D
+  - delay: 71
+    content: E
+  - delay: 174
+    content: V
+  - delay: 92
+    content: L
+  - delay: 162
+    content: O
+  - delay: 147
+    content: G
+  - delay: 124
+    content: R
+  - delay: 300
+    content: _
+  - delay: 247
+    content: S
+  - delay: 90
+    content: H
+  - delay: 147
+    content: O
+  - delay: 122
+    content: W
+  - delay: 158
+    content: _
+  - delay: 288
+    content: T
+  - delay: 132
+    content: I
+  - delay: 158
+    content: M
+  - delay: 125
+    content: E
+  - delay: 212
+    content: S
+  - delay: 281
+    content: T
+  - delay: 249
+    content: A
+  - delay: 155
+    content: M
+  - delay: 91
+    content: P
+  - delay: 775
+    content: '='
+  - delay: 649
+    content: t
+  - delay: 107
+    content: r
+  - delay: 165
+    content: u
+  - delay: 160
+    content: e
+  - delay: 1269
+    content: ' '
+  - delay: 209
+    content: 'n'
+  - delay: 155
+    content: p
+  - delay: 59
+    content: m
+  - delay: 133
+    content: ' '
+  - delay: 314
+    content: r
+  - delay: 15
+    content: u
+  - delay: 99
+    content: 'n'
+  - delay: 387
+    content: ' '
+  - delay: 371
+    content: p
+  - delay: 76
+    content: l
+  - delay: 116
+    content: a
+  - delay: 105
+    content: 'y'
+  - delay: 114
+    content: g
+  - delay: 75
+    content: r
+  - delay: 91
+    content: o
+  - delay: 50
+    content: u
+  - delay: 63
+    content: 'n'
+  - delay: 153
+    content: d
+  - delay: 444
+    content: "\r\n\e[?2004l\r"
+  - delay: 110
+    content: "\r\n> @neofork/devlogr@1.0.0 playground\r\n> npm run build && node playground.js\r\n\r\n\e[1G\e[0K"
+  - delay: 125
+    content: "\r\n> @neofork/devlogr@1.0.0 build\r\n> tsc\r\n\r\n\e[1G\e[0K"
+  - delay: 1094
+    content: "\e[1G\e[0K⠙\e[1G\e[0K"
+  - delay: 104
+    content: "\e[1;1H\e[0J"
+  - delay: 1006
+    content: "\e[2m[18:32:41]\e[22m \e[35m●\e[39m \e[1m\e[35mTITLE  \e[39m\e[22m \e[2m[devpack]\e[22m \e[35m\U0001F680 DevPack - Modern Development Toolkit\e[39m\r\n\e[2m----------------- Initialization -----------------\e[22m\r\n"
+  - delay: 501
+    content: "\e[2m[18:32:41]\e[22m \e[36mi\e[39m \e[1m\e[36mINFO   \e[39m\e[22m \e[2m[devpack]\e[22m Loading configuration from devpack.config.js\r\n"
+  - delay: 810
+    content: "\e[?25l\e[1G\e[1G\e[2m[18:32:42]\e[22m \e[37m→\e[39m \e[1m\e[37mTASK   \e[39m\e[22m \e[2m[devpack]\e[22m  \e[36m⠋\e[39m Checking dependencies..."
+  - delay: 80
+    content: "\e[1G\e[0K\e[2m[18:32:42]\e[22m \e[37m→\e[39m \e[1m\e[37mTASK   \e[39m\e[22m \e[2m[devpack]\e[22m  \e[36m⠙\e[39m Checking dependencies..."
+  - delay: 80
+    content: "\e[1G\e[0K\e[2m[18:32:42]\e[22m \e[37m→\e[39m \e[1m\e[37mTASK   \e[39m\e[22m \e[2m[devpack]\e[22m  \e[36m⠙\e[39m Checking dependencies..."
+  - delay: 80
+    content: "\e[1G\e[0K\e[2m[18:32:42]\e[22m \e[37m→\e[39m \e[1m\e[37mTASK   \e[39m\e[22m \e[2m[devpack]\e[22m  \e[36m⠹\e[39m Checking dependencies..."
+  - delay: 80
+    content: "\e[1G\e[0K\e[2m[18:32:42]\e[22m \e[37m→\e[39m \e[1m\e[37mTASK   \e[39m\e[22m \e[2m[devpack]\e[22m  \e[36m⠸\e[39m Checking dependencies..."
+  - delay: 81
+    content: "\e[1G\e[0K\e[2m[18:32:42]\e[22m \e[37m→\e[39m \e[1m\e[37mTASK   \e[39m\e[22m \e[2m[devpack]\e[22m  \e[36m⠼\e[39m Checking dependencies..."
+  - delay: 80
+    content: "\e[1G\e[0K\e[2m[18:32:42]\e[22m \e[37m→\e[39m \e[1m\e[37mTASK   \e[39m\e[22m \e[2m[devpack]\e[22m  \e[36m⠴\e[39m Checking dependencies..."
+  - delay: 80
+    content: "\e[1G\e[0K\e[2m[18:32:42]\e[22m \e[37m→\e[39m \e[1m\e[37mTASK   \e[39m\e[22m \e[2m[devpack]\e[22m  \e[36m⠦\e[39m Checking dependencies..."
+  - delay: 81
+    content: "\e[1G\e[0K\e[2m[18:32:42]\e[22m \e[37m→\e[39m \e[1m\e[37mTASK   \e[39m\e[22m \e[2m[devpack]\e[22m  \e[36m⠧\e[39m Checking dependencies..."
+  - delay: 80
+    content: "\e[1G\e[0K\e[2m[18:32:42]\e[22m \e[37m→\e[39m \e[1m\e[37mTASK   \e[39m\e[22m \e[2m[devpack]\e[22m  \e[36m⠇\e[39m Checking dependencies..."
+  - delay: 81
+    content: "\e[1G\e[0K\e[2m[18:32:42]\e[22m \e[37m→\e[39m \e[1m\e[37mTASK   \e[39m\e[22m \e[2m[devpack]\e[22m  \e[36m⠏\e[39m Checking dependencies..."
+  - delay: 79
+    content: "\e[1G\e[0K\e[2m[18:32:42]\e[22m \e[37m→\e[39m \e[1m\e[37mTASK   \e[39m\e[22m \e[2m[devpack]\e[22m  \e[36m⠋\e[39m Checking dependencies..."
+  - delay: 81
+    content: "\e[1G\e[0K\e[2m[18:32:42]\e[22m \e[37m→\e[39m \e[1m\e[37mTASK   \e[39m\e[22m \e[2m[devpack]\e[22m  \e[36m⠙\e[39m Checking dependencies..."
+  - delay: 79
+    content: "\e[1G\e[0K\e[2m[18:32:42]\e[22m \e[37m→\e[39m \e[1m\e[37mTASK   \e[39m\e[22m \e[2m[devpack]\e[22m  \e[36m⠙\e[39m Checking dependencies..."
+  - delay: 81
+    content: "\e[1G\e[0K\e[2m[18:32:42]\e[22m \e[37m→\e[39m \e[1m\e[37mTASK   \e[39m\e[22m \e[2m[devpack]\e[22m  \e[36m⠹\e[39m Checking dependencies..."
+  - delay: 80
+    content: "\e[1G\e[0K\e[2m[18:32:42]\e[22m \e[37m→\e[39m \e[1m\e[37mTASK   \e[39m\e[22m \e[2m[devpack]\e[22m  \e[36m⠸\e[39m Checking dependencies..."
+  - delay: 80
+    content: "\e[1G\e[0K\e[2m[18:32:42]\e[22m \e[37m→\e[39m \e[1m\e[37mTASK   \e[39m\e[22m \e[2m[devpack]\e[22m  \e[36m⠼\e[39m Checking dependencies..."
+  - delay: 80
+    content: "\e[1G\e[0K\e[2m[18:32:42]\e[22m \e[37m→\e[39m \e[1m\e[37mTASK   \e[39m\e[22m \e[2m[devpack]\e[22m  \e[36m⠴\e[39m Checking dependencies..."
+  - delay: 79
+    content: "\e[1G\e[0K\e[2m[18:32:42]\e[22m \e[37m→\e[39m \e[1m\e[37mTASK   \e[39m\e[22m \e[2m[devpack]\e[22m  \e[36m⠦\e[39m Checking dependencies..."
+  - delay: 81
+    content: "\e[1G\e[0K\e[2m[18:32:42]\e[22m \e[37m→\e[39m \e[1m\e[37mTASK   \e[39m\e[22m \e[2m[devpack]\e[22m  \e[36m⠧\e[39m Checking dependencies..."
+  - delay: 80
+    content: "\e[1G\e[0K\e[2m[18:32:42]\e[22m \e[37m→\e[39m \e[1m\e[37mTASK   \e[39m\e[22m \e[2m[devpack]\e[22m  \e[36m⠇\e[39m Checking dependencies..."
+  - delay: 80
+    content: "\e[1G\e[0K\e[2m[18:32:42]\e[22m \e[37m→\e[39m \e[1m\e[37mTASK   \e[39m\e[22m \e[2m[devpack]\e[22m  \e[36m⠏\e[39m Checking dependencies..."
+  - delay: 81
+    content: "\e[1G\e[0K\e[2m[18:32:42]\e[22m \e[37m→\e[39m \e[1m\e[37mTASK   \e[39m\e[22m \e[2m[devpack]\e[22m  \e[36m⠋\e[39m Checking dependencies..."
+  - delay: 79
+    content: "\e[1G\e[0K\e[2m[18:32:42]\e[22m \e[37m→\e[39m \e[1m\e[37mTASK   \e[39m\e[22m \e[2m[devpack]\e[22m  \e[36m⠙\e[39m Checking dependencies..."
+  - delay: 81
+    content: "\e[1G\e[0K\e[2m[18:32:42]\e[22m \e[37m→\e[39m \e[1m\e[37mTASK   \e[39m\e[22m \e[2m[devpack]\e[22m  \e[36m⠹\e[39m Checking dependencies..."
+  - delay: 79
+    content: "\e[1G\e[0K\e[2m[18:32:42]\e[22m \e[37m→\e[39m \e[1m\e[37mTASK   \e[39m\e[22m \e[2m[devpack]\e[22m  \e[36m⠹\e[39m Resolving package versions..."
+  - delay: 80
+    content: "\e[1G\e[0K\e[2m[18:32:42]\e[22m \e[37m→\e[39m \e[1m\e[37mTASK   \e[39m\e[22m \e[2m[devpack]\e[22m  \e[36m⠸\e[39m Resolving package versions..."
+  - delay: 81
+    content: "\e[1G\e[0K\e[2m[18:32:42]\e[22m \e[37m→\e[39m \e[1m\e[37mTASK   \e[39m\e[22m \e[2m[devpack]\e[22m  \e[36m⠼\e[39m Resolving package versions..."
+  - delay: 80
+    content: "\e[1G\e[0K\e[2m[18:32:42]\e[22m \e[37m→\e[39m \e[1m\e[37mTASK   \e[39m\e[22m \e[2m[devpack]\e[22m  \e[36m⠴\e[39m Resolving package versions..."
+  - delay: 80
+    content: "\e[1G\e[0K\e[2m[18:32:42]\e[22m \e[37m→\e[39m \e[1m\e[37mTASK   \e[39m\e[22m \e[2m[devpack]\e[22m  \e[36m⠦\e[39m Resolving package versions..."
+  - delay: 81
+    content: "\e[1G\e[0K\e[2m[18:32:42]\e[22m \e[37m→\e[39m \e[1m\e[37mTASK   \e[39m\e[22m \e[2m[devpack]\e[22m  \e[36m⠧\e[39m Resolving package versions..."
+  - delay: 80
+    content: "\e[1G\e[0K\e[2m[18:32:42]\e[22m \e[37m→\e[39m \e[1m\e[37mTASK   \e[39m\e[22m \e[2m[devpack]\e[22m  \e[36m⠇\e[39m Resolving package versions..."
+  - delay: 80
+    content: "\e[1G\e[0K\e[2m[18:32:42]\e[22m \e[37m→\e[39m \e[1m\e[37mTASK   \e[39m\e[22m \e[2m[devpack]\e[22m  \e[36m⠏\e[39m Resolving package versions..."
+  - delay: 80
+    content: "\e[1G\e[0K\e[2m[18:32:42]\e[22m \e[37m→\e[39m \e[1m\e[37mTASK   \e[39m\e[22m \e[2m[devpack]\e[22m  \e[36m⠋\e[39m Resolving package versions..."
+  - delay: 80
+    content: "\e[1G\e[0K\e[2m[18:32:42]\e[22m \e[37m→\e[39m \e[1m\e[37mTASK   \e[39m\e[22m \e[2m[devpack]\e[22m  \e[36m⠙\e[39m Resolving package versions..."
+  - delay: 81
+    content: "\e[1G\e[0K\e[2m[18:32:42]\e[22m \e[37m→\e[39m \e[1m\e[37mTASK   \e[39m\e[22m \e[2m[devpack]\e[22m  \e[36m⠹\e[39m Resolving package versions..."
+  - delay: 80
+    content: "\e[1G\e[0K\e[2m[18:32:42]\e[22m \e[37m→\e[39m \e[1m\e[37mTASK   \e[39m\e[22m \e[2m[devpack]\e[22m  \e[36m⠸\e[39m Resolving package versions..."
+  - delay: 80
+    content: "\e[1G\e[0K\e[2m[18:32:42]\e[22m \e[37m→\e[39m \e[1m\e[37mTASK   \e[39m\e[22m \e[2m[devpack]\e[22m  \e[36m⠼\e[39m Resolving package versions..."
+  - delay: 81
+    content: "\e[1G\e[0K\e[2m[18:32:42]\e[22m \e[37m→\e[39m \e[1m\e[37mTASK   \e[39m\e[22m \e[2m[devpack]\e[22m  \e[36m⠴\e[39m Resolving package versions..."
+  - delay: 80
+    content: "\e[1G\e[0K\e[2m[18:32:42]\e[22m \e[37m→\e[39m \e[1m\e[37mTASK   \e[39m\e[22m \e[2m[devpack]\e[22m  \e[36m⠦\e[39m Resolving package versions..."
+  - delay: 80
+    content: "\e[1G\e[0K\e[2m[18:32:42]\e[22m \e[37m→\e[39m \e[1m\e[37mTASK   \e[39m\e[22m \e[2m[devpack]\e[22m  \e[36m⠧\e[39m Resolving package versions..."
+  - delay: 81
+    content: "\e[1G\e[0K\e[2m[18:32:42]\e[22m \e[37m→\e[39m \e[1m\e[37mTASK   \e[39m\e[22m \e[2m[devpack]\e[22m  \e[36m⠇\e[39m Resolving package versions..."
+  - delay: 80
+    content: "\e[1G\e[0K\e[2m[18:32:42]\e[22m \e[37m→\e[39m \e[1m\e[37mTASK   \e[39m\e[22m \e[2m[devpack]\e[22m  \e[36m⠏\e[39m Resolving package versions..."
+  - delay: 80
+    content: "\e[1G\e[0K\e[2m[18:32:42]\e[22m \e[37m→\e[39m \e[1m\e[37mTASK   \e[39m\e[22m \e[2m[devpack]\e[22m  \e[36m⠋\e[39m Resolving package versions..."
+  - delay: 52
+    content: "\e[1G\e[0K\e[?25h\e[2m[18:32:46]\e[22m \e[32m✓\e[39m \e[1m\e[32mSUCCESS\e[39m\e[22m \e[2m[devpack]\e[22m \e[1m\e[32mDependencies resolved ✨\e[39m\e[22m\r\n\r\n\e[2m---------------- \U0001F528 Build Process ----------------\e[22m\r\n\e[?25l\e[1G\e[1G\e[2m[18:32:46]\e[22m \e[37m→\e[39m \e[1m\e[37mTASK   \e[39m\e[22m \e[2m[builder]\e[22m  \e[36m⠋\e[39m Compiling TypeScript...\e[?25l\e[1G\e[1G\e[2m[18:32:46]\e[22m \e[37m→\e[39m \e[1m\e[37mTASK   \e[39m\e[22m    \e[2m[test]\e[22m  \e[36m⠋\e[39m Running tests in parallel..."
+  - delay: 80
+    content: "\e[1G\e[0K\e[2m[18:32:46]\e[22m \e[37m→\e[39m \e[1m\e[37mTASK   \e[39m\e[22m \e[2m[builder]\e[22m  \e[36m⠙\e[39m Compiling TypeScript...\e[1G\e[0K\e[2m[18:32:46]\e[22m \e[37m→\e[39m \e[1m\e[37mTASK   \e[39m\e[22m    \e[2m[test]\e[22m  \e[36m⠙\e[39m Running tests in parallel..."
+  - delay: 79
+    content: "\e[1G\e[0K\e[2m[18:32:46]\e[22m \e[37m→\e[39m \e[1m\e[37mTASK   \e[39m\e[22m \e[2m[builder]\e[22m  \e[36m⠹\e[39m Compiling TypeScript...\e[1G\e[0K\e[2m[18:32:46]\e[22m \e[37m→\e[39m \e[1m\e[37mTASK   \e[39m\e[22m    \e[2m[test]\e[22m  \e[36m⠙\e[39m Running tests in parallel..."
+  - delay: 81
+    content: "\e[1G\e[0K\e[2m[18:32:46]\e[22m \e[37m→\e[39m \e[1m\e[37mTASK   \e[39m\e[22m \e[2m[builder]\e[22m  \e[36m⠸\e[39m Compiling TypeScript...\e[1G\e[0K\e[2m[18:32:46]\e[22m \e[37m→\e[39m \e[1m\e[37mTASK   \e[39m\e[22m    \e[2m[test]\e[22m  \e[36m⠹\e[39m Running tests in parallel..."
+  - delay: 80
+    content: "\e[1G\e[0K\e[2m[18:32:46]\e[22m \e[37m→\e[39m \e[1m\e[37mTASK   \e[39m\e[22m \e[2m[builder]\e[22m  \e[36m⠼\e[39m Compiling TypeScript...\e[1G\e[0K\e[2m[18:32:46]\e[22m \e[37m→\e[39m \e[1m\e[37mTASK   \e[39m\e[22m    \e[2m[test]\e[22m  \e[36m⠸\e[39m Running tests in parallel..."
+  - delay: 80
+    content: "\e[1G\e[0K\e[2m[18:32:46]\e[22m \e[37m→\e[39m \e[1m\e[37mTASK   \e[39m\e[22m \e[2m[builder]\e[22m  \e[36m⠴\e[39m Compiling TypeScript...\e[1G\e[0K\e[2m[18:32:46]\e[22m \e[37m→\e[39m \e[1m\e[37mTASK   \e[39m\e[22m    \e[2m[test]\e[22m  \e[36m⠼\e[39m Running tests in parallel..."
+  - delay: 78
+    content: "\e[1G\e[0K\e[2m[18:32:46]\e[22m \e[37m→\e[39m \e[1m\e[37mTASK   \e[39m\e[22m \e[2m[builder]\e[22m  \e[36m⠴\e[39m Compiling TypeScript...\e[1G\e[0K\e[2m[18:32:46]\e[22m \e[37m→\e[39m \e[1m\e[37mTASK   \e[39m\e[22m    \e[2m[test]\e[22m  \e[36m⠴\e[39m Running tests in parallel..."
+  - delay: 80
+    content: "\e[1G\e[0K\e[2m[18:32:46]\e[22m \e[37m→\e[39m \e[1m\e[37mTASK   \e[39m\e[22m \e[2m[builder]\e[22m  \e[36m⠦\e[39m Compiling TypeScript...\e[1G\e[0K\e[2m[18:32:46]\e[22m \e[37m→\e[39m \e[1m\e[37mTASK   \e[39m\e[22m    \e[2m[test]\e[22m  \e[36m⠦\e[39m Running tests in parallel..."
+  - delay: 79
+    content: "\e[1G\e[0K\e[2m[18:32:46]\e[22m \e[37m→\e[39m \e[1m\e[37mTASK   \e[39m\e[22m \e[2m[builder]\e[22m  \e[36m⠧\e[39m Compiling TypeScript...\e[1G\e[0K\e[2m[18:32:46]\e[22m \e[37m→\e[39m \e[1m\e[37mTASK   \e[39m\e[22m    \e[2m[test]\e[22m  \e[36m⠦\e[39m Running tests in parallel..."
+  - delay: 80
+    content: "\e[1G\e[0K\e[2m[18:32:46]\e[22m \e[37m→\e[39m \e[1m\e[37mTASK   \e[39m\e[22m \e[2m[builder]\e[22m  \e[36m⠇\e[39m Compiling TypeScript...\e[1G\e[0K\e[2m[18:32:46]\e[22m \e[37m→\e[39m \e[1m\e[37mTASK   \e[39m\e[22m    \e[2m[test]\e[22m  \e[36m⠧\e[39m Running tests in parallel..."
+  - delay: 80
+    content: "\e[1G\e[0K\e[2m[18:32:46]\e[22m \e[37m→\e[39m \e[1m\e[37mTASK   \e[39m\e[22m \e[2m[builder]\e[22m  \e[36m⠏\e[39m Compiling TypeScript...\e[1G\e[0K\e[2m[18:32:46]\e[22m \e[37m→\e[39m \e[1m\e[37mTASK   \e[39m\e[22m    \e[2m[test]\e[22m  \e[36m⠇\e[39m Running tests in parallel..."
+  - delay: 79
+    content: "\e[1G\e[0K\e[2m[18:32:46]\e[22m \e[37m→\e[39m \e[1m\e[37mTASK   \e[39m\e[22m \e[2m[builder]\e[22m  \e[36m⠋\e[39m Compiling TypeScript...\e[1G\e[0K\e[2m[18:32:46]\e[22m \e[37m→\e[39m \e[1m\e[37mTASK   \e[39m\e[22m    \e[2m[test]\e[22m  \e[36m⠏\e[39m Running tests in parallel..."
+  - delay: 80
+    content: "\e[1G\e[0K\e[2m[18:32:46]\e[22m \e[37m→\e[39m \e[1m\e[37mTASK   \e[39m\e[22m \e[2m[builder]\e[22m  \e[36m⠙\e[39m Compiling TypeScript...\e[1G\e[0K\e[2m[18:32:46]\e[22m \e[37m→\e[39m \e[1m\e[37mTASK   \e[39m\e[22m    \e[2m[test]\e[22m  \e[36m⠏\e[39m Running tests in parallel..."
+  - delay: 79
+    content: "\e[1G\e[0K\e[2m[18:32:46]\e[22m \e[37m→\e[39m \e[1m\e[37mTASK   \e[39m\e[22m \e[2m[builder]\e[22m  \e[36m⠙\e[39m Compiling TypeScript...\e[1G\e[0K\e[2m[18:32:46]\e[22m \e[37m→\e[39m \e[1m\e[37mTASK   \e[39m\e[22m    \e[2m[test]\e[22m  \e[36m⠋\e[39m Running tests in parallel..."
+  - delay: 80
+    content: "\e[1G\e[0K\e[2m[18:32:46]\e[22m \e[37m→\e[39m \e[1m\e[37mTASK   \e[39m\e[22m \e[2m[builder]\e[22m  \e[36m⠹\e[39m Compiling TypeScript...\e[1G\e[0K\e[2m[18:32:46]\e[22m \e[37m→\e[39m \e[1m\e[37mTASK   \e[39m\e[22m    \e[2m[test]\e[22m  \e[36m⠙\e[39m Running tests in parallel..."
+  - delay: 79
+    content: "\e[1G\e[0K\e[2m[18:32:46]\e[22m \e[37m→\e[39m \e[1m\e[37mTASK   \e[39m\e[22m \e[2m[builder]\e[22m  \e[36m⠸\e[39m Compiling TypeScript...\e[1G\e[0K\e[2m[18:32:46]\e[22m \e[37m→\e[39m \e[1m\e[37mTASK   \e[39m\e[22m    \e[2m[test]\e[22m  \e[36m⠙\e[39m Running tests in parallel..."
+  - delay: 81
+    content: "\e[1G\e[0K\e[2m[18:32:46]\e[22m \e[37m→\e[39m \e[1m\e[37mTASK   \e[39m\e[22m \e[2m[builder]\e[22m  \e[36m⠼\e[39m Compiling TypeScript...\e[1G\e[0K\e[2m[18:32:46]\e[22m \e[37m→\e[39m \e[1m\e[37mTASK   \e[39m\e[22m    \e[2m[test]\e[22m  \e[36m⠹\e[39m Running tests in parallel..."
+  - delay: 80
+    content: "\e[1G\e[0K\e[2m[18:32:46]\e[22m \e[37m→\e[39m \e[1m\e[37mTASK   \e[39m\e[22m \e[2m[builder]\e[22m  \e[36m⠴\e[39m Compiling TypeScript...\e[1G\e[0K\e[2m[18:32:46]\e[22m \e[37m→\e[39m \e[1m\e[37mTASK   \e[39m\e[22m    \e[2m[test]\e[22m  \e[36m⠸\e[39m Running tests in parallel..."
+  - delay: 80
+    content: "\e[1G\e[0K\e[2m[18:32:46]\e[22m \e[37m→\e[39m \e[1m\e[37mTASK   \e[39m\e[22m \e[2m[builder]\e[22m  \e[36m⠦\e[39m Compiling TypeScript...\e[1G\e[0K\e[2m[18:32:46]\e[22m \e[37m→\e[39m \e[1m\e[37mTASK   \e[39m\e[22m    \e[2m[test]\e[22m  \e[36m⠼\e[39m Running tests in parallel..."
+  - delay: 80
+    content: "\e[1G\e[0K\e[2m[18:32:46]\e[22m \e[37m→\e[39m \e[1m\e[37mTASK   \e[39m\e[22m \e[2m[builder]\e[22m  \e[36m⠧\e[39m Compiling TypeScript...\e[1G\e[0K\e[2m[18:32:46]\e[22m \e[37m→\e[39m \e[1m\e[37mTASK   \e[39m\e[22m    \e[2m[test]\e[22m  \e[36m⠴\e[39m Running tests in parallel..."
+  - delay: 79
+    content: "\e[1G\e[0K\e[2m[18:32:46]\e[22m \e[37m→\e[39m \e[1m\e[37mTASK   \e[39m\e[22m \e[2m[builder]\e[22m  \e[36m⠇\e[39m Compiling TypeScript...\e[1G\e[0K\e[2m[18:32:46]\e[22m \e[37m→\e[39m \e[1m\e[37mTASK   \e[39m\e[22m    \e[2m[test]\e[22m  \e[36m⠦\e[39m Running tests in parallel..."
+  - delay: 80
+    content: "\e[1G\e[0K\e[2m[18:32:46]\e[22m \e[37m→\e[39m \e[1m\e[37mTASK   \e[39m\e[22m \e[2m[builder]\e[22m  \e[36m⠏\e[39m Compiling TypeScript...\e[1G\e[0K\e[2m[18:32:46]\e[22m \e[37m→\e[39m \e[1m\e[37mTASK   \e[39m\e[22m    \e[2m[test]\e[22m  \e[36m⠦\e[39m Running tests in parallel..."
+  - delay: 79
+    content: "\e[1G\e[0K\e[2m[18:32:46]\e[22m \e[37m→\e[39m \e[1m\e[37mTASK   \e[39m\e[22m \e[2m[builder]\e[22m  \e[36m⠏\e[39m Compiling TypeScript...\e[1G\e[0K\e[2m[18:32:46]\e[22m \e[37m→\e[39m \e[1m\e[37mTASK   \e[39m\e[22m    \e[2m[test]\e[22m  \e[36m⠧\e[39m Running tests in parallel..."
+  - delay: 80
+    content: "\e[1G\e[0K\e[2m[18:32:46]\e[22m \e[37m→\e[39m \e[1m\e[37mTASK   \e[39m\e[22m \e[2m[builder]\e[22m  \e[36m⠋\e[39m Compiling TypeScript...\e[1G\e[0K\e[2m[18:32:46]\e[22m \e[37m→\e[39m \e[1m\e[37mTASK   \e[39m\e[22m    \e[2m[test]\e[22m  \e[36m⠇\e[39m Running tests in parallel..."
+  - delay: 78
+    content: "\e[1G\e[0K\e[2m[18:32:46]\e[22m \e[37m→\e[39m \e[1m\e[37mTASK   \e[39m\e[22m \e[2m[builder]\e[22m  \e[36m⠙\e[39m Compiling TypeScript...\e[1G\e[0K\e[2m[18:32:46]\e[22m \e[37m→\e[39m \e[1m\e[37mTASK   \e[39m\e[22m    \e[2m[test]\e[22m  \e[36m⠏\e[39m Running tests in parallel..."
+  - delay: 79
+    content: "\e[1G\e[0K\e[2m[18:32:46]\e[22m \e[37m→\e[39m \e[1m\e[37mTASK   \e[39m\e[22m \e[2m[builder]\e[22m  \e[36m⠹\e[39m Compiling TypeScript...\e[1G\e[0K\e[2m[18:32:46]\e[22m \e[37m→\e[39m \e[1m\e[37mTASK   \e[39m\e[22m    \e[2m[test]\e[22m  \e[36m⠋\e[39m Running tests in parallel..."
+  - delay: 77
+    content: "\e[1G\e[0K\e[2m[18:32:46]\e[22m \e[37m→\e[39m \e[1m\e[37mTASK   \e[39m\e[22m \e[2m[builder]\e[22m  \e[36m⠹\e[39m Compiling TypeScript...\e[1G\e[0K\e[2m[18:32:46]\e[22m \e[37m→\e[39m \e[1m\e[37mTASK   \e[39m\e[22m    \e[2m[test]\e[22m  \e[36m⠙\e[39m Running tests in parallel..."
+  - delay: 79
+    content: "\e[1G\e[0K\e[2m[18:32:46]\e[22m \e[37m→\e[39m \e[1m\e[37mTASK   \e[39m\e[22m \e[2m[builder]\e[22m  \e[36m⠸\e[39m Compiling TypeScript...\e[1G\e[0K\e[2m[18:32:46]\e[22m \e[37m→\e[39m \e[1m\e[37mTASK   \e[39m\e[22m    \e[2m[test]\e[22m  \e[36m⠹\e[39m Running tests in parallel..."
+  - delay: 77
+    content: "\e[1G\e[0K\e[2m[18:32:46]\e[22m \e[37m→\e[39m \e[1m\e[37mTASK   \e[39m\e[22m \e[2m[builder]\e[22m  \e[36m⠼\e[39m Compiling TypeScript...\e[1G\e[0K\e[2m[18:32:46]\e[22m \e[37m→\e[39m \e[1m\e[37mTASK   \e[39m\e[22m    \e[2m[test]\e[22m  \e[36m⠸\e[39m Running tests in parallel..."
+  - delay: 78
+    content: "\e[1G\e[0K\e[2m[18:32:46]\e[22m \e[37m→\e[39m \e[1m\e[37mTASK   \e[39m\e[22m \e[2m[builder]\e[22m  \e[36m⠴\e[39m Compiling TypeScript...\e[1G\e[0K\e[2m[18:32:46]\e[22m \e[37m→\e[39m \e[1m\e[37mTASK   \e[39m\e[22m    \e[2m[test]\e[22m  \e[36m⠸\e[39m Running tests in parallel..."
+  - delay: 77
+    content: "\e[1G\e[0K\e[2m[18:32:46]\e[22m \e[37m→\e[39m \e[1m\e[37mTASK   \e[39m\e[22m \e[2m[builder]\e[22m  \e[36m⠦\e[39m Compiling TypeScript...\e[1G\e[0K\e[2m[18:32:46]\e[22m \e[37m→\e[39m \e[1m\e[37mTASK   \e[39m\e[22m    \e[2m[test]\e[22m  \e[36m⠼\e[39m Running tests in parallel..."
+  - delay: 77
+    content: "\e[1G\e[0K\e[2m[18:32:46]\e[22m \e[37m→\e[39m \e[1m\e[37mTASK   \e[39m\e[22m \e[2m[builder]\e[22m  \e[36m⠧\e[39m Compiling TypeScript...\e[1G\e[0K\e[2m[18:32:46]\e[22m \e[37m→\e[39m \e[1m\e[37mTASK   \e[39m\e[22m    \e[2m[test]\e[22m  \e[36m⠼\e[39m Running tests in parallel..."
+  - delay: 14
+    content: "\e[1G\e[0K\e[?25h\e[2m[18:32:48]\e[22m \e[32m✓\e[39m \e[1m\e[32mSUCCESS\e[39m\e[22m \e[2m[builder]\e[22m \e[1m\e[32mTypeScript compilation complete (847ms)\e[39m\e[22m\r\n"
+  - delay: 66
+    content: "\e[1G\e[0K\e[2m[18:32:46]\e[22m \e[37m→\e[39m \e[1m\e[37mTASK   \e[39m\e[22m    \e[2m[test]\e[22m  \e[36m⠴\e[39m Running tests in parallel..."
+  - delay: 80
+    content: "\e[1G\e[0K\e[2m[18:32:46]\e[22m \e[37m→\e[39m \e[1m\e[37mTASK   \e[39m\e[22m    \e[2m[test]\e[22m  \e[36m⠦\e[39m Running tests in parallel..."
+  - delay: 80
+    content: "\e[1G\e[0K\e[2m[18:32:46]\e[22m \e[37m→\e[39m \e[1m\e[37mTASK   \e[39m\e[22m    \e[2m[test]\e[22m  \e[36m⠧\e[39m Running tests in parallel..."
+  - delay: 75
+    content: "\e[1G\e[0K\e[?25h\e[2m[18:32:48]\e[22m \e[32m✓\e[39m \e[1m\e[32mSUCCESS\e[39m\e[22m    \e[2m[test]\e[22m \e[1m\e[32mAll tests passed (1.2s) - 47 tests, 0 failures\e[39m\e[22m\r\n"
+  - delay: 502
+    content: "\e[?25l\e[1G\e[1G\e[2m[18:32:49]\e[22m \e[37m→\e[39m \e[1m\e[37mTASK   \e[39m\e[22m \e[2m[builder]\e[22m  \e[36m⠋\e[39m Optimizing bundles..."
+  - delay: 81
+    content: "\e[1G\e[0K\e[2m[18:32:49]\e[22m \e[37m→\e[39m \e[1m\e[37mTASK   \e[39m\e[22m \e[2m[builder]\e[22m  \e[36m⠙\e[39m Optimizing bundles..."
+  - delay: 79
+    content: "\e[1G\e[0K\e[2m[18:32:49]\e[22m \e[37m→\e[39m \e[1m\e[37mTASK   \e[39m\e[22m \e[2m[builder]\e[22m  \e[36m⠹\e[39m Optimizing bundles..."
+  - delay: 81
+    content: "\e[1G\e[0K\e[2m[18:32:49]\e[22m \e[37m→\e[39m \e[1m\e[37mTASK   \e[39m\e[22m \e[2m[builder]\e[22m  \e[36m⠸\e[39m Optimizing bundles..."
+  - delay: 80
+    content: "\e[1G\e[0K\e[2m[18:32:49]\e[22m \e[37m→\e[39m \e[1m\e[37mTASK   \e[39m\e[22m \e[2m[builder]\e[22m  \e[36m⠼\e[39m Optimizing bundles..."
+  - delay: 81
+    content: "\e[1G\e[0K\e[2m[18:32:49]\e[22m \e[37m→\e[39m \e[1m\e[37mTASK   \e[39m\e[22m \e[2m[builder]\e[22m  \e[36m⠴\e[39m Optimizing bundles..."
+  - delay: 80
+    content: "\e[1G\e[0K\e[2m[18:32:49]\e[22m \e[37m→\e[39m \e[1m\e[37mTASK   \e[39m\e[22m \e[2m[builder]\e[22m  \e[36m⠦\e[39m Optimizing bundles..."
+  - delay: 80
+    content: "\e[1G\e[0K\e[2m[18:32:49]\e[22m \e[37m→\e[39m \e[1m\e[37mTASK   \e[39m\e[22m \e[2m[builder]\e[22m  \e[36m⠧\e[39m Optimizing bundles..."
+  - delay: 80
+    content: "\e[1G\e[0K\e[2m[18:32:49]\e[22m \e[37m→\e[39m \e[1m\e[37mTASK   \e[39m\e[22m \e[2m[builder]\e[22m  \e[36m⠇\e[39m Optimizing bundles..."
+  - delay: 81
+    content: "\e[1G\e[0K\e[2m[18:32:49]\e[22m \e[37m→\e[39m \e[1m\e[37mTASK   \e[39m\e[22m \e[2m[builder]\e[22m  \e[36m⠏\e[39m Optimizing bundles..."
+  - delay: 80
+    content: "\e[1G\e[0K\e[2m[18:32:49]\e[22m \e[37m→\e[39m \e[1m\e[37mTASK   \e[39m\e[22m \e[2m[builder]\e[22m  \e[36m⠋\e[39m Optimizing bundles..."
+  - delay: 81
+    content: "\e[1G\e[0K\e[2m[18:32:49]\e[22m \e[37m→\e[39m \e[1m\e[37mTASK   \e[39m\e[22m \e[2m[builder]\e[22m  \e[36m⠙\e[39m Optimizing bundles..."
+  - delay: 80
+    content: "\e[1G\e[0K\e[2m[18:32:49]\e[22m \e[37m→\e[39m \e[1m\e[37mTASK   \e[39m\e[22m \e[2m[builder]\e[22m  \e[36m⠹\e[39m Optimizing bundles..."
+  - delay: 79
+    content: "\e[1G\e[0K\e[2m[18:32:49]\e[22m \e[37m→\e[39m \e[1m\e[37mTASK   \e[39m\e[22m \e[2m[builder]\e[22m  \e[36m⠸\e[39m Optimizing bundles..."
+  - delay: 81
+    content: "\e[1G\e[0K\e[2m[18:32:49]\e[22m \e[37m→\e[39m \e[1m\e[37mTASK   \e[39m\e[22m \e[2m[builder]\e[22m  \e[36m⠼\e[39m Optimizing bundles..."
+  - delay: 80
+    content: "\e[1G\e[0K\e[2m[18:32:49]\e[22m \e[37m→\e[39m \e[1m\e[37mTASK   \e[39m\e[22m \e[2m[builder]\e[22m  \e[36m⠴\e[39m Optimizing bundles..."
+  - delay: 80
+    content: "\e[1G\e[0K\e[2m[18:32:49]\e[22m \e[37m→\e[39m \e[1m\e[37mTASK   \e[39m\e[22m \e[2m[builder]\e[22m  \e[36m⠦\e[39m Optimizing bundles..."
+  - delay: 81
+    content: "\e[1G\e[0K\e[2m[18:32:49]\e[22m \e[37m→\e[39m \e[1m\e[37mTASK   \e[39m\e[22m \e[2m[builder]\e[22m  \e[36m⠧\e[39m Optimizing bundles..."
+  - delay: 80
+    content: "\e[1G\e[0K\e[2m[18:32:49]\e[22m \e[37m→\e[39m \e[1m\e[37mTASK   \e[39m\e[22m \e[2m[builder]\e[22m  \e[36m⠇\e[39m Optimizing bundles..."
+  - delay: 80
+    content: "\e[1G\e[0K\e[2m[18:32:49]\e[22m \e[37m→\e[39m \e[1m\e[37mTASK   \e[39m\e[22m \e[2m[builder]\e[22m  \e[36m⠏\e[39m Optimizing bundles..."
+  - delay: 81
+    content: "\e[1G\e[0K\e[2m[18:32:49]\e[22m \e[37m→\e[39m \e[1m\e[37mTASK   \e[39m\e[22m \e[2m[builder]\e[22m  \e[36m⠋\e[39m Optimizing bundles..."
+  - delay: 80
+    content: "\e[1G\e[0K\e[2m[18:32:49]\e[22m \e[37m→\e[39m \e[1m\e[37mTASK   \e[39m\e[22m \e[2m[builder]\e[22m  \e[36m⠙\e[39m Optimizing bundles..."
+  - delay: 80
+    content: "\e[1G\e[0K\e[2m[18:32:49]\e[22m \e[37m→\e[39m \e[1m\e[37mTASK   \e[39m\e[22m \e[2m[builder]\e[22m  \e[36m⠹\e[39m Optimizing bundles..."
+  - delay: 80
+    content: "\e[1G\e[0K\e[2m[18:32:49]\e[22m \e[37m→\e[39m \e[1m\e[37mTASK   \e[39m\e[22m \e[2m[builder]\e[22m  \e[36m⠸\e[39m Optimizing bundles..."
+  - delay: 80
+    content: "\e[1G\e[0K\e[2m[18:32:49]\e[22m \e[37m→\e[39m \e[1m\e[37mTASK   \e[39m\e[22m \e[2m[builder]\e[22m  \e[36m⠼\e[39m Optimizing bundles..."
+  - delay: 81
+    content: "\e[1G\e[0K\e[2m[18:32:49]\e[22m \e[37m→\e[39m \e[1m\e[37mTASK   \e[39m\e[22m \e[2m[builder]\e[22m  \e[36m⠴\e[39m Tree-shaking unused code..."
+  - delay: 79
+    content: "\e[1G\e[0K\e[2m[18:32:49]\e[22m \e[37m→\e[39m \e[1m\e[37mTASK   \e[39m\e[22m \e[2m[builder]\e[22m  \e[36m⠦\e[39m Tree-shaking unused code..."
+  - delay: 82
+    content: "\e[1G\e[0K\e[2m[18:32:49]\e[22m \e[37m→\e[39m \e[1m\e[37mTASK   \e[39m\e[22m \e[2m[builder]\e[22m  \e[36m⠧\e[39m Tree-shaking unused code..."
+  - delay: 80
+    content: "\e[1G\e[0K\e[2m[18:32:49]\e[22m \e[37m→\e[39m \e[1m\e[37mTASK   \e[39m\e[22m \e[2m[builder]\e[22m  \e[36m⠇\e[39m Tree-shaking unused code..."
+  - delay: 81
+    content: "\e[1G\e[0K\e[2m[18:32:49]\e[22m \e[37m→\e[39m \e[1m\e[37mTASK   \e[39m\e[22m \e[2m[builder]\e[22m  \e[36m⠏\e[39m Tree-shaking unused code..."
+  - delay: 80
+    content: "\e[1G\e[0K\e[2m[18:32:49]\e[22m \e[37m→\e[39m \e[1m\e[37mTASK   \e[39m\e[22m \e[2m[builder]\e[22m  \e[36m⠋\e[39m Tree-shaking unused code..."
+  - delay: 79
+    content: "\e[1G\e[0K\e[2m[18:32:49]\e[22m \e[37m→\e[39m \e[1m\e[37mTASK   \e[39m\e[22m \e[2m[builder]\e[22m  \e[36m⠋\e[39m Tree-shaking unused code..."
+  - delay: 81
+    content: "\e[1G\e[0K\e[2m[18:32:49]\e[22m \e[37m→\e[39m \e[1m\e[37mTASK   \e[39m\e[22m \e[2m[builder]\e[22m  \e[36m⠙\e[39m Tree-shaking unused code..."
+  - delay: 80
+    content: "\e[1G\e[0K\e[2m[18:32:49]\e[22m \e[37m→\e[39m \e[1m\e[37mTASK   \e[39m\e[22m \e[2m[builder]\e[22m  \e[36m⠹\e[39m Tree-shaking unused code..."
+  - delay: 79
+    content: "\e[1G\e[0K\e[2m[18:32:49]\e[22m \e[37m→\e[39m \e[1m\e[37mTASK   \e[39m\e[22m \e[2m[builder]\e[22m  \e[36m⠸\e[39m Tree-shaking unused code..."
+  - delay: 81
+    content: "\e[1G\e[0K\e[2m[18:32:49]\e[22m \e[37m→\e[39m \e[1m\e[37mTASK   \e[39m\e[22m \e[2m[builder]\e[22m  \e[36m⠼\e[39m Tree-shaking unused code..."
+  - delay: 80
+    content: "\e[1G\e[0K\e[2m[18:32:49]\e[22m \e[37m→\e[39m \e[1m\e[37mTASK   \e[39m\e[22m \e[2m[builder]\e[22m  \e[36m⠴\e[39m Tree-shaking unused code..."
+  - delay: 80
+    content: "\e[1G\e[0K\e[2m[18:32:49]\e[22m \e[37m→\e[39m \e[1m\e[37mTASK   \e[39m\e[22m \e[2m[builder]\e[22m  \e[36m⠦\e[39m Tree-shaking unused code..."
+  - delay: 80
+    content: "\e[1G\e[0K\e[2m[18:32:49]\e[22m \e[37m→\e[39m \e[1m\e[37mTASK   \e[39m\e[22m \e[2m[builder]\e[22m  \e[36m⠧\e[39m Tree-shaking unused code..."
+  - delay: 80
+    content: "\e[1G\e[0K\e[2m[18:32:49]\e[22m \e[37m→\e[39m \e[1m\e[37mTASK   \e[39m\e[22m \e[2m[builder]\e[22m  \e[36m⠇\e[39m Tree-shaking unused code..."
+  - delay: 81
+    content: "\e[1G\e[0K\e[2m[18:32:49]\e[22m \e[37m→\e[39m \e[1m\e[37mTASK   \e[39m\e[22m \e[2m[builder]\e[22m  \e[36m⠏\e[39m Minifying JavaScript..."
+  - delay: 80
+    content: "\e[1G\e[0K\e[2m[18:32:49]\e[22m \e[37m→\e[39m \e[1m\e[37mTASK   \e[39m\e[22m \e[2m[builder]\e[22m  \e[36m⠋\e[39m Minifying JavaScript..."
+  - delay: 81
+    content: "\e[1G\e[0K\e[2m[18:32:49]\e[22m \e[37m→\e[39m \e[1m\e[37mTASK   \e[39m\e[22m \e[2m[builder]\e[22m  \e[36m⠙\e[39m Minifying JavaScript..."
+  - delay: 80
+    content: "\e[1G\e[0K\e[2m[18:32:49]\e[22m \e[37m→\e[39m \e[1m\e[37mTASK   \e[39m\e[22m \e[2m[builder]\e[22m  \e[36m⠹\e[39m Minifying JavaScript..."
+  - delay: 80
+    content: "\e[1G\e[0K\e[2m[18:32:49]\e[22m \e[37m→\e[39m \e[1m\e[37mTASK   \e[39m\e[22m \e[2m[builder]\e[22m  \e[36m⠸\e[39m Minifying JavaScript..."
+  - delay: 81
+    content: "\e[1G\e[0K\e[2m[18:32:49]\e[22m \e[37m→\e[39m \e[1m\e[37mTASK   \e[39m\e[22m \e[2m[builder]\e[22m  \e[36m⠼\e[39m Minifying JavaScript..."
+  - delay: 79
+    content: "\e[1G\e[0K\e[2m[18:32:49]\e[22m \e[37m→\e[39m \e[1m\e[37mTASK   \e[39m\e[22m \e[2m[builder]\e[22m  \e[36m⠼\e[39m Minifying JavaScript..."
+  - delay: 81
+    content: "\e[1G\e[0K\e[2m[18:32:49]\e[22m \e[37m→\e[39m \e[1m\e[37mTASK   \e[39m\e[22m \e[2m[builder]\e[22m  \e[36m⠴\e[39m Minifying JavaScript..."
+  - delay: 80
+    content: "\e[1G\e[0K\e[2m[18:32:49]\e[22m \e[37m→\e[39m \e[1m\e[37mTASK   \e[39m\e[22m \e[2m[builder]\e[22m  \e[36m⠦\e[39m Minifying JavaScript..."
+  - delay: 80
+    content: "\e[1G\e[0K\e[2m[18:32:49]\e[22m \e[37m→\e[39m \e[1m\e[37mTASK   \e[39m\e[22m \e[2m[builder]\e[22m  \e[36m⠧\e[39m Minifying JavaScript..."
+  - delay: 81
+    content: "\e[1G\e[0K\e[2m[18:32:49]\e[22m \e[37m→\e[39m \e[1m\e[37mTASK   \e[39m\e[22m \e[2m[builder]\e[22m  \e[36m⠇\e[39m Minifying JavaScript..."
+  - delay: 80
+    content: "\e[1G\e[0K\e[2m[18:32:49]\e[22m \e[37m→\e[39m \e[1m\e[37mTASK   \e[39m\e[22m \e[2m[builder]\e[22m  \e[36m⠏\e[39m Minifying JavaScript..."
+  - delay: 80
+    content: "\e[1G\e[0K\e[2m[18:32:49]\e[22m \e[37m→\e[39m \e[1m\e[37mTASK   \e[39m\e[22m \e[2m[builder]\e[22m  \e[36m⠋\e[39m Minifying JavaScript..."
+  - delay: 27
+    content: "\e[1G\e[0K\e[?25h\e[2m[18:32:53]\e[22m \e[32m✓\e[39m \e[1m\e[32mSUCCESS\e[39m\e[22m \e[2m[builder]\e[22m \e[1m\e[32mBundle optimization complete\e[39m\e[22m\r\n\e[2m[18:32:53]\e[22m \e[32m✓\e[39m \e[1m\e[32mSUCCESS\e[39m\e[22m \e[2m[builder]\e[22m \e[1m\e[32m\U0001F4E6 Build artifacts generated:\e[39m\e[22m\r\n\e[2m[18:32:53]\e[22m   \e[1m\e[37mPLAIN  \e[39m\e[22m \e[2m[builder]\e[22m \e[37m   • main.js (342 KB → 89 KB gzipped)\e[39m\r\n\e[2m[18:32:53]\e[22m   \e[1m\e[37mPLAIN  \e[39m\e[22m \e[2m[builder]\e[22m \e[37m   • styles.css (156 KB → 23 KB gzipped)\e[39m\r\n\e[2m[18:32:53]\e[22m   \e[1m\e[37mPLAIN  \e[39m\e[22m \e[2m[builder]\e[22m \e[37m   • assets/ (47 files, 2.1 MB total)\e[39m\r\n"
+  - delay: 800
+    content: "\e[2m[18:32:54]\e[22m \e[33m!\e[39m \e[1m\e[33mWARN   \e[39m\e[22m \e[2m[builder]\e[22m \e[33mLarge bundle detected in vendor.js (245 KB)\e[39m\r\n\e[2m[18:32:54]\e[22m   \e[1m\e[37mPLAIN  \e[39m\e[22m \e[2m[builder]\e[22m \e[37m   Consider code splitting for better performance\e[39m\r\n\r\n\e[2m--------------- \U0001F9EA Quality Checks ----------------\e[22m\r\n\e[?25l\e[1G\e[1G\e[2m[18:32:54]\e[22m \e[37m→\e[39m \e[1m\e[37mTASK   \e[39m\e[22m     \e[2m[eslint]\e[22m  \e[36m⠋\e[39m Linting code...\e[?25l\e[1G\e[1G\e[2m[18:32:54]\e[22m \e[37m→\e[39m \e[1m\e[37mTASK   \e[39m\e[22m      \e[2m[audit]\e[22m  \e[36m⠋\e[39m Security audit...\e[?25l\e[1G\e[1G\e[2m[18:32:54]\e[22m \e[37m→\e[39m \e[1m\e[37mTASK   \e[39m\e[22m \e[2m[lighthouse]\e[22m  \e[36m⠋\e[39m Performance analysis..."
+  - delay: 81
+    content: "\e[1G\e[0K\e[2m[18:32:54]\e[22m \e[37m→\e[39m \e[1m\e[37mTASK   \e[39m\e[22m     \e[2m[eslint]\e[22m  \e[36m⠙\e[39m Linting code...\e[1G\e[0K\e[2m[18:32:54]\e[22m \e[37m→\e[39m \e[1m\e[37mTASK   \e[39m\e[22m      \e[2m[audit]\e[22m  \e[36m⠙\e[39m Security audit...\e[1G\e[0K\e[2m[18:32:54]\e[22m \e[37m→\e[39m \e[1m\e[37mTASK   \e[39m\e[22m \e[2m[lighthouse]\e[22m  \e[36m⠙\e[39m Performance analysis..."
+  - delay: 81
+    content: "\e[1G\e[0K\e[2m[18:32:54]\e[22m \e[37m→\e[39m \e[1m\e[37mTASK   \e[39m\e[22m     \e[2m[eslint]\e[22m  \e[36m⠹\e[39m Linting code...\e[1G\e[0K\e[2m[18:32:54]\e[22m \e[37m→\e[39m \e[1m\e[37mTASK   \e[39m\e[22m      \e[2m[audit]\e[22m  \e[36m⠹\e[39m Security audit...\e[1G\e[0K\e[2m[18:32:54]\e[22m \e[37m→\e[39m \e[1m\e[37mTASK   \e[39m\e[22m \e[2m[lighthouse]\e[22m  \e[36m⠹\e[39m Performance analysis..."
+  - delay: 80
+    content: "\e[1G\e[0K\e[2m[18:32:54]\e[22m \e[37m→\e[39m \e[1m\e[37mTASK   \e[39m\e[22m     \e[2m[eslint]\e[22m  \e[36m⠸\e[39m Linting code...\e[1G\e[0K\e[2m[18:32:54]\e[22m \e[37m→\e[39m \e[1m\e[37mTASK   \e[39m\e[22m      \e[2m[audit]\e[22m  \e[36m⠸\e[39m Security audit...\e[1G\e[0K\e[2m[18:32:54]\e[22m \e[37m→\e[39m \e[1m\e[37mTASK   \e[39m\e[22m \e[2m[lighthouse]\e[22m  \e[36m⠸\e[39m Performance analysis..."
+  - delay: 80
+    content: "\e[1G\e[0K\e[2m[18:32:54]\e[22m \e[37m→\e[39m \e[1m\e[37mTASK   \e[39m\e[22m     \e[2m[eslint]\e[22m  \e[36m⠼\e[39m Linting code...\e[1G\e[0K\e[2m[18:32:54]\e[22m \e[37m→\e[39m \e[1m\e[37mTASK   \e[39m\e[22m      \e[2m[audit]\e[22m  \e[36m⠼\e[39m Security audit...\e[1G\e[0K\e[2m[18:32:54]\e[22m \e[37m→\e[39m \e[1m\e[37mTASK   \e[39m\e[22m \e[2m[lighthouse]\e[22m  \e[36m⠼\e[39m Performance analysis..."
+  - delay: 80
+    content: "\e[1G\e[0K\e[2m[18:32:54]\e[22m \e[37m→\e[39m \e[1m\e[37mTASK   \e[39m\e[22m     \e[2m[eslint]\e[22m  \e[36m⠴\e[39m Linting code...\e[1G\e[0K\e[2m[18:32:54]\e[22m \e[37m→\e[39m \e[1m\e[37mTASK   \e[39m\e[22m      \e[2m[audit]\e[22m  \e[36m⠴\e[39m Security audit...\e[1G\e[0K\e[2m[18:32:54]\e[22m \e[37m→\e[39m \e[1m\e[37mTASK   \e[39m\e[22m \e[2m[lighthouse]\e[22m  \e[36m⠴\e[39m Performance analysis..."
+  - delay: 79
+    content: "\e[1G\e[0K\e[2m[18:32:54]\e[22m \e[37m→\e[39m \e[1m\e[37mTASK   \e[39m\e[22m     \e[2m[eslint]\e[22m  \e[36m⠦\e[39m Linting code...\e[1G\e[0K\e[2m[18:32:54]\e[22m \e[37m→\e[39m \e[1m\e[37mTASK   \e[39m\e[22m      \e[2m[audit]\e[22m  \e[36m⠦\e[39m Security audit...\e[1G\e[0K\e[2m[18:32:54]\e[22m \e[37m→\e[39m \e[1m\e[37mTASK   \e[39m\e[22m \e[2m[lighthouse]\e[22m  \e[36m⠦\e[39m Performance analysis..."
+  - delay: 79
+    content: "\e[1G\e[0K\e[2m[18:32:54]\e[22m \e[37m→\e[39m \e[1m\e[37mTASK   \e[39m\e[22m     \e[2m[eslint]\e[22m  \e[36m⠧\e[39m Linting code...\e[1G\e[0K\e[2m[18:32:54]\e[22m \e[37m→\e[39m \e[1m\e[37mTASK   \e[39m\e[22m      \e[2m[audit]\e[22m  \e[36m⠦\e[39m Security audit...\e[1G\e[0K\e[2m[18:32:54]\e[22m \e[37m→\e[39m \e[1m\e[37mTASK   \e[39m\e[22m \e[2m[lighthouse]\e[22m  \e[36m⠦\e[39m Performance analysis..."
+  - delay: 79
+    content: "\e[1G\e[0K\e[2m[18:32:54]\e[22m \e[37m→\e[39m \e[1m\e[37mTASK   \e[39m\e[22m     \e[2m[eslint]\e[22m  \e[36m⠇\e[39m Linting code...\e[1G\e[0K\e[2m[18:32:54]\e[22m \e[37m→\e[39m \e[1m\e[37mTASK   \e[39m\e[22m      \e[2m[audit]\e[22m  \e[36m⠧\e[39m Security audit...\e[1G\e[0K\e[2m[18:32:54]\e[22m \e[37m→\e[39m \e[1m\e[37mTASK   \e[39m\e[22m \e[2m[lighthouse]\e[22m  \e[36m⠧\e[39m Performance analysis..."
+  - delay: 80
+    content: "\e[1G\e[0K\e[2m[18:32:54]\e[22m \e[37m→\e[39m \e[1m\e[37mTASK   \e[39m\e[22m     \e[2m[eslint]\e[22m  \e[36m⠏\e[39m Linting code...\e[1G\e[0K\e[2m[18:32:54]\e[22m \e[37m→\e[39m \e[1m\e[37mTASK   \e[39m\e[22m      \e[2m[audit]\e[22m  \e[36m⠧\e[39m Security audit...\e[1G\e[0K\e[2m[18:32:54]\e[22m \e[37m→\e[39m \e[1m\e[37mTASK   \e[39m\e[22m \e[2m[lighthouse]\e[22m  \e[36m⠧\e[39m Performance analysis..."
+  - delay: 80
+    content: "\e[1G\e[0K\e[2m[18:32:54]\e[22m \e[37m→\e[39m \e[1m\e[37mTASK   \e[39m\e[22m     \e[2m[eslint]\e[22m  \e[36m⠋\e[39m Linting code...\e[1G\e[0K\e[2m[18:32:54]\e[22m \e[37m→\e[39m \e[1m\e[37mTASK   \e[39m\e[22m      \e[2m[audit]\e[22m  \e[36m⠇\e[39m Security audit...\e[1G\e[0K\e[2m[18:32:54]\e[22m \e[37m→\e[39m \e[1m\e[37mTASK   \e[39m\e[22m \e[2m[lighthouse]\e[22m  \e[36m⠇\e[39m Performance analysis..."
+  - delay: 78
+    content: "\e[1G\e[0K\e[2m[18:32:54]\e[22m \e[37m→\e[39m \e[1m\e[37mTASK   \e[39m\e[22m     \e[2m[eslint]\e[22m  \e[36m⠋\e[39m Linting code...\e[1G\e[0K\e[2m[18:32:54]\e[22m \e[37m→\e[39m \e[1m\e[37mTASK   \e[39m\e[22m      \e[2m[audit]\e[22m  \e[36m⠏\e[39m Security audit...\e[1G\e[0K\e[2m[18:32:54]\e[22m \e[37m→\e[39m \e[1m\e[37mTASK   \e[39m\e[22m \e[2m[lighthouse]\e[22m  \e[36m⠏\e[39m Performance analysis..."
+  - delay: 79
+    content: "\e[1G\e[0K\e[2m[18:32:54]\e[22m \e[37m→\e[39m \e[1m\e[37mTASK   \e[39m\e[22m     \e[2m[eslint]\e[22m  \e[36m⠙\e[39m Linting code...\e[1G\e[0K\e[2m[18:32:54]\e[22m \e[37m→\e[39m \e[1m\e[37mTASK   \e[39m\e[22m      \e[2m[audit]\e[22m  \e[36m⠏\e[39m Security audit...\e[1G\e[0K\e[2m[18:32:54]\e[22m \e[37m→\e[39m \e[1m\e[37mTASK   \e[39m\e[22m \e[2m[lighthouse]\e[22m  \e[36m⠏\e[39m Performance analysis..."
+  - delay: 78
+    content: "\e[1G\e[0K\e[2m[18:32:54]\e[22m \e[37m→\e[39m \e[1m\e[37mTASK   \e[39m\e[22m     \e[2m[eslint]\e[22m  \e[36m⠹\e[39m Linting code...\e[1G\e[0K\e[2m[18:32:54]\e[22m \e[37m→\e[39m \e[1m\e[37mTASK   \e[39m\e[22m      \e[2m[audit]\e[22m  \e[36m⠋\e[39m Security audit...\e[1G\e[0K\e[2m[18:32:54]\e[22m \e[37m→\e[39m \e[1m\e[37mTASK   \e[39m\e[22m \e[2m[lighthouse]\e[22m  \e[36m⠋\e[39m Performance analysis..."
+  - delay: 78
+    content: "\e[1G\e[0K\e[2m[18:32:54]\e[22m \e[37m→\e[39m \e[1m\e[37mTASK   \e[39m\e[22m     \e[2m[eslint]\e[22m  \e[36m⠸\e[39m Linting code...\e[1G\e[0K\e[2m[18:32:54]\e[22m \e[37m→\e[39m \e[1m\e[37mTASK   \e[39m\e[22m      \e[2m[audit]\e[22m  \e[36m⠋\e[39m Security audit...\e[1G\e[0K\e[2m[18:32:54]\e[22m \e[37m→\e[39m \e[1m\e[37mTASK   \e[39m\e[22m \e[2m[lighthouse]\e[22m  \e[36m⠙\e[39m Performance analysis..."
+  - delay: 80
+    content: "\e[1G\e[0K\e[2m[18:32:54]\e[22m \e[37m→\e[39m \e[1m\e[37mTASK   \e[39m\e[22m     \e[2m[eslint]\e[22m  \e[36m⠼\e[39m Linting code...\e[1G\e[0K\e[2m[18:32:54]\e[22m \e[37m→\e[39m \e[1m\e[37mTASK   \e[39m\e[22m      \e[2m[audit]\e[22m  \e[36m⠙\e[39m Security audit...\e[1G\e[0K\e[2m[18:32:54]\e[22m \e[37m→\e[39m \e[1m\e[37mTASK   \e[39m\e[22m \e[2m[lighthouse]\e[22m  \e[36m⠹\e[39m Performance analysis..."
+  - delay: 78
+    content: "\e[1G\e[0K\e[2m[18:32:54]\e[22m \e[37m→\e[39m \e[1m\e[37mTASK   \e[39m\e[22m     \e[2m[eslint]\e[22m  \e[36m⠼\e[39m Linting code...\e[1G\e[0K\e[2m[18:32:54]\e[22m \e[37m→\e[39m \e[1m\e[37mTASK   \e[39m\e[22m      \e[2m[audit]\e[22m  \e[36m⠙\e[39m Security audit...\e[1G\e[0K\e[2m[18:32:54]\e[22m \e[37m→\e[39m \e[1m\e[37mTASK   \e[39m\e[22m \e[2m[lighthouse]\e[22m  \e[36m⠸\e[39m Performance analysis..."
+  - delay: 80
+    content: "\e[1G\e[0K\e[2m[18:32:54]\e[22m \e[37m→\e[39m \e[1m\e[37mTASK   \e[39m\e[22m     \e[2m[eslint]\e[22m  \e[36m⠴\e[39m Linting code...\e[1G\e[0K\e[2m[18:32:54]\e[22m \e[37m→\e[39m \e[1m\e[37mTASK   \e[39m\e[22m      \e[2m[audit]\e[22m  \e[36m⠹\e[39m Security audit...\e[1G\e[0K\e[2m[18:32:54]\e[22m \e[37m→\e[39m \e[1m\e[37mTASK   \e[39m\e[22m \e[2m[lighthouse]\e[22m  \e[36m⠼\e[39m Performance analysis..."
+  - delay: 78
+    content: "\e[1G\e[0K\e[2m[18:32:54]\e[22m \e[37m→\e[39m \e[1m\e[37mTASK   \e[39m\e[22m     \e[2m[eslint]\e[22m  \e[36m⠴\e[39m Linting code...\e[1G\e[0K\e[2m[18:32:54]\e[22m \e[37m→\e[39m \e[1m\e[37mTASK   \e[39m\e[22m      \e[2m[audit]\e[22m  \e[36m⠹\e[39m Security audit...\e[1G\e[0K\e[2m[18:32:54]\e[22m \e[37m→\e[39m \e[1m\e[37mTASK   \e[39m\e[22m \e[2m[lighthouse]\e[22m  \e[36m⠴\e[39m Performance analysis..."
+  - delay: 80
+    content: "\e[1G\e[0K\e[2m[18:32:54]\e[22m \e[37m→\e[39m \e[1m\e[37mTASK   \e[39m\e[22m     \e[2m[eslint]\e[22m  \e[36m⠦\e[39m Linting code...\e[1G\e[0K\e[2m[18:32:54]\e[22m \e[37m→\e[39m \e[1m\e[37mTASK   \e[39m\e[22m      \e[2m[audit]\e[22m  \e[36m⠸\e[39m Security audit...\e[1G\e[0K\e[2m[18:32:54]\e[22m \e[37m→\e[39m \e[1m\e[37mTASK   \e[39m\e[22m \e[2m[lighthouse]\e[22m  \e[36m⠦\e[39m Performance analysis..."
+  - delay: 78
+    content: "\e[1G\e[0K\e[2m[18:32:54]\e[22m \e[37m→\e[39m \e[1m\e[37mTASK   \e[39m\e[22m     \e[2m[eslint]\e[22m  \e[36m⠦\e[39m Linting code...\e[1G\e[0K\e[2m[18:32:54]\e[22m \e[37m→\e[39m \e[1m\e[37mTASK   \e[39m\e[22m      \e[2m[audit]\e[22m  \e[36m⠼\e[39m Security audit...\e[1G\e[0K\e[2m[18:32:54]\e[22m \e[37m→\e[39m \e[1m\e[37mTASK   \e[39m\e[22m \e[2m[lighthouse]\e[22m  \e[36m⠧\e[39m Performance analysis..."
+  - delay: 80
+    content: "\e[1G\e[0K\e[2m[18:32:54]\e[22m \e[37m→\e[39m \e[1m\e[37mTASK   \e[39m\e[22m     \e[2m[eslint]\e[22m  \e[36m⠧\e[39m Linting code...\e[1G\e[0K\e[2m[18:32:54]\e[22m \e[37m→\e[39m \e[1m\e[37mTASK   \e[39m\e[22m      \e[2m[audit]\e[22m  \e[36m⠴\e[39m Security audit...\e[1G\e[0K\e[2m[18:32:54]\e[22m \e[37m→\e[39m \e[1m\e[37mTASK   \e[39m\e[22m \e[2m[lighthouse]\e[22m  \e[36m⠧\e[39m Performance analysis..."
+  - delay: 79
+    content: "\e[1G\e[0K\e[2m[18:32:54]\e[22m \e[37m→\e[39m \e[1m\e[37mTASK   \e[39m\e[22m     \e[2m[eslint]\e[22m  \e[36m⠧\e[39m Linting code...\e[1G\e[0K\e[2m[18:32:54]\e[22m \e[37m→\e[39m \e[1m\e[37mTASK   \e[39m\e[22m      \e[2m[audit]\e[22m  \e[36m⠦\e[39m Security audit...\e[1G\e[0K\e[2m[18:32:54]\e[22m \e[37m→\e[39m \e[1m\e[37mTASK   \e[39m\e[22m \e[2m[lighthouse]\e[22m  \e[36m⠇\e[39m Performance analysis..."
+  - delay: 80
+    content: "\e[1G\e[0K\e[2m[18:32:54]\e[22m \e[37m→\e[39m \e[1m\e[37mTASK   \e[39m\e[22m     \e[2m[eslint]\e[22m  \e[36m⠇\e[39m Linting code...\e[1G\e[0K\e[2m[18:32:54]\e[22m \e[37m→\e[39m \e[1m\e[37mTASK   \e[39m\e[22m      \e[2m[audit]\e[22m  \e[36m⠧\e[39m Security audit...\e[1G\e[0K\e[2m[18:32:54]\e[22m \e[37m→\e[39m \e[1m\e[37mTASK   \e[39m\e[22m \e[2m[lighthouse]\e[22m  \e[36m⠏\e[39m Performance analysis..."
+  - delay: 79
+    content: "\e[1G\e[0K\e[2m[18:32:54]\e[22m \e[37m→\e[39m \e[1m\e[37mTASK   \e[39m\e[22m     \e[2m[eslint]\e[22m  \e[36m⠏\e[39m Linting code...\e[1G\e[0K\e[2m[18:32:54]\e[22m \e[37m→\e[39m \e[1m\e[37mTASK   \e[39m\e[22m      \e[2m[audit]\e[22m  \e[36m⠇\e[39m Security audit...\e[1G\e[0K\e[2m[18:32:54]\e[22m \e[37m→\e[39m \e[1m\e[37mTASK   \e[39m\e[22m \e[2m[lighthouse]\e[22m  \e[36m⠋\e[39m Performance analysis..."
+  - delay: 75
+    content: "\e[1G\e[0K\e[?25h\e[2m[18:32:56]\e[22m \e[32m✓\e[39m \e[1m\e[32mSUCCESS\e[39m\e[22m     \e[2m[eslint]\e[22m \e[1m\e[32mLINT passed\e[39m\e[22m\r\n\e[1G\e[0K\e[2m[18:32:54]\e[22m \e[37m→\e[39m \e[1m\e[37mTASK   \e[39m\e[22m      \e[2m[audit]\e[22m  \e[36m⠏\e[39m Security audit...\e[1G\e[0K\e[2m[18:32:54]\e[22m \e[37m→\e[39m \e[1m\e[37mTASK   \e[39m\e[22m \e[2m[lighthouse]\e[22m  \e[36m⠙\e[39m Performance analysis..."
+  - delay: 77
+    content: "\e[1G\e[0K\e[2m[18:32:54]\e[22m \e[37m→\e[39m \e[1m\e[37mTASK   \e[39m\e[22m      \e[2m[audit]\e[22m  \e[36m⠏\e[39m Security audit...\e[1G\e[0K\e[2m[18:32:54]\e[22m \e[37m→\e[39m \e[1m\e[37mTASK   \e[39m\e[22m \e[2m[lighthouse]\e[22m  \e[36m⠹\e[39m Performance analysis..."
+  - delay: 78
+    content: "\e[1G\e[0K\e[2m[18:32:54]\e[22m \e[37m→\e[39m \e[1m\e[37mTASK   \e[39m\e[22m      \e[2m[audit]\e[22m  \e[36m⠋\e[39m Security audit...\e[1G\e[0K\e[2m[18:32:54]\e[22m \e[37m→\e[39m \e[1m\e[37mTASK   \e[39m\e[22m \e[2m[lighthouse]\e[22m  \e[36m⠸\e[39m Performance analysis..."
+  - delay: 77
+    content: "\e[1G\e[0K\e[2m[18:32:54]\e[22m \e[37m→\e[39m \e[1m\e[37mTASK   \e[39m\e[22m      \e[2m[audit]\e[22m  \e[36m⠙\e[39m Security audit...\e[1G\e[0K\e[2m[18:32:54]\e[22m \e[37m→\e[39m \e[1m\e[37mTASK   \e[39m\e[22m \e[2m[lighthouse]\e[22m  \e[36m⠸\e[39m Performance analysis..."
+  - delay: 77
+    content: "\e[1G\e[0K\e[2m[18:32:54]\e[22m \e[37m→\e[39m \e[1m\e[37mTASK   \e[39m\e[22m      \e[2m[audit]\e[22m  \e[36m⠹\e[39m Security audit...\e[1G\e[0K\e[2m[18:32:54]\e[22m \e[37m→\e[39m \e[1m\e[37mTASK   \e[39m\e[22m \e[2m[lighthouse]\e[22m  \e[36m⠼\e[39m Performance analysis..."
+  - delay: 77
+    content: "\e[1G\e[0K\e[2m[18:32:54]\e[22m \e[37m→\e[39m \e[1m\e[37mTASK   \e[39m\e[22m      \e[2m[audit]\e[22m  \e[36m⠸\e[39m Security audit...\e[1G\e[0K\e[2m[18:32:54]\e[22m \e[37m→\e[39m \e[1m\e[37mTASK   \e[39m\e[22m \e[2m[lighthouse]\e[22m  \e[36m⠼\e[39m Performance analysis..."
+  - delay: 78
+    content: "\e[1G\e[0K\e[2m[18:32:54]\e[22m \e[37m→\e[39m \e[1m\e[37mTASK   \e[39m\e[22m      \e[2m[audit]\e[22m  \e[36m⠼\e[39m Security audit...\e[1G\e[0K\e[2m[18:32:54]\e[22m \e[37m→\e[39m \e[1m\e[37mTASK   \e[39m\e[22m \e[2m[lighthouse]\e[22m  \e[36m⠴\e[39m Performance analysis..."
+  - delay: 76
+    content: "\e[1G\e[0K\e[2m[18:32:54]\e[22m \e[37m→\e[39m \e[1m\e[37mTASK   \e[39m\e[22m      \e[2m[audit]\e[22m  \e[36m⠼\e[39m Security audit...\e[1G\e[0K\e[2m[18:32:54]\e[22m \e[37m→\e[39m \e[1m\e[37mTASK   \e[39m\e[22m \e[2m[lighthouse]\e[22m  \e[36m⠦\e[39m Performance analysis..."
+  - delay: 78
+    content: "\e[1G\e[0K\e[2m[18:32:54]\e[22m \e[37m→\e[39m \e[1m\e[37mTASK   \e[39m\e[22m      \e[2m[audit]\e[22m  \e[36m⠴\e[39m Security audit...\e[1G\e[0K\e[2m[18:32:54]\e[22m \e[37m→\e[39m \e[1m\e[37mTASK   \e[39m\e[22m \e[2m[lighthouse]\e[22m  \e[36m⠦\e[39m Performance analysis..."
+  - delay: 77
+    content: "\e[1G\e[0K\e[2m[18:32:54]\e[22m \e[37m→\e[39m \e[1m\e[37mTASK   \e[39m\e[22m      \e[2m[audit]\e[22m  \e[36m⠦\e[39m Security audit...\e[1G\e[0K\e[2m[18:32:54]\e[22m \e[37m→\e[39m \e[1m\e[37mTASK   \e[39m\e[22m \e[2m[lighthouse]\e[22m  \e[36m⠧\e[39m Performance analysis..."
+  - delay: 77
+    content: "\e[1G\e[0K\e[2m[18:32:54]\e[22m \e[37m→\e[39m \e[1m\e[37mTASK   \e[39m\e[22m      \e[2m[audit]\e[22m  \e[36m⠧\e[39m Security audit...\e[1G\e[0K\e[2m[18:32:54]\e[22m \e[37m→\e[39m \e[1m\e[37mTASK   \e[39m\e[22m \e[2m[lighthouse]\e[22m  \e[36m⠇\e[39m Performance analysis..."
+  - delay: 79
+    content: "\e[1G\e[0K\e[2m[18:32:54]\e[22m \e[37m→\e[39m \e[1m\e[37mTASK   \e[39m\e[22m      \e[2m[audit]\e[22m  \e[36m⠇\e[39m Security audit...\e[1G\e[0K\e[2m[18:32:54]\e[22m \e[37m→\e[39m \e[1m\e[37mTASK   \e[39m\e[22m \e[2m[lighthouse]\e[22m  \e[36m⠏\e[39m Performance analysis..."
+  - delay: 78
+    content: "\e[1G\e[0K\e[2m[18:32:54]\e[22m \e[37m→\e[39m \e[1m\e[37mTASK   \e[39m\e[22m      \e[2m[audit]\e[22m  \e[36m⠏\e[39m Security audit...\e[1G\e[0K\e[2m[18:32:54]\e[22m \e[37m→\e[39m \e[1m\e[37mTASK   \e[39m\e[22m \e[2m[lighthouse]\e[22m  \e[36m⠋\e[39m Performance analysis..."
+  - delay: 80
+    content: "\e[1G\e[0K\e[2m[18:32:54]\e[22m \e[37m→\e[39m \e[1m\e[37mTASK   \e[39m\e[22m      \e[2m[audit]\e[22m  \e[36m⠋\e[39m Security audit...\e[1G\e[0K\e[2m[18:32:54]\e[22m \e[37m→\e[39m \e[1m\e[37mTASK   \e[39m\e[22m \e[2m[lighthouse]\e[22m  \e[36m⠙\e[39m Performance analysis..."
+  - delay: 78
+    content: "\e[1G\e[0K\e[2m[18:32:54]\e[22m \e[37m→\e[39m \e[1m\e[37mTASK   \e[39m\e[22m      \e[2m[audit]\e[22m  \e[36m⠋\e[39m Security audit...\e[1G\e[0K\e[2m[18:32:54]\e[22m \e[37m→\e[39m \e[1m\e[37mTASK   \e[39m\e[22m \e[2m[lighthouse]\e[22m  \e[36m⠹\e[39m Performance analysis..."
+  - delay: 79
+    content: "\e[1G\e[0K\e[2m[18:32:54]\e[22m \e[37m→\e[39m \e[1m\e[37mTASK   \e[39m\e[22m      \e[2m[audit]\e[22m  \e[36m⠙\e[39m Security audit...\e[1G\e[0K\e[2m[18:32:54]\e[22m \e[37m→\e[39m \e[1m\e[37mTASK   \e[39m\e[22m \e[2m[lighthouse]\e[22m  \e[36m⠸\e[39m Performance analysis..."
+  - delay: 78
+    content: "\e[1G\e[0K\e[2m[18:32:54]\e[22m \e[37m→\e[39m \e[1m\e[37mTASK   \e[39m\e[22m      \e[2m[audit]\e[22m  \e[36m⠹\e[39m Security audit...\e[1G\e[0K\e[2m[18:32:54]\e[22m \e[37m→\e[39m \e[1m\e[37mTASK   \e[39m\e[22m \e[2m[lighthouse]\e[22m  \e[36m⠼\e[39m Performance analysis..."
+  - delay: 80
+    content: "\e[1G\e[0K\e[2m[18:32:54]\e[22m \e[37m→\e[39m \e[1m\e[37mTASK   \e[39m\e[22m      \e[2m[audit]\e[22m  \e[36m⠸\e[39m Security audit...\e[1G\e[0K\e[2m[18:32:54]\e[22m \e[37m→\e[39m \e[1m\e[37mTASK   \e[39m\e[22m \e[2m[lighthouse]\e[22m  \e[36m⠴\e[39m Performance analysis..."
+  - delay: 78
+    content: "\e[1G\e[0K\e[2m[18:32:54]\e[22m \e[37m→\e[39m \e[1m\e[37mTASK   \e[39m\e[22m      \e[2m[audit]\e[22m  \e[36m⠸\e[39m Security audit...\e[1G\e[0K\e[2m[18:32:54]\e[22m \e[37m→\e[39m \e[1m\e[37mTASK   \e[39m\e[22m \e[2m[lighthouse]\e[22m  \e[36m⠦\e[39m Performance analysis..."
+  - delay: 79
+    content: "\e[1G\e[0K\e[2m[18:32:54]\e[22m \e[37m→\e[39m \e[1m\e[37mTASK   \e[39m\e[22m      \e[2m[audit]\e[22m  \e[36m⠼\e[39m Security audit...\e[1G\e[0K\e[2m[18:32:54]\e[22m \e[37m→\e[39m \e[1m\e[37mTASK   \e[39m\e[22m \e[2m[lighthouse]\e[22m  \e[36m⠧\e[39m Performance analysis..."
+  - delay: 77
+    content: "\e[1G\e[0K\e[2m[18:32:54]\e[22m \e[37m→\e[39m \e[1m\e[37mTASK   \e[39m\e[22m      \e[2m[audit]\e[22m  \e[36m⠴\e[39m Security audit...\e[1G\e[0K\e[2m[18:32:54]\e[22m \e[37m→\e[39m \e[1m\e[37mTASK   \e[39m\e[22m \e[2m[lighthouse]\e[22m  \e[36m⠇\e[39m Performance analysis..."
+  - delay: 78
+    content: "\e[1G\e[0K\e[2m[18:32:54]\e[22m \e[37m→\e[39m \e[1m\e[37mTASK   \e[39m\e[22m      \e[2m[audit]\e[22m  \e[36m⠦\e[39m Security audit...\e[1G\e[0K\e[2m[18:32:54]\e[22m \e[37m→\e[39m \e[1m\e[37mTASK   \e[39m\e[22m \e[2m[lighthouse]\e[22m  \e[36m⠏\e[39m Performance analysis..."
+  - delay: 76
+    content: "\e[1G\e[0K\e[2m[18:32:54]\e[22m \e[37m→\e[39m \e[1m\e[37mTASK   \e[39m\e[22m      \e[2m[audit]\e[22m  \e[36m⠧\e[39m Security audit..."
+  - delay: 5
+    content: "\e[1G\e[0K\e[2m[18:32:54]\e[22m \e[37m→\e[39m \e[1m\e[37mTASK   \e[39m\e[22m \e[2m[lighthouse]\e[22m  \e[36m⠋\e[39m Performance analysis..."
+  - delay: 76
+    content: "\e[1G\e[0K\e[2m[18:32:54]\e[22m \e[37m→\e[39m \e[1m\e[37mTASK   \e[39m\e[22m      \e[2m[audit]\e[22m  \e[36m⠇\e[39m Security audit...\e[1G\e[0K\e[2m[18:32:54]\e[22m \e[37m→\e[39m \e[1m\e[37mTASK   \e[39m\e[22m \e[2m[lighthouse]\e[22m  \e[36m⠙\e[39m Performance analysis..."
+  - delay: 78
+    content: "\e[1G\e[0K\e[2m[18:32:54]\e[22m \e[37m→\e[39m \e[1m\e[37mTASK   \e[39m\e[22m      \e[2m[audit]\e[22m  \e[36m⠏\e[39m Security audit...\e[1G\e[0K\e[2m[18:32:54]\e[22m \e[37m→\e[39m \e[1m\e[37mTASK   \e[39m\e[22m \e[2m[lighthouse]\e[22m  \e[36m⠹\e[39m Performance analysis..."
+  - delay: 71
+    content: "\e[1G\e[0K\e[?25h\e[2m[18:32:58]\e[22m \e[33m!\e[39m \e[1m\e[33mWARN   \e[39m\e[22m      \e[2m[audit]\e[22m \e[33mSECURITY completed with warnings\e[39m\r\n\e[2m[18:32:58]\e[22m   \e[1m\e[37mPLAIN  \e[39m\e[22m      \e[2m[audit]\e[22m \e[37m   • 2 moderate vulnerabilities found\e[39m\r\n\e[2m[18:32:58]\e[22m   \e[1m\e[37mPLAIN  \e[39m\e[22m      \e[2m[audit]\e[22m \e[37m   • Run \"npm audit fix\" to resolve\e[39m\r\n"
+  - delay: 7
+    content: "\e[1G\e[0K\e[2m[18:32:54]\e[22m \e[37m→\e[39m \e[1m\e[37mTASK   \e[39m\e[22m \e[2m[lighthouse]\e[22m  \e[36m⠹\e[39m Performance analysis..."
+  - delay: 80
+    content: "\e[1G\e[0K\e[2m[18:32:54]\e[22m \e[37m→\e[39m \e[1m\e[37mTASK   \e[39m\e[22m \e[2m[lighthouse]\e[22m  \e[36m⠸\e[39m Performance analysis..."
+  - delay: 81
+    content: "\e[1G\e[0K\e[2m[18:32:54]\e[22m \e[37m→\e[39m \e[1m\e[37mTASK   \e[39m\e[22m \e[2m[lighthouse]\e[22m  \e[36m⠼\e[39m Performance analysis..."
+  - delay: 79
+    content: "\e[1G\e[0K\e[2m[18:32:54]\e[22m \e[37m→\e[39m \e[1m\e[37mTASK   \e[39m\e[22m \e[2m[lighthouse]\e[22m  \e[36m⠴\e[39m Performance analysis..."
+  - delay: 81
+    content: "\e[1G\e[0K\e[2m[18:32:54]\e[22m \e[37m→\e[39m \e[1m\e[37mTASK   \e[39m\e[22m \e[2m[lighthouse]\e[22m  \e[36m⠦\e[39m Performance analysis..."
+  - delay: 80
+    content: "\e[1G\e[0K\e[2m[18:32:54]\e[22m \e[37m→\e[39m \e[1m\e[37mTASK   \e[39m\e[22m \e[2m[lighthouse]\e[22m  \e[36m⠧\e[39m Performance analysis..."
+  - delay: 79
+    content: "\e[1G\e[0K\e[2m[18:32:54]\e[22m \e[37m→\e[39m \e[1m\e[37mTASK   \e[39m\e[22m \e[2m[lighthouse]\e[22m  \e[36m⠇\e[39m Performance analysis..."
+  - delay: 81
+    content: "\e[1G\e[0K\e[2m[18:32:54]\e[22m \e[37m→\e[39m \e[1m\e[37mTASK   \e[39m\e[22m \e[2m[lighthouse]\e[22m  \e[36m⠏\e[39m Performance analysis..."
+  - delay: 80
+    content: "\e[1G\e[0K\e[2m[18:32:54]\e[22m \e[37m→\e[39m \e[1m\e[37mTASK   \e[39m\e[22m \e[2m[lighthouse]\e[22m  \e[36m⠋\e[39m Performance analysis..."
+  - delay: 80
+    content: "\e[1G\e[0K\e[2m[18:32:54]\e[22m \e[37m→\e[39m \e[1m\e[37mTASK   \e[39m\e[22m \e[2m[lighthouse]\e[22m  \e[36m⠙\e[39m Performance analysis..."
+  - delay: 81
+    content: "\e[1G\e[0K\e[2m[18:32:54]\e[22m \e[37m→\e[39m \e[1m\e[37mTASK   \e[39m\e[22m \e[2m[lighthouse]\e[22m  \e[36m⠹\e[39m Performance analysis..."
+  - delay: 81
+    content: "\e[1G\e[0K\e[2m[18:32:54]\e[22m \e[37m→\e[39m \e[1m\e[37mTASK   \e[39m\e[22m \e[2m[lighthouse]\e[22m  \e[36m⠸\e[39m Performance analysis..."
+  - delay: 80
+    content: "\e[1G\e[0K\e[2m[18:32:54]\e[22m \e[37m→\e[39m \e[1m\e[37mTASK   \e[39m\e[22m \e[2m[lighthouse]\e[22m  \e[36m⠼\e[39m Performance analysis..."
+  - delay: 79
+    content: "\e[1G\e[0K\e[2m[18:32:54]\e[22m \e[37m→\e[39m \e[1m\e[37mTASK   \e[39m\e[22m \e[2m[lighthouse]\e[22m  \e[36m⠼\e[39m Performance analysis..."
+  - delay: 81
+    content: "\e[1G\e[0K\e[2m[18:32:54]\e[22m \e[37m→\e[39m \e[1m\e[37mTASK   \e[39m\e[22m \e[2m[lighthouse]\e[22m  \e[36m⠴\e[39m Performance analysis..."
+  - delay: 80
+    content: "\e[1G\e[0K\e[2m[18:32:54]\e[22m \e[37m→\e[39m \e[1m\e[37mTASK   \e[39m\e[22m \e[2m[lighthouse]\e[22m  \e[36m⠦\e[39m Performance analysis..."
+  - delay: 80
+    content: "\e[1G\e[0K\e[2m[18:32:54]\e[22m \e[37m→\e[39m \e[1m\e[37mTASK   \e[39m\e[22m \e[2m[lighthouse]\e[22m  \e[36m⠧\e[39m Performance analysis..."
+  - delay: 80
+    content: "\e[1G\e[0K\e[2m[18:32:54]\e[22m \e[37m→\e[39m \e[1m\e[37mTASK   \e[39m\e[22m \e[2m[lighthouse]\e[22m  \e[36m⠇\e[39m Performance analysis..."
+  - delay: 80
+    content: "\e[1G\e[0K\e[2m[18:32:54]\e[22m \e[37m→\e[39m \e[1m\e[37mTASK   \e[39m\e[22m \e[2m[lighthouse]\e[22m  \e[36m⠏\e[39m Performance analysis..."
+  - delay: 81
+    content: "\e[1G\e[0K\e[2m[18:32:54]\e[22m \e[37m→\e[39m \e[1m\e[37mTASK   \e[39m\e[22m \e[2m[lighthouse]\e[22m  \e[36m⠋\e[39m Performance analysis..."
+  - delay: 80
+    content: "\e[1G\e[0K\e[2m[18:32:54]\e[22m \e[37m→\e[39m \e[1m\e[37mTASK   \e[39m\e[22m \e[2m[lighthouse]\e[22m  \e[36m⠙\e[39m Performance analysis..."
+  - delay: 79
+    content: "\e[1G\e[0K\e[2m[18:32:54]\e[22m \e[37m→\e[39m \e[1m\e[37mTASK   \e[39m\e[22m \e[2m[lighthouse]\e[22m  \e[36m⠹\e[39m Performance analysis..."
+  - delay: 81
+    content: "\e[1G\e[0K\e[2m[18:32:54]\e[22m \e[37m→\e[39m \e[1m\e[37mTASK   \e[39m\e[22m \e[2m[lighthouse]\e[22m  \e[36m⠸\e[39m Performance analysis..."
+  - delay: 79
+    content: "\e[1G\e[0K\e[2m[18:32:54]\e[22m \e[37m→\e[39m \e[1m\e[37mTASK   \e[39m\e[22m \e[2m[lighthouse]\e[22m  \e[36m⠼\e[39m Performance analysis..."
+  - delay: 81
+    content: "\e[1G\e[0K\e[2m[18:32:54]\e[22m \e[37m→\e[39m \e[1m\e[37mTASK   \e[39m\e[22m \e[2m[lighthouse]\e[22m  \e[36m⠴\e[39m Performance analysis..."
+  - delay: 81
+    content: "\e[1G\e[0K\e[2m[18:32:54]\e[22m \e[37m→\e[39m \e[1m\e[37mTASK   \e[39m\e[22m \e[2m[lighthouse]\e[22m  \e[36m⠦\e[39m Performance analysis..."
+  - delay: 80
+    content: "\e[1G\e[0K\e[2m[18:32:54]\e[22m \e[37m→\e[39m \e[1m\e[37mTASK   \e[39m\e[22m \e[2m[lighthouse]\e[22m  \e[36m⠧\e[39m Performance analysis..."
+  - delay: 80
+    content: "\e[1G\e[0K\e[2m[18:32:54]\e[22m \e[37m→\e[39m \e[1m\e[37mTASK   \e[39m\e[22m \e[2m[lighthouse]\e[22m  \e[36m⠇\e[39m Performance analysis..."
+  - delay: 80
+    content: "\e[1G\e[0K\e[2m[18:32:54]\e[22m \e[37m→\e[39m \e[1m\e[37mTASK   \e[39m\e[22m \e[2m[lighthouse]\e[22m  \e[36m⠏\e[39m Performance analysis..."
+  - delay: 81
+    content: "\e[1G\e[0K\e[2m[18:32:54]\e[22m \e[37m→\e[39m \e[1m\e[37mTASK   \e[39m\e[22m \e[2m[lighthouse]\e[22m  \e[36m⠋\e[39m Performance analysis..."
+  - delay: 68
+    content: "\e[1G\e[0K\e[?25h\e[2m[18:33:00]\e[22m \e[32m✓\e[39m \e[1m\e[32mSUCCESS\e[39m\e[22m \e[2m[lighthouse]\e[22m \e[1m\e[32mPERF passed\e[39m\e[22m\r\n"
+  - delay: 201
+    content: "\r\n\e[2m----------------- \U0001F680 Deployment ------------------\e[22m\r\n\e[2m[18:33:00]\e[22m \e[36mi\e[39m \e[1m\e[36mINFO   \e[39m\e[22m     \e[2m[deploy]\e[22m Target: production (us-east-1)\r\n"
+  - delay: 503
+    content: "\e[?25l\e[1G\e[1G\e[2m[18:33:01]\e[22m \e[37m→\e[39m \e[1m\e[37mTASK   \e[39m\e[22m     \e[2m[deploy]\e[22m  \e[36m⠋\e[39m Uploading assets to CDN..."
+  - delay: 80
+    content: "\e[1G\e[0K\e[2m[18:33:01]\e[22m \e[37m→\e[39m \e[1m\e[37mTASK   \e[39m\e[22m     \e[2m[deploy]\e[22m  \e[36m⠙\e[39m Uploading assets to CDN..."
+  - delay: 80
+    content: "\e[1G\e[0K\e[2m[18:33:01]\e[22m \e[37m→\e[39m \e[1m\e[37mTASK   \e[39m\e[22m     \e[2m[deploy]\e[22m  \e[36m⠹\e[39m Uploading assets to CDN..."
+  - delay: 81
+    content: "\e[1G\e[0K\e[2m[18:33:01]\e[22m \e[37m→\e[39m \e[1m\e[37mTASK   \e[39m\e[22m     \e[2m[deploy]\e[22m  \e[36m⠸\e[39m Uploading assets to CDN..."
+  - delay: 80
+    content: "\e[1G\e[0K\e[2m[18:33:01]\e[22m \e[37m→\e[39m \e[1m\e[37mTASK   \e[39m\e[22m     \e[2m[deploy]\e[22m  \e[36m⠼\e[39m Uploading assets to CDN..."
+  - delay: 81
+    content: "\e[1G\e[0K\e[2m[18:33:01]\e[22m \e[37m→\e[39m \e[1m\e[37mTASK   \e[39m\e[22m     \e[2m[deploy]\e[22m  \e[36m⠴\e[39m Uploading assets to CDN..."
+  - delay: 80
+    content: "\e[1G\e[0K\e[2m[18:33:01]\e[22m \e[37m→\e[39m \e[1m\e[37mTASK   \e[39m\e[22m     \e[2m[deploy]\e[22m  \e[36m⠦\e[39m Uploading assets to CDN..."
+  - delay: 79
+    content: "\e[1G\e[0K\e[2m[18:33:01]\e[22m \e[37m→\e[39m \e[1m\e[37mTASK   \e[39m\e[22m     \e[2m[deploy]\e[22m  \e[36m⠧\e[39m Uploading assets to CDN..."
+  - delay: 81
+    content: "\e[1G\e[0K\e[2m[18:33:01]\e[22m \e[37m→\e[39m \e[1m\e[37mTASK   \e[39m\e[22m     \e[2m[deploy]\e[22m  \e[36m⠇\e[39m Uploading assets to CDN..."
+  - delay: 80
+    content: "\e[1G\e[0K\e[2m[18:33:01]\e[22m \e[37m→\e[39m \e[1m\e[37mTASK   \e[39m\e[22m     \e[2m[deploy]\e[22m  \e[36m⠏\e[39m Uploading assets to CDN..."
+  - delay: 80
+    content: "\e[1G\e[0K\e[2m[18:33:01]\e[22m \e[37m→\e[39m \e[1m\e[37mTASK   \e[39m\e[22m     \e[2m[deploy]\e[22m  \e[36m⠋\e[39m Uploading assets to CDN..."
+  - delay: 81
+    content: "\e[1G\e[0K\e[2m[18:33:01]\e[22m \e[37m→\e[39m \e[1m\e[37mTASK   \e[39m\e[22m     \e[2m[deploy]\e[22m  \e[36m⠙\e[39m Uploading assets to CDN..."
+  - delay: 80
+    content: "\e[1G\e[0K\e[2m[18:33:01]\e[22m \e[37m→\e[39m \e[1m\e[37mTASK   \e[39m\e[22m     \e[2m[deploy]\e[22m  \e[36m⠹\e[39m Uploading assets to CDN..."
+  - delay: 80
+    content: "\e[1G\e[0K\e[2m[18:33:01]\e[22m \e[37m→\e[39m \e[1m\e[37mTASK   \e[39m\e[22m     \e[2m[deploy]\e[22m  \e[36m⠸\e[39m Uploading assets to CDN..."
+  - delay: 81
+    content: "\e[1G\e[0K\e[2m[18:33:01]\e[22m \e[37m→\e[39m \e[1m\e[37mTASK   \e[39m\e[22m     \e[2m[deploy]\e[22m  \e[36m⠼\e[39m Uploading assets to CDN..."
+  - delay: 80
+    content: "\e[1G\e[0K\e[2m[18:33:01]\e[22m \e[37m→\e[39m \e[1m\e[37mTASK   \e[39m\e[22m     \e[2m[deploy]\e[22m  \e[36m⠴\e[39m Uploading assets to CDN..."
+  - delay: 80
+    content: "\e[1G\e[0K\e[2m[18:33:01]\e[22m \e[37m→\e[39m \e[1m\e[37mTASK   \e[39m\e[22m     \e[2m[deploy]\e[22m  \e[36m⠦\e[39m Uploading assets to CDN..."
+  - delay: 81
+    content: "\e[1G\e[0K\e[2m[18:33:01]\e[22m \e[37m→\e[39m \e[1m\e[37mTASK   \e[39m\e[22m     \e[2m[deploy]\e[22m  \e[36m⠧\e[39m Uploading assets to CDN..."
+  - delay: 80
+    content: "\e[1G\e[0K\e[2m[18:33:01]\e[22m \e[37m→\e[39m \e[1m\e[37mTASK   \e[39m\e[22m     \e[2m[deploy]\e[22m  \e[36m⠇\e[39m Uploading assets to CDN..."
+  - delay: 79
+    content: "\e[1G\e[0K\e[2m[18:33:01]\e[22m \e[37m→\e[39m \e[1m\e[37mTASK   \e[39m\e[22m     \e[2m[deploy]\e[22m  \e[36m⠏\e[39m Uploading assets to CDN..."
+  - delay: 81
+    content: "\e[1G\e[0K\e[2m[18:33:01]\e[22m \e[37m→\e[39m \e[1m\e[37mTASK   \e[39m\e[22m     \e[2m[deploy]\e[22m  \e[36m⠋\e[39m Uploading assets to CDN..."
+  - delay: 80
+    content: "\e[1G\e[0K\e[2m[18:33:01]\e[22m \e[37m→\e[39m \e[1m\e[37mTASK   \e[39m\e[22m     \e[2m[deploy]\e[22m  \e[36m⠙\e[39m Uploading assets to CDN..."
+  - delay: 80
+    content: "\e[1G\e[0K\e[2m[18:33:01]\e[22m \e[37m→\e[39m \e[1m\e[37mTASK   \e[39m\e[22m     \e[2m[deploy]\e[22m  \e[36m⠹\e[39m Uploading assets to CDN..."
+  - delay: 81
+    content: "\e[1G\e[0K\e[2m[18:33:01]\e[22m \e[37m→\e[39m \e[1m\e[37mTASK   \e[39m\e[22m     \e[2m[deploy]\e[22m  \e[36m⠸\e[39m Uploading assets to CDN..."
+  - delay: 80
+    content: "\e[1G\e[0K\e[2m[18:33:01]\e[22m \e[37m→\e[39m \e[1m\e[37mTASK   \e[39m\e[22m     \e[2m[deploy]\e[22m  \e[36m⠼\e[39m Uploading assets to CDN..."
+  - delay: 80
+    content: "\e[1G\e[0K\e[2m[18:33:01]\e[22m \e[37m→\e[39m \e[1m\e[37mTASK   \e[39m\e[22m     \e[2m[deploy]\e[22m  \e[36m⠴\e[39m Uploading assets to CDN..."
+  - delay: 81
+    content: "\e[1G\e[0K\e[2m[18:33:01]\e[22m \e[37m→\e[39m \e[1m\e[37mTASK   \e[39m\e[22m     \e[2m[deploy]\e[22m  \e[36m⠦\e[39m Uploading assets to CDN..."
+  - delay: 80
+    content: "\e[1G\e[0K\e[2m[18:33:01]\e[22m \e[37m→\e[39m \e[1m\e[37mTASK   \e[39m\e[22m     \e[2m[deploy]\e[22m  \e[36m⠧\e[39m Uploading assets to CDN..."
+  - delay: 80
+    content: "\e[1G\e[0K\e[2m[18:33:01]\e[22m \e[37m→\e[39m \e[1m\e[37mTASK   \e[39m\e[22m     \e[2m[deploy]\e[22m  \e[36m⠇\e[39m Uploading assets to CDN..."
+  - delay: 81
+    content: "\e[1G\e[0K\e[2m[18:33:01]\e[22m \e[37m→\e[39m \e[1m\e[37mTASK   \e[39m\e[22m     \e[2m[deploy]\e[22m  \e[36m⠏\e[39m Uploading assets to CDN..."
+  - delay: 80
+    content: "\e[1G\e[0K\e[2m[18:33:01]\e[22m \e[37m→\e[39m \e[1m\e[37mTASK   \e[39m\e[22m     \e[2m[deploy]\e[22m  \e[36m⠋\e[39m Uploading assets to CDN..."
+  - delay: 81
+    content: "\e[1G\e[0K\e[2m[18:33:01]\e[22m \e[37m→\e[39m \e[1m\e[37mTASK   \e[39m\e[22m     \e[2m[deploy]\e[22m  \e[36m⠙\e[39m Uploading assets to CDN..."
+  - delay: 79
+    content: "\e[1G\e[0K\e[2m[18:33:01]\e[22m \e[37m→\e[39m \e[1m\e[37mTASK   \e[39m\e[22m     \e[2m[deploy]\e[22m  \e[36m⠹\e[39m Invalidating cache..."
+  - delay: 81
+    content: "\e[1G\e[0K\e[2m[18:33:01]\e[22m \e[37m→\e[39m \e[1m\e[37mTASK   \e[39m\e[22m     \e[2m[deploy]\e[22m  \e[36m⠸\e[39m Invalidating cache..."
+  - delay: 79
+    content: "\e[1G\e[0K\e[2m[18:33:01]\e[22m \e[37m→\e[39m \e[1m\e[37mTASK   \e[39m\e[22m     \e[2m[deploy]\e[22m  \e[36m⠸\e[39m Invalidating cache..."
+  - delay: 81
+    content: "\e[1G\e[0K\e[2m[18:33:01]\e[22m \e[37m→\e[39m \e[1m\e[37mTASK   \e[39m\e[22m     \e[2m[deploy]\e[22m  \e[36m⠼\e[39m Invalidating cache..."
+  - delay: 80
+    content: "\e[1G\e[0K\e[2m[18:33:01]\e[22m \e[37m→\e[39m \e[1m\e[37mTASK   \e[39m\e[22m     \e[2m[deploy]\e[22m  \e[36m⠴\e[39m Invalidating cache..."
+  - delay: 80
+    content: "\e[1G\e[0K\e[2m[18:33:01]\e[22m \e[37m→\e[39m \e[1m\e[37mTASK   \e[39m\e[22m     \e[2m[deploy]\e[22m  \e[36m⠦\e[39m Invalidating cache..."
+  - delay: 81
+    content: "\e[1G\e[0K\e[2m[18:33:01]\e[22m \e[37m→\e[39m \e[1m\e[37mTASK   \e[39m\e[22m     \e[2m[deploy]\e[22m  \e[36m⠧\e[39m Invalidating cache..."
+  - delay: 80
+    content: "\e[1G\e[0K\e[2m[18:33:01]\e[22m \e[37m→\e[39m \e[1m\e[37mTASK   \e[39m\e[22m     \e[2m[deploy]\e[22m  \e[36m⠇\e[39m Invalidating cache..."
+  - delay: 81
+    content: "\e[1G\e[0K\e[2m[18:33:01]\e[22m \e[37m→\e[39m \e[1m\e[37mTASK   \e[39m\e[22m     \e[2m[deploy]\e[22m  \e[36m⠏\e[39m Invalidating cache..."
+  - delay: 80
+    content: "\e[1G\e[0K\e[2m[18:33:01]\e[22m \e[37m→\e[39m \e[1m\e[37mTASK   \e[39m\e[22m     \e[2m[deploy]\e[22m  \e[36m⠋\e[39m Invalidating cache..."
+  - delay: 80
+    content: "\e[1G\e[0K\e[2m[18:33:01]\e[22m \e[37m→\e[39m \e[1m\e[37mTASK   \e[39m\e[22m     \e[2m[deploy]\e[22m  \e[36m⠙\e[39m Invalidating cache..."
+  - delay: 81
+    content: "\e[1G\e[0K\e[2m[18:33:01]\e[22m \e[37m→\e[39m \e[1m\e[37mTASK   \e[39m\e[22m     \e[2m[deploy]\e[22m  \e[36m⠹\e[39m Invalidating cache..."
+  - delay: 80
+    content: "\e[1G\e[0K\e[2m[18:33:01]\e[22m \e[37m→\e[39m \e[1m\e[37mTASK   \e[39m\e[22m     \e[2m[deploy]\e[22m  \e[36m⠸\e[39m Invalidating cache..."
+  - delay: 80
+    content: "\e[1G\e[0K\e[2m[18:33:01]\e[22m \e[37m→\e[39m \e[1m\e[37mTASK   \e[39m\e[22m     \e[2m[deploy]\e[22m  \e[36m⠼\e[39m Invalidating cache..."
+  - delay: 81
+    content: "\e[1G\e[0K\e[2m[18:33:01]\e[22m \e[37m→\e[39m \e[1m\e[37mTASK   \e[39m\e[22m     \e[2m[deploy]\e[22m  \e[36m⠴\e[39m Invalidating cache..."
+  - delay: 8
+    content: "\e[1G\e[0K\e[?25h\e[2m[18:33:05]\e[22m \e[32m✓\e[39m \e[1m\e[32mSUCCESS\e[39m\e[22m     \e[2m[deploy]\e[22m \e[1m\e[32mAssets deployed successfully\e[39m\e[22m\r\n"
+  - delay: 302
+    content: "\e[?25l\e[1G\e[1G\e[2m[18:33:05]\e[22m \e[37m→\e[39m \e[1m\e[37mTASK   \e[39m\e[22m     \e[2m[deploy]\e[22m  \e[36m⠋\e[39m Updating application servers..."
+  - delay: 81
+    content: "\e[1G\e[0K\e[2m[18:33:05]\e[22m \e[37m→\e[39m \e[1m\e[37mTASK   \e[39m\e[22m     \e[2m[deploy]\e[22m  \e[36m⠙\e[39m Updating application servers..."
+  - delay: 79
+    content: "\e[1G\e[0K\e[2m[18:33:05]\e[22m \e[37m→\e[39m \e[1m\e[37mTASK   \e[39m\e[22m     \e[2m[deploy]\e[22m  \e[36m⠹\e[39m Updating application servers..."
+  - delay: 81
+    content: "\e[1G\e[0K\e[2m[18:33:05]\e[22m \e[37m→\e[39m \e[1m\e[37mTASK   \e[39m\e[22m     \e[2m[deploy]\e[22m  \e[36m⠸\e[39m Updating application servers..."
+  - delay: 80
+    content: "\e[1G\e[0K\e[2m[18:33:05]\e[22m \e[37m→\e[39m \e[1m\e[37mTASK   \e[39m\e[22m     \e[2m[deploy]\e[22m  \e[36m⠼\e[39m Updating application servers..."
+  - delay: 81
+    content: "\e[1G\e[0K\e[2m[18:33:05]\e[22m \e[37m→\e[39m \e[1m\e[37mTASK   \e[39m\e[22m     \e[2m[deploy]\e[22m  \e[36m⠴\e[39m Updating application servers..."
+  - delay: 80
+    content: "\e[1G\e[0K\e[2m[18:33:05]\e[22m \e[37m→\e[39m \e[1m\e[37mTASK   \e[39m\e[22m     \e[2m[deploy]\e[22m  \e[36m⠦\e[39m Updating application servers..."
+  - delay: 79
+    content: "\e[1G\e[0K\e[2m[18:33:05]\e[22m \e[37m→\e[39m \e[1m\e[37mTASK   \e[39m\e[22m     \e[2m[deploy]\e[22m  \e[36m⠦\e[39m Updating application servers..."
+  - delay: 81
+    content: "\e[1G\e[0K\e[2m[18:33:05]\e[22m \e[37m→\e[39m \e[1m\e[37mTASK   \e[39m\e[22m     \e[2m[deploy]\e[22m  \e[36m⠧\e[39m Updating application servers..."
+  - delay: 80
+    content: "\e[1G\e[0K\e[2m[18:33:05]\e[22m \e[37m→\e[39m \e[1m\e[37mTASK   \e[39m\e[22m     \e[2m[deploy]\e[22m  \e[36m⠇\e[39m Updating application servers..."
+  - delay: 79
+    content: "\e[1G\e[0K\e[2m[18:33:05]\e[22m \e[37m→\e[39m \e[1m\e[37mTASK   \e[39m\e[22m     \e[2m[deploy]\e[22m  \e[36m⠏\e[39m Updating application servers..."
+  - delay: 81
+    content: "\e[1G\e[0K\e[2m[18:33:05]\e[22m \e[37m→\e[39m \e[1m\e[37mTASK   \e[39m\e[22m     \e[2m[deploy]\e[22m  \e[36m⠋\e[39m Updating application servers..."
+  - delay: 80
+    content: "\e[1G\e[0K\e[2m[18:33:05]\e[22m \e[37m→\e[39m \e[1m\e[37mTASK   \e[39m\e[22m     \e[2m[deploy]\e[22m  \e[36m⠙\e[39m Updating application servers..."
+  - delay: 80
+    content: "\e[1G\e[0K\e[2m[18:33:05]\e[22m \e[37m→\e[39m \e[1m\e[37mTASK   \e[39m\e[22m     \e[2m[deploy]\e[22m  \e[36m⠹\e[39m Updating application servers..."
+  - delay: 81
+    content: "\e[1G\e[0K\e[2m[18:33:05]\e[22m \e[37m→\e[39m \e[1m\e[37mTASK   \e[39m\e[22m     \e[2m[deploy]\e[22m  \e[36m⠸\e[39m Updating application servers..."
+  - delay: 80
+    content: "\e[1G\e[0K\e[2m[18:33:05]\e[22m \e[37m→\e[39m \e[1m\e[37mTASK   \e[39m\e[22m     \e[2m[deploy]\e[22m  \e[36m⠼\e[39m Updating application servers..."
+  - delay: 81
+    content: "\e[1G\e[0K\e[2m[18:33:05]\e[22m \e[37m→\e[39m \e[1m\e[37mTASK   \e[39m\e[22m     \e[2m[deploy]\e[22m  \e[36m⠴\e[39m Updating application servers..."
+  - delay: 80
+    content: "\e[1G\e[0K\e[2m[18:33:05]\e[22m \e[37m→\e[39m \e[1m\e[37mTASK   \e[39m\e[22m     \e[2m[deploy]\e[22m  \e[36m⠦\e[39m Updating application servers..."
+  - delay: 79
+    content: "\e[1G\e[0K\e[2m[18:33:05]\e[22m \e[37m→\e[39m \e[1m\e[37mTASK   \e[39m\e[22m     \e[2m[deploy]\e[22m  \e[36m⠧\e[39m Updating application servers..."
+  - delay: 80
+    content: "\e[1G\e[0K\e[2m[18:33:05]\e[22m \e[37m→\e[39m \e[1m\e[37mTASK   \e[39m\e[22m     \e[2m[deploy]\e[22m  \e[36m⠇\e[39m Updating application servers..."
+  - delay: 80
+    content: "\e[1G\e[0K\e[2m[18:33:05]\e[22m \e[37m→\e[39m \e[1m\e[37mTASK   \e[39m\e[22m     \e[2m[deploy]\e[22m  \e[36m⠏\e[39m Updating application servers..."
+  - delay: 80
+    content: "\e[1G\e[0K\e[2m[18:33:05]\e[22m \e[37m→\e[39m \e[1m\e[37mTASK   \e[39m\e[22m     \e[2m[deploy]\e[22m  \e[36m⠋\e[39m Updating application servers..."
+  - delay: 81
+    content: "\e[1G\e[0K\e[2m[18:33:05]\e[22m \e[37m→\e[39m \e[1m\e[37mTASK   \e[39m\e[22m     \e[2m[deploy]\e[22m  \e[36m⠙\e[39m Updating application servers..."
+  - delay: 80
+    content: "\e[1G\e[0K\e[2m[18:33:05]\e[22m \e[37m→\e[39m \e[1m\e[37mTASK   \e[39m\e[22m     \e[2m[deploy]\e[22m  \e[36m⠹\e[39m Updating application servers..."
+  - delay: 80
+    content: "\e[1G\e[0K\e[2m[18:33:05]\e[22m \e[37m→\e[39m \e[1m\e[37mTASK   \e[39m\e[22m     \e[2m[deploy]\e[22m  \e[36m⠸\e[39m Updating application servers..."
+  - delay: 81
+    content: "\e[1G\e[0K\e[2m[18:33:05]\e[22m \e[37m→\e[39m \e[1m\e[37mTASK   \e[39m\e[22m     \e[2m[deploy]\e[22m  \e[36m⠼\e[39m Rolling deployment: 2/4 servers updated..."
+  - delay: 80
+    content: "\e[1G\e[0K\e[2m[18:33:05]\e[22m \e[37m→\e[39m \e[1m\e[37mTASK   \e[39m\e[22m     \e[2m[deploy]\e[22m  \e[36m⠴\e[39m Rolling deployment: 2/4 servers updated..."
+  - delay: 81
+    content: "\e[1G\e[0K\e[2m[18:33:05]\e[22m \e[37m→\e[39m \e[1m\e[37mTASK   \e[39m\e[22m     \e[2m[deploy]\e[22m  \e[36m⠦\e[39m Rolling deployment: 2/4 servers updated..."
+  - delay: 80
+    content: "\e[1G\e[0K\e[2m[18:33:05]\e[22m \e[37m→\e[39m \e[1m\e[37mTASK   \e[39m\e[22m     \e[2m[deploy]\e[22m  \e[36m⠧\e[39m Rolling deployment: 2/4 servers updated..."
+  - delay: 81
+    content: "\e[1G\e[0K\e[2m[18:33:05]\e[22m \e[37m→\e[39m \e[1m\e[37mTASK   \e[39m\e[22m     \e[2m[deploy]\e[22m  \e[36m⠇\e[39m Rolling deployment: 2/4 servers updated..."
+  - delay: 80
+    content: "\e[1G\e[0K\e[2m[18:33:05]\e[22m \e[37m→\e[39m \e[1m\e[37mTASK   \e[39m\e[22m     \e[2m[deploy]\e[22m  \e[36m⠏\e[39m Rolling deployment: 2/4 servers updated..."
+  - delay: 80
+    content: "\e[1G\e[0K\e[2m[18:33:05]\e[22m \e[37m→\e[39m \e[1m\e[37mTASK   \e[39m\e[22m     \e[2m[deploy]\e[22m  \e[36m⠋\e[39m Rolling deployment: 2/4 servers updated..."
+  - delay: 81
+    content: "\e[1G\e[0K\e[2m[18:33:05]\e[22m \e[37m→\e[39m \e[1m\e[37mTASK   \e[39m\e[22m     \e[2m[deploy]\e[22m  \e[36m⠙\e[39m Rolling deployment: 2/4 servers updated..."
+  - delay: 80
+    content: "\e[1G\e[0K\e[2m[18:33:05]\e[22m \e[37m→\e[39m \e[1m\e[37mTASK   \e[39m\e[22m     \e[2m[deploy]\e[22m  \e[36m⠹\e[39m Rolling deployment: 2/4 servers updated..."
+  - delay: 79
+    content: "\e[1G\e[0K\e[2m[18:33:05]\e[22m \e[37m→\e[39m \e[1m\e[37mTASK   \e[39m\e[22m     \e[2m[deploy]\e[22m  \e[36m⠸\e[39m Rolling deployment: 2/4 servers updated..."
+  - delay: 80
+    content: "\e[1G\e[0K\e[2m[18:33:05]\e[22m \e[37m→\e[39m \e[1m\e[37mTASK   \e[39m\e[22m     \e[2m[deploy]\e[22m  \e[36m⠼\e[39m Rolling deployment: 2/4 servers updated..."
+  - delay: 80
+    content: "\e[1G\e[0K\e[2m[18:33:05]\e[22m \e[37m→\e[39m \e[1m\e[37mTASK   \e[39m\e[22m     \e[2m[deploy]\e[22m  \e[36m⠴\e[39m Rolling deployment: 2/4 servers updated..."
+  - delay: 79
+    content: "\e[1G\e[0K\e[2m[18:33:05]\e[22m \e[37m→\e[39m \e[1m\e[37mTASK   \e[39m\e[22m     \e[2m[deploy]\e[22m  \e[36m⠦\e[39m Rolling deployment: 2/4 servers updated..."
+  - delay: 81
+    content: "\e[1G\e[0K\e[2m[18:33:05]\e[22m \e[37m→\e[39m \e[1m\e[37mTASK   \e[39m\e[22m     \e[2m[deploy]\e[22m  \e[36m⠧\e[39m Rolling deployment: 2/4 servers updated..."
+  - delay: 80
+    content: "\e[1G\e[0K\e[2m[18:33:05]\e[22m \e[37m→\e[39m \e[1m\e[37mTASK   \e[39m\e[22m     \e[2m[deploy]\e[22m  \e[36m⠇\e[39m Rolling deployment: 2/4 servers updated..."
+  - delay: 80
+    content: "\e[1G\e[0K\e[2m[18:33:05]\e[22m \e[37m→\e[39m \e[1m\e[37mTASK   \e[39m\e[22m     \e[2m[deploy]\e[22m  \e[36m⠏\e[39m Rolling deployment: 2/4 servers updated..."
+  - delay: 81
+    content: "\e[1G\e[0K\e[2m[18:33:05]\e[22m \e[37m→\e[39m \e[1m\e[37mTASK   \e[39m\e[22m     \e[2m[deploy]\e[22m  \e[36m⠋\e[39m Rolling deployment: 2/4 servers updated..."
+  - delay: 80
+    content: "\e[1G\e[0K\e[2m[18:33:05]\e[22m \e[37m→\e[39m \e[1m\e[37mTASK   \e[39m\e[22m     \e[2m[deploy]\e[22m  \e[36m⠙\e[39m Rolling deployment: 2/4 servers updated..."
+  - delay: 79
+    content: "\e[1G\e[0K\e[2m[18:33:05]\e[22m \e[37m→\e[39m \e[1m\e[37mTASK   \e[39m\e[22m     \e[2m[deploy]\e[22m  \e[36m⠹\e[39m Rolling deployment: 2/4 servers updated..."
+  - delay: 81
+    content: "\e[1G\e[0K\e[2m[18:33:05]\e[22m \e[37m→\e[39m \e[1m\e[37mTASK   \e[39m\e[22m     \e[2m[deploy]\e[22m  \e[36m⠸\e[39m Health checks passing..."
+  - delay: 80
+    content: "\e[1G\e[0K\e[2m[18:33:05]\e[22m \e[37m→\e[39m \e[1m\e[37mTASK   \e[39m\e[22m     \e[2m[deploy]\e[22m  \e[36m⠼\e[39m Health checks passing..."
+  - delay: 80
+    content: "\e[1G\e[0K\e[2m[18:33:05]\e[22m \e[37m→\e[39m \e[1m\e[37mTASK   \e[39m\e[22m     \e[2m[deploy]\e[22m  \e[36m⠴\e[39m Health checks passing..."
+  - delay: 81
+    content: "\e[1G\e[0K\e[2m[18:33:05]\e[22m \e[37m→\e[39m \e[1m\e[37mTASK   \e[39m\e[22m     \e[2m[deploy]\e[22m  \e[36m⠦\e[39m Health checks passing..."
+  - delay: 79
+    content: "\e[1G\e[0K\e[2m[18:33:05]\e[22m \e[37m→\e[39m \e[1m\e[37mTASK   \e[39m\e[22m     \e[2m[deploy]\e[22m  \e[36m⠧\e[39m Health checks passing..."
+  - delay: 81
+    content: "\e[1G\e[0K\e[2m[18:33:05]\e[22m \e[37m→\e[39m \e[1m\e[37mTASK   \e[39m\e[22m     \e[2m[deploy]\e[22m  \e[36m⠇\e[39m Health checks passing..."
+  - delay: 80
+    content: "\e[1G\e[0K\e[2m[18:33:05]\e[22m \e[37m→\e[39m \e[1m\e[37mTASK   \e[39m\e[22m     \e[2m[deploy]\e[22m  \e[36m⠏\e[39m Health checks passing..."
+  - delay: 80
+    content: "\e[1G\e[0K\e[2m[18:33:05]\e[22m \e[37m→\e[39m \e[1m\e[37mTASK   \e[39m\e[22m     \e[2m[deploy]\e[22m  \e[36m⠋\e[39m Health checks passing..."
+  - delay: 81
+    content: "\e[1G\e[0K\e[2m[18:33:05]\e[22m \e[37m→\e[39m \e[1m\e[37mTASK   \e[39m\e[22m     \e[2m[deploy]\e[22m  \e[36m⠙\e[39m Health checks passing..."
+  - delay: 80
+    content: "\e[1G\e[0K\e[2m[18:33:05]\e[22m \e[37m→\e[39m \e[1m\e[37mTASK   \e[39m\e[22m     \e[2m[deploy]\e[22m  \e[36m⠹\e[39m Health checks passing..."
+  - delay: 80
+    content: "\e[1G\e[0K\e[2m[18:33:05]\e[22m \e[37m→\e[39m \e[1m\e[37mTASK   \e[39m\e[22m     \e[2m[deploy]\e[22m  \e[36m⠸\e[39m Health checks passing..."
+  - delay: 81
+    content: "\e[1G\e[0K\e[2m[18:33:05]\e[22m \e[37m→\e[39m \e[1m\e[37mTASK   \e[39m\e[22m     \e[2m[deploy]\e[22m  \e[36m⠼\e[39m Health checks passing..."
+  - delay: 80
+    content: "\e[1G\e[0K\e[2m[18:33:05]\e[22m \e[37m→\e[39m \e[1m\e[37mTASK   \e[39m\e[22m     \e[2m[deploy]\e[22m  \e[36m⠴\e[39m Health checks passing..."
+  - delay: 9
+    content: "\e[1G\e[0K\e[?25h\e[2m[18:33:10]\e[22m \e[32m✓\e[39m \e[1m\e[32mSUCCESS\e[39m\e[22m     \e[2m[deploy]\e[22m \e[1m\e[32mDeployment complete! \U0001F389\e[39m\e[22m\r\n\r\n\e[2m------------------- \U0001F4CA Summary -------------------\e[22m\r\n\e[2m[18:33:10]\e[22m \e[32m✓\e[39m \e[1m\e[32mSUCCESS\e[39m\e[22m    \e[2m[devpack]\e[22m \e[1m\e[32m✅ Build completed successfully\e[39m\e[22m\r\n\e[2m[18:33:10]\e[22m \e[36mi\e[39m \e[1m\e[36mINFO   \e[39m\e[22m    \e[2m[devpack]\e[22m \U0001F310 Application URL: https://myapp.example.com\r\n\e[2m[18:33:10]\e[22m \e[36mi\e[39m \e[1m\e[36mINFO   \e[39m\e[22m    \e[2m[devpack]\e[22m \U0001F4C8 Performance Score: 94/100\r\n\e[2m[18:33:10]\e[22m \e[36mi\e[39m \e[1m\e[36mINFO   \e[39m\e[22m    \e[2m[devpack]\e[22m ⏱️  Total time: 12.7 seconds\r\n"
+  - delay: 1002
+    content: "\r\n\e[2m[18:33:11]\e[22m \e[37m→\e[39m \e[1m\e[37mTASK   \e[39m\e[22m    \e[2m[devpack]\e[22m \e[37m\U0001F3AF Ready for development!\e[39m\r\n\e[2m[18:33:11]\e[22m   \e[1m\e[37mPLAIN  \e[39m\e[22m    \e[2m[devpack]\e[22m \e[37mRun \"devpack dev\" to start development server\e[39m\r\n\e[2m[18:33:11]\e[22m   \e[1m\e[37mPLAIN  \e[39m\e[22m    \e[2m[devpack]\e[22m \e[37mRun \"devpack build --prod\" for production build\e[39m\r\n\r\n\e[2m------------------ \U0001F4A1 Pro Tips -------------------\e[22m\r\n\e[2m[18:33:11]\e[22m \e[36mi\e[39m \e[1m\e[36mINFO   \e[39m\e[22m    \e[2m[devpack]\e[22m Set DEVLOGR_OUTPUT_JSON=true for structured logging\r\n\e[2m[18:33:11]\e[22m \e[36mi\e[39m \e[1m\e[36mINFO   \e[39m\e[22m    \e[2m[devpack]\e[22m Set DEVLOGR_LOG_LEVEL=debug for verbose output\r\n\e[2m[18:33:11]\e[22m \e[36mi\e[39m \e[1m\e[36mINFO   \e[39m\e[22m    \e[2m[devpack]\e[22m Use NO_COLOR=1 in CI environments\r\n\e[?25h"
+  - delay: 7
+    content: "\e[1G\e[0K⠙\e[1G\e[0K"
+  - delay: 22
+    content: "\e[?2004h\r\n\e[1;36m …/devlogr\e[0m \e[1;35m\U0001F331 main\e[0m \e[1;38;2;243;139;168m[?✓]\e[0m \e[1;38;2;166;227;161m➜\e[0m "
+  - delay: 4040
+    content: "\e[?2004l\r\r\nlogout\r\n"

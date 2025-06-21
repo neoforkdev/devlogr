@@ -1,0 +1,65 @@
+{
+  "name": "@neofork/devlogr",
+  "version": "1.0.0",
+  "description": "A simple, maintainable TypeScript logger with emoji support, themes, and multiple output formats",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist/**/*",
+    "README.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "build": "tsc",
+    "build:watch": "tsc --watch",
+    "test": "vitest --run",
+    "test:watch": "vitest",
+    "test:coverage": "vitest --coverage",
+    "lint": "eslint src/**/*.ts",
+    "lint:fix": "eslint src/**/*.ts --fix",
+    "playground": "npm run build && node playground.js",
+    "test:global-standards": "npm run build && node scripts/test-global-standards.js",
+    "clean": "rm -rf dist",
+    "prepare": "npm run build",
+    "prepublishOnly": "npm run clean && npm run build && npm test"
+  },
+  "keywords": [
+    "logger",
+    "logging",
+    "typescript",
+    "console",
+    "emoji",
+    "json",
+    "colors",
+    "terminal"
+  ],
+  "author": "Neofork",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/neofork/devlogr.git"
+  },
+  "bugs": {
+    "url": "https://github.com/neofork/devlogr/issues"
+  },
+  "homepage": "https://github.com/neofork/devlogr#readme",
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "@typescript-eslint/eslint-plugin": "^6.0.0",
+    "@typescript-eslint/parser": "^6.0.0",
+    "eslint": "^8.0.0",
+    "typescript": "^5.0.0",
+    "vitest": "^1.0.0",
+    "@vitest/coverage-v8": "^1.0.0"
+  },
+  "dependencies": {
+    "chalk": "^5.3.0",
+    "ora": "^8.0.1"
+  },
+  "engines": {
+    "node": ">=16.0.0"
+  },
+  "publishConfig": {
+    "access": "public"
+  }
+} 
