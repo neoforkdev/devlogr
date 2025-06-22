@@ -1,6 +1,6 @@
 import { describe, it, expect, afterEach } from 'vitest';
-import { LogLevel } from '../src/types';
-import { Logger } from '../src/logger';
+import { LogLevel } from '../../src/types';
+import { Logger } from '../../src/logger';
 
 describe('Logger Themes and Configuration', () => {
   describe('LogLevel enum', () => {

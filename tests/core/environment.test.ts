@@ -1,7 +1,7 @@
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
-import { Logger, createLogger } from '../src/logger';
-import { LogLevel } from '../src/types';
-import { LogConfiguration } from '../src/config';
+import { Logger, createLogger } from '../../src/logger';
+import { LogLevel } from '../../src/types';
+import { LogConfiguration } from '../../src/config';
 
 describe('Logger Environment Variables', () => {
   let originalEnv: Record<string, string | undefined>;

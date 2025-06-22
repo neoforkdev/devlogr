@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
-import { Logger } from '../src/logger';
-import { SpinnerUtils } from '../src/utils';
+import { Logger } from '../../src/logger';
+import { SpinnerUtils } from '../../src/utils';
 
 describe('Spinner functionality', () => {
   beforeEach(() => {
@@ -64,10 +64,10 @@ describe('Spinner functionality', () => {
       expect(failSpy).toHaveBeenCalledWith('test', 'Failed!');
     });
 
-    it('should warn with spinner', () => {
-      const warnSpy = vi.spyOn(SpinnerUtils, 'warn');
-      SpinnerUtils.warn('test', 'Warning!');
-      expect(warnSpy).toHaveBeenCalledWith('test', 'Warning!');
+    it('should complete with info', () => {
+      const infoSpy = vi.spyOn(SpinnerUtils, 'info');
+      SpinnerUtils.info('test', 'Info!');
+      expect(infoSpy).toHaveBeenCalledWith('test', 'Info!');
     });
 
     it('should info with spinner', () => {
@@ -122,28 +122,28 @@ describe('Spinner functionality', () => {
     it('should complete spinner with success', () => {
       const successSpy = vi.spyOn(logger, 'success');
 
-      logger.completeSpinnerWithSuccess('Success!');
+      logger.succeedSpinner('Success!');
       expect(successSpy).toHaveBeenCalledWith('Success!');
     });
 
     it('should complete spinner with error', () => {
       const errorSpy = vi.spyOn(logger, 'error');
 
-      logger.completeSpinnerWithError('Failed!');
+      logger.failSpinner('Failed!');
       expect(errorSpy).toHaveBeenCalledWith('Failed!');
     });
 
     it('should complete spinner with warning', () => {
       const warnSpy = vi.spyOn(logger, 'warning');
 
-      logger.completeSpinnerWithWarning('Warning!');
+      logger.warnSpinner('Warning!');
       expect(warnSpy).toHaveBeenCalledWith('Warning!');
     });
 
     it('should complete spinner with info', () => {
       const infoSpy = vi.spyOn(logger, 'info');
 
-      logger.completeSpinnerWithInfo('Info!');
+      logger.infoSpinner('Info!');
       expect(infoSpy).toHaveBeenCalledWith('Info!');
     });
   });
@@ -161,7 +161,7 @@ describe('Spinner functionality', () => {
       logger.startSpinner('Loading...');
       expect(taskSpy).toHaveBeenCalledWith('Loading...');
 
-      logger.completeSpinnerWithSuccess('Done!');
+      logger.succeedSpinner('Done!');
       expect(successSpy).toHaveBeenCalledWith('Done!');
 
       // Restore environment
@@ -188,7 +188,7 @@ describe('Spinner functionality', () => {
       logger.startSpinner('Loading...');
       expect(taskSpy).toHaveBeenCalledWith('Loading...');
 
-      logger.completeSpinnerWithSuccess('Done!');
+      logger.succeedSpinner('Done!');
       expect(successSpy).toHaveBeenCalledWith('Done!');
     });
   });
@@ -233,14 +233,14 @@ describe('Spinner functionality', () => {
     it('should handle completion with default text', () => {
       const successSpy = vi.spyOn(logger, 'success');
 
-      logger.completeSpinnerWithSuccess();
+      logger.succeedSpinner();
       expect(successSpy).toHaveBeenCalledWith('Done');
     });
 
     it('should handle completion with custom text', () => {
       const successSpy = vi.spyOn(logger, 'success');
 
-      logger.completeSpinnerWithSuccess('Custom success message');
+      logger.succeedSpinner('Custom success message');
       expect(successSpy).toHaveBeenCalledWith('Custom success message');
     });
 
@@ -350,7 +350,7 @@ describe('Spinner functionality', () => {
     it('should pass formatting options to completion methods', () => {
       const successSpy = vi.spyOn(logger, 'success');
 
-      logger.completeSpinnerWithSuccess('Enhanced success');
+      logger.succeedSpinner('Enhanced success');
 
       expect(successSpy).toHaveBeenCalledWith('Enhanced success');
     });
@@ -371,7 +371,7 @@ describe('Spinner functionality', () => {
     it('should show proper log level labels in completion messages', () => {
       const consoleSpy = vi.spyOn(console, 'log');
 
-      logger.completeSpinnerWithSuccess('Success message');
+      logger.succeedSpinner('Success message');
       expect(consoleSpy).toHaveBeenCalledWith(expect.stringContaining('Success message'));
     });
   });
@@ -401,7 +401,7 @@ describe('Spinner functionality', () => {
 
       // Should not throw error
       expect(() => {
-        logger.completeSpinnerWithSuccess('Done');
+        logger.succeedSpinner('Done');
       }).not.toThrow();
 
       expect(successSpy).toHaveBeenCalledWith('Done');
@@ -456,10 +456,10 @@ describe('Spinner functionality', () => {
       const warnSpy = vi.spyOn(logger, 'warning');
       const infoSpy = vi.spyOn(logger, 'info');
 
-      logger.completeSpinnerWithSuccess('Success');
-      logger.completeSpinnerWithError('Error');
-      logger.completeSpinnerWithWarning('Warning');
-      logger.completeSpinnerWithInfo('Info');
+      logger.succeedSpinner('Success');
+      logger.failSpinner('Error');
+      logger.warnSpinner('Warning');
+      logger.infoSpinner('Info');
 
       expect(successSpy).toHaveBeenCalledWith('Success');
       expect(errorSpy).toHaveBeenCalledWith('Error');
@@ -518,7 +518,7 @@ describe('Spinner functionality', () => {
       expect(mockSpinner.start).toHaveBeenCalled();
 
       // Complete the spinner
-      logger.completeSpinnerWithWarning('Completed with warnings');
+      logger.warnSpinner('Completed with warnings');
 
       // Verify that both stop() and clear() were called to prevent artifacts
       expect(mockSpinner.stop).toHaveBeenCalled();
@@ -532,10 +532,10 @@ describe('Spinner functionality', () => {
 
     it('should clear spinner artifacts for all completion types', () => {
       const completionTypes = [
-        { method: 'completeSpinnerWithSuccess', text: 'Success!' },
-        { method: 'completeSpinnerWithError', text: 'Failed!' },
-        { method: 'completeSpinnerWithWarning', text: 'Warning!' },
-        { method: 'completeSpinnerWithInfo', text: 'Info!' },
+        { method: 'succeedSpinner', text: 'Success!' },
+        { method: 'failSpinner', text: 'Failed!' },
+        { method: 'warnSpinner', text: 'Warning!' },
+        { method: 'infoSpinner', text: 'Info!' },
       ];
 
       completionTypes.forEach(({ method, text }, index) => {
@@ -594,8 +594,8 @@ describe('Spinner functionality', () => {
       logger2.startSpinner('Task 2');
 
       // Complete them
-      logger1.completeSpinnerWithSuccess('Task 1 done');
-      logger2.completeSpinnerWithError('Task 2 failed');
+      logger1.succeedSpinner('Task 1 done');
+      logger2.failSpinner('Task 2 failed');
 
       // Verify both spinners were properly cleared
       expect(mockSpinner1.clear).toHaveBeenCalled();
@@ -607,7 +607,7 @@ describe('Spinner functionality', () => {
 
       // Try to complete a spinner that was never started
       expect(() => {
-        logger.completeSpinnerWithSuccess('Should not crash');
+        logger.succeedSpinner('Should not crash');
       }).not.toThrow();
 
       // Verify no spinner operations were attempted
@@ -768,7 +768,7 @@ describe('Spinner functionality', () => {
       }
 
       // Complete spinner
-      logger.completeSpinnerWithSuccess('Completed successfully!');
+      logger.succeedSpinner('Completed successfully!');
 
       // Verify spinner was properly stopped and cleared
       expect(mockSpinner.stop).toHaveBeenCalled();

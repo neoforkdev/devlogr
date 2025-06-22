@@ -1,4 +1,14 @@
-import { ListrRenderer, ListrTaskObject, ListrEventType, ListrTaskEventType, ListrTaskState, ListrEventManager } from 'listr2';
+import {
+  ListrRenderer,
+  ListrTaskObject,
+  ListrEventType,
+  ListrTaskEventType,
+  ListrTaskState,
+  ListrEventManager,
+  Spinner,
+} from 'listr2';
+import chalk from 'chalk';
+import { createLogUpdate } from 'log-update';
 import { MessageFormatter } from './formatters';
 import { ThemeProvider } from './themes';
 import { PrefixTracker } from './tracker';
@@ -16,14 +26,17 @@ export interface DevLogrRendererOptions {
 export class DevLogrRenderer implements ListrRenderer {
   public static nonTTY = false; // Enable TTY mode for animations
   public static rendererOptions: DevLogrRendererOptions = {
-    lazy: false
+    lazy: false,
   };
   public static rendererTaskOptions: never;
 
   private options: Required<DevLogrRendererOptions>;
   private spinner: any; // Will be imported dynamically
   private updater: any; // Will be imported dynamically
-  private activeTasks = new Map<string, { task: ListrTaskObject<any, typeof DevLogrRenderer>, startTime: number }>();
+  private activeTasks = new Map<
+    string,
+    { task: ListrTaskObject<any, typeof DevLogrRenderer>; startTime: number }
+  >();
 
   constructor(
     private readonly tasks: ListrTaskObject<any, typeof DevLogrRenderer>[],
@@ -41,18 +54,15 @@ export class DevLogrRenderer implements ListrRenderer {
   }
 
   public async render(): Promise<void> {
-    const { Spinner } = await import('listr2');
-    const { createLogUpdate } = await import('log-update');
-    
     this.spinner = new Spinner();
     this.updater = createLogUpdate(process.stdout);
-    
+
     this.setupTaskListeners(this.tasks);
-    
+
     if (!this.options.lazy) {
       this.spinner.start(() => this.update());
     }
-    
+
     this.events?.on(ListrEventType.SHOULD_REFRESH_RENDER, () => this.update());
   }
 
@@ -66,7 +76,7 @@ export class DevLogrRenderer implements ListrRenderer {
     if (this.spinner) {
       this.spinner.stop();
     }
-    
+
     if (this.updater) {
       this.updater(this.createOutput({ done: true }));
       this.updater.done();
@@ -75,8 +85,8 @@ export class DevLogrRenderer implements ListrRenderer {
 
   private setupTaskListeners(tasks: ListrTaskObject<any, typeof DevLogrRenderer>[]): void {
     for (const task of tasks) {
-      task.on(ListrTaskEventType.SUBTASK, (subtasks) => this.setupTaskListeners(subtasks));
-      
+      task.on(ListrTaskEventType.SUBTASK, subtasks => this.setupTaskListeners(subtasks));
+
       const triggerUpdate = () => this.update();
       task.on(ListrTaskEventType.STATE, triggerUpdate);
       task.on(ListrTaskEventType.TITLE, triggerUpdate);
@@ -88,7 +98,11 @@ export class DevLogrRenderer implements ListrRenderer {
     return this.renderTasks(this.tasks, 0, options.done).join('\n');
   }
 
-  private renderTasks(tasks: ListrTaskObject<any, typeof DevLogrRenderer>[], level: number, done = false): string[] {
+  private renderTasks(
+    tasks: ListrTaskObject<any, typeof DevLogrRenderer>[],
+    level: number,
+    done = false
+  ): string[] {
     const output: string[] = [];
 
     for (const task of tasks) {
@@ -100,28 +114,38 @@ export class DevLogrRenderer implements ListrRenderer {
       let title = task.title;
 
       if (task.isStarted() && !task.isCompleted() && !task.hasFailed() && !done) {
-        symbol = this.spinner ? this.spinner.fetch() : '⠋';
+        // Loading animation - blue color
+        const spinnerSymbol = this.spinner ? this.spinner.fetch() : '⠋';
+        symbol = this.options.useColors ? chalk.blue(spinnerSymbol) : spinnerSymbol;
       } else if (task.isCompleted()) {
-        symbol = '✔';
+        // Success - green color
+        symbol = this.options.useColors ? chalk.green('✔') : '✔';
       } else if (task.hasFailed()) {
-        symbol = '✖';
+        // Error - red color
+        symbol = this.options.useColors ? chalk.red('✖') : '✖';
       } else if (task.isSkipped() && task.message.skip) {
-        symbol = '◯';
+        // Skipped - yellow/orange color
+        symbol = this.options.useColors ? chalk.yellow('◯') : '◯';
         title = typeof task.message.skip === 'string' ? `${title} -> ${task.message.skip}` : title;
       } else if (task.isStarted() && done) {
-        symbol = '❯'; // Task was interrupted
+        // Task was interrupted - gray color
+        symbol = this.options.useColors ? chalk.gray('❯') : '❯';
       } else {
-        symbol = ' '; 
+        symbol = ' ';
       }
-      
+
       if (title) {
         output.push(this.formatTaskMessage(title, symbol, level));
       }
 
       if (task.output && (task.isStarted() || task.hasFailed())) {
-        task.output.trim().split('\n').forEach(line => {
-            output.push(this.formatTaskMessage(line, '›', level + 1));
-        });
+        task.output
+          .trim()
+          .split('\n')
+          .forEach(line => {
+            const outputSymbol = this.options.useColors ? chalk.cyan('›') : '›';
+            output.push(this.formatTaskMessage(line, outputSymbol, level + 1));
+          });
       }
 
       if (task.hasSubtasks() && (task.isStarted() || task.isCompleted() || task.hasFailed())) {
@@ -157,4 +181,4 @@ export class DevLogrRenderer implements ListrRenderer {
     const indentation = '  '.repeat(level);
     return `${prefix} ${indentation}${symbol} ${message}`;
   }
-} 
+}

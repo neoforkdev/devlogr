@@ -1,5 +1,5 @@
 import { describe, it, expect, vi } from 'vitest';
-import { StringUtils, EmojiUtils, TerminalUtils, SafeStringUtils } from '../src/utils';
+import { StringUtils, EmojiUtils, TerminalUtils, SafeStringUtils } from '../../src/utils';
 
 describe('StringUtils', () => {
   describe('formatTime', () => {

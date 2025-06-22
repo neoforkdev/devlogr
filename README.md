@@ -12,7 +12,7 @@
 
 ## 🎯 Made for CLI tools. Seriously.
 
-Most loggers are backend-first. `devlogr` isn’t.
+Most loggers are backend-first. `devlogr` isn't.
 
 It's built for the command line. For dev tools. For you—the developer who cares about UX even when nobody else does.
 
@@ -75,8 +75,8 @@ log.plain('No formatting here.');
 
 ```ts
 log.startSpinner('Loading...');
-log.completeSpinnerWithSuccess('Loaded');
-log.completeSpinnerWithError('Failed');
+log.succeedSpinner('Loaded');
+log.failSpinner('Failed');
 ```
 
 Or use named spinners for more control:
@@ -87,6 +87,24 @@ import { SpinnerUtils } from '@neofork/devlogr';
 SpinnerUtils.start('build', { text: 'Building...', color: 'yellow' });
 SpinnerUtils.succeed('build', 'Build done!');
 ```
+
+---
+
+## 📚 See Examples
+
+Want to see DevLogr in action? Check out our comprehensive examples:
+
+**[👉 View Examples](./examples/README.md)**
+
+The examples directory contains working code samples for:
+- All logging levels and methods
+- Spinner usage patterns  
+- Task management with listr2
+- Environment variable configuration
+- JSON output mode
+- And more!
+
+Run any example with: `npm run example:<name>`
 
 ---
 

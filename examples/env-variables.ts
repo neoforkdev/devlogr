@@ -11,12 +11,12 @@ function envVariablesDemo() {
 
   // Show current environment variables
   const envVars = {
-    'LOG_LEVEL': process.env.LOG_LEVEL || 'not set',
-    'LOG_JSON': process.env.LOG_JSON || 'not set',
-    'LOG_COLORS': process.env.LOG_COLORS || 'not set',
-    'LOG_TIMESTAMP': process.env.LOG_TIMESTAMP || 'not set',
-    'LOG_UNICODE': process.env.LOG_UNICODE || 'not set',
-    'LOG_TIMESTAMP_FORMAT': process.env.LOG_TIMESTAMP_FORMAT || 'not set',
+    LOG_LEVEL: process.env.LOG_LEVEL || 'not set',
+    LOG_JSON: process.env.LOG_JSON || 'not set',
+    LOG_COLORS: process.env.LOG_COLORS || 'not set',
+    LOG_TIMESTAMP: process.env.LOG_TIMESTAMP || 'not set',
+    LOG_UNICODE: process.env.LOG_UNICODE || 'not set',
+    LOG_TIMESTAMP_FORMAT: process.env.LOG_TIMESTAMP_FORMAT || 'not set',
   };
 
   logger.info('Environment variables:', envVars);
@@ -51,14 +51,14 @@ function envVariablesDemo() {
       user: { id: 123, name: 'Alice' },
       action: 'login',
       timestamp: new Date(),
-      metadata: { ip: '192.168.1.1', userAgent: 'DevLogr/1.0' }
+      metadata: { ip: '192.168.1.1', userAgent: 'DevLogr/1.0' },
     });
   } else {
     logger.info('Standard formatting mode is active');
     logger.info('Object logging example:', {
       environment: 'development',
       features: ['logging', 'spinners', 'tasks'],
-      config: { debug: true, verbose: false }
+      config: { debug: true, verbose: false },
     });
   }
 
@@ -77,7 +77,7 @@ function envVariablesDemo() {
   logger.separator('Runtime Level Changes');
 
   logger.info('You can also change log levels at runtime:');
-  
+
   const originalLevel = process.env.LOG_LEVEL;
   logger.info(`Original level: ${originalLevel || 'default (info)'}`);
 
@@ -107,9 +107,11 @@ function envVariablesDemo() {
   logger.plain('LOG_COLORS=false LOG_LEVEL=error npm run example:env-variables');
   logger.plain('');
   logger.plain('# ISO timestamps with Unicode disabled');
-  logger.plain('LOG_TIMESTAMP=true LOG_TIMESTAMP_FORMAT=iso LOG_UNICODE=false npm run example:env-variables');
+  logger.plain(
+    'LOG_TIMESTAMP=true LOG_TIMESTAMP_FORMAT=iso LOG_UNICODE=false npm run example:env-variables'
+  );
 
   logger.success('Environment variables demo complete!');
 }
 
-envVariablesDemo(); 
+envVariablesDemo();

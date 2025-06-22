@@ -1,7 +1,7 @@
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
-import { TerminalUtils } from '../src/utils/terminal';
-import { EmojiUtils } from '../src/utils/emoji';
-import { createLogger } from '../src/logger';
+import { TerminalUtils } from '../../src/utils/terminal';
+import { EmojiUtils } from '../../src/utils/emoji';
+import { createLogger } from '../../src/logger';
 
 describe('Global Environment Variable Standards', () => {
   // Store original environment variables

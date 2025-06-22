@@ -1,8 +1,8 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
-import { createLogger, Logger } from '../src/logger';
-import { LogLevel, TimestampFormat } from '../src/types';
-import { SpinnerUtils } from '../src/utils';
-import { LogConfiguration } from '../src/config';
+import { createLogger, Logger } from '../../src/logger';
+import { LogLevel, TimestampFormat } from '../../src/types';
+import { SpinnerUtils } from '../../src/utils';
+import { LogConfiguration } from '../../src/config';
 
 describe('Logger Timestamp Behavior', () => {
   let logger: Logger;
@@ -258,7 +258,7 @@ describe('Logger Timestamp Behavior', () => {
 
     it('should maintain ISO format in spinner completion messages', () => {
       logger.startSpinner('Processing...');
-      logger.completeSpinnerWithSuccess('Done!');
+      logger.succeedSpinner('Done!');
 
       expect(consoleSpy).toHaveBeenCalled();
       // In test environment, spinner falls back to task logging, then success logging

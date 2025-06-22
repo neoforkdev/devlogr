@@ -3,7 +3,7 @@ import { LogTheme, TimestampFormat } from './types';
 import { StringUtils, EmojiUtils } from './utils';
 
 // ============================================================================
-// SIMPLIFIED MESSAGE FORMATTING - KISS PRINCIPLE
+// MESSAGE FORMATTING - UNIFIED FORMATTER
 // ============================================================================
 
 interface FormatOptions {
@@ -24,7 +24,7 @@ interface FormatOptions {
 export class MessageFormatter {
   /**
    * Universal formatter - handles all formatting scenarios
-   * This single method replaces multiple similar methods following KISS principle
+   * Single method for consistent message formatting across all log types
    */
   static format(options: FormatOptions): string {
     const {
@@ -69,106 +69,6 @@ export class MessageFormatter {
     }
 
     return parts.join(' ').trim();
-  }
-
-  // ============================================================================
-  // LEGACY COMPATIBILITY METHODS - SIMPLE WRAPPERS
-  // ============================================================================
-
-  /**
-   * Format basic prefix (legacy compatibility)
-   */
-  static formatBasicPrefix(
-    prefix: string,
-    maxPrefixLength: number,
-    showTimestamp: boolean,
-    useColors: boolean,
-    timestampFormat: TimestampFormat = TimestampFormat.TIME
-  ): string {
-    if (!showTimestamp) return '';
-
-    const timestamp = this.formatTimestamp(timestampFormat, useColors);
-    const prefixFormatted = this.formatPrefix(prefix, maxPrefixLength, useColors);
-    
-    return `${timestamp}        ${prefixFormatted} `;
-  }
-
-  /**
-   * Format simple message without timestamp/prefix (legacy compatibility)
-   */
-  static formatSimpleMessage(
-    level: string,
-    theme: LogTheme,
-    message: string,
-    args: unknown[],
-    useColors: boolean,
-    stripEmojis = false
-  ): string {
-    return this.format({
-      level,
-      theme,
-      message,
-      args,
-      useColors,
-      stripEmojis,
-      includeLevel: false,
-      includePrefix: false,
-      showTimestamp: false,
-    });
-  }
-
-  /**
-   * Format spinner prefix with level (legacy compatibility)
-   */
-  static formatSpinnerPrefixWithLevel(
-    level: string,
-    theme: LogTheme,
-    prefix: string,
-    maxPrefixLength: number,
-    showTimestamp: boolean,
-    useColors: boolean,
-    timestampFormat: TimestampFormat = TimestampFormat.TIME
-  ): string {
-    if (!showTimestamp) return '';
-
-    return this.format({
-      level,
-      theme,
-      prefix,
-      maxPrefixLength,
-      showTimestamp,
-      useColors,
-      timestampFormat,
-      includeLevel: true,
-    });
-  }
-
-  /**
-   * Format complete log message (legacy compatibility)
-   */
-  static formatCompleteLogMessage(
-    level: string,
-    theme: LogTheme,
-    message: string,
-    args: unknown[],
-    prefix: string,
-    maxPrefixLength: number,
-    useColors: boolean,
-    timestampFormat: TimestampFormat = TimestampFormat.TIME,
-    stripEmojis = false
-  ): string {
-    return this.format({
-      level,
-      theme,
-      message,
-      args,
-      prefix,
-      maxPrefixLength,
-      showTimestamp: true,
-      useColors,
-      timestampFormat,
-      stripEmojis,
-    });
   }
 
   // ============================================================================
@@ -224,8 +124,19 @@ export class MessageFormatter {
   ): string {
     const colorFn = useColors ? theme.color : (text: string) => text;
     const styledMessage = this.styleMessage(level, message, colorFn, useColors);
-    const finalMessage = stripEmojis ? EmojiUtils.format(styledMessage) : styledMessage;
-    const formattedArgs = StringUtils.formatArgs(args);
+    const finalMessage = stripEmojis ? EmojiUtils.forceStripEmojis(styledMessage) : styledMessage;
+
+    // Process arguments to strip emojis if needed
+    const processedArgs = stripEmojis
+      ? args.map(arg => {
+          if (typeof arg === 'string') {
+            return EmojiUtils.forceStripEmojis(arg);
+          }
+          return arg;
+        })
+      : args;
+
+    const formattedArgs = StringUtils.formatArgs(processedArgs);
     return `${finalMessage}${formattedArgs}`;
   }
 
@@ -253,5 +164,101 @@ export class MessageFormatter {
     }
 
     return message;
+  }
+
+  /**
+   * Format basic prefix with timestamp and spacing
+   */
+  static formatBasicPrefix(
+    prefix: string,
+    maxPrefixLength: number,
+    showTimestamp: boolean,
+    useColors: boolean,
+    timestampFormat: TimestampFormat = TimestampFormat.TIME
+  ): string {
+    if (!showTimestamp) return '';
+
+    const timestamp = this.formatTimestamp(timestampFormat, useColors);
+    const prefixFormatted = this.formatPrefix(prefix, maxPrefixLength, useColors);
+
+    return `${timestamp}        ${prefixFormatted} `;
+  }
+
+  /**
+   * Format message with theme and emoji handling
+   */
+  static formatSimpleMessage(
+    level: string,
+    theme: LogTheme,
+    message: string,
+    args: unknown[],
+    useColors: boolean,
+    stripEmojis = false
+  ): string {
+    return this.format({
+      level,
+      theme,
+      message,
+      args,
+      useColors,
+      stripEmojis,
+      includeLevel: false,
+      includePrefix: false,
+      showTimestamp: false,
+    });
+  }
+
+  /**
+   * Format spinner prefix with level symbol and timestamp
+   */
+  static formatSpinnerPrefixWithLevel(
+    level: string,
+    theme: LogTheme,
+    prefix: string,
+    maxPrefixLength: number,
+    showTimestamp: boolean,
+    useColors: boolean,
+    timestampFormat: TimestampFormat = TimestampFormat.TIME
+  ): string {
+    if (!showTimestamp) return '';
+
+    return this.format({
+      level,
+      theme,
+      prefix,
+      maxPrefixLength,
+      showTimestamp,
+      useColors,
+      timestampFormat,
+      includeLevel: true,
+    });
+  }
+
+  /**
+   * Format complete log message with all elements
+   */
+  static formatCompleteLogMessage(
+    level: string,
+    theme: LogTheme,
+    message: string,
+    args: unknown[],
+    prefix: string,
+    maxPrefixLength: number,
+    useColors: boolean,
+    timestampFormat: TimestampFormat = TimestampFormat.TIME,
+    stripEmojis = false
+  ): string {
+    return this.format({
+      level,
+      theme,
+      message,
+      args,
+      prefix,
+      maxPrefixLength,
+      showTimestamp: true,
+      useColors,
+      timestampFormat,
+      stripEmojis,
+    });
   }
 }

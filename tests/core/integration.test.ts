@@ -1,6 +1,6 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest';
-import { Logger } from '../src/logger';
-import { LogLevel } from '../src/types';
+import { Logger } from '../../src/logger';
+import { LogLevel } from '../../src/types';
 
 describe('Logger Integration', () => {
   beforeEach(() => {

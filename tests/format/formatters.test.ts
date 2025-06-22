@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
-import { MessageFormatter } from '../src/formatters';
-import { SafeStringUtils } from '../src/utils/safe-string';
-import { StringUtils } from '../src/utils';
+import { MessageFormatter } from '../../src/formatters';
+import { SafeStringUtils } from '../../src/utils/safe-string';
+import { StringUtils } from '../../src/utils';
 
 // Mock the time to make tests deterministic
 vi.mock('../src/utils', async () => {

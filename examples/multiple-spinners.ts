@@ -36,7 +36,7 @@ async function multipleSpinnersDemo() {
     },
   ];
 
-  await logger.runSequentialTasks('Sequential Build Process', sequentialTasks);
+  await logger.runTasks('Sequential Build Process', sequentialTasks);
 
   logger.spacer();
 
@@ -71,7 +71,7 @@ async function multipleSpinnersDemo() {
     },
   ];
 
-  await logger.runConcurrentTasks('Concurrent Quality Checks', concurrentTasks);
+  await logger.runTasks('Concurrent Quality Checks', concurrentTasks);
 
   logger.spacer();
 
@@ -79,42 +79,44 @@ async function multipleSpinnersDemo() {
   const nestedTasks: ListrTask[] = [
     {
       title: 'Database operations',
-      task: () => logger.createTaskList([
-        {
-          title: 'Creating tables',
-          task: async () => await new Promise(resolve => setTimeout(resolve, 1000)),
-        },
-        {
-          title: 'Seeding data',
-          task: async (ctx, task) => {
-            task.output = 'Inserting user records...';
-            await new Promise(resolve => setTimeout(resolve, 800));
-            task.output = 'Inserting product records...';
-            await new Promise(resolve => setTimeout(resolve, 800));
+      task: () =>
+        logger.createTaskList([
+          {
+            title: 'Creating tables',
+            task: async () => await new Promise(resolve => setTimeout(resolve, 1000)),
           },
-        },
-        {
-          title: 'Creating indexes',
-          task: async () => await new Promise(resolve => setTimeout(resolve, 600)),
-        },
-      ]),
+          {
+            title: 'Seeding data',
+            task: async (ctx, task) => {
+              task.output = 'Inserting user records...';
+              await new Promise(resolve => setTimeout(resolve, 800));
+              task.output = 'Inserting product records...';
+              await new Promise(resolve => setTimeout(resolve, 800));
+            },
+          },
+          {
+            title: 'Creating indexes',
+            task: async () => await new Promise(resolve => setTimeout(resolve, 600)),
+          },
+        ]),
     },
     {
       title: 'Cache operations',
-      task: () => logger.createTaskList([
-        {
-          title: 'Warming Redis cache',
-          task: async () => await new Promise(resolve => setTimeout(resolve, 1200)),
-        },
-        {
-          title: 'Precomputing queries',
-          task: async () => await new Promise(resolve => setTimeout(resolve, 900)),
-        },
-      ]),
+      task: () =>
+        logger.createTaskList([
+          {
+            title: 'Warming Redis cache',
+            task: async () => await new Promise(resolve => setTimeout(resolve, 1200)),
+          },
+          {
+            title: 'Precomputing queries',
+            task: async () => await new Promise(resolve => setTimeout(resolve, 900)),
+          },
+        ]),
     },
   ];
 
-  await logger.runSequentialTasks('System Initialization', nestedTasks);
+  await logger.runTasks('System Initialization', nestedTasks);
 
   logger.spacer();
 
@@ -146,7 +148,7 @@ async function multipleSpinnersDemo() {
   ];
 
   try {
-    await logger.runSequentialTasks('Mixed Outcome Tasks', mixedOutcomeTasks);
+    await logger.runTasks('Mixed Outcome Tasks', mixedOutcomeTasks);
   } catch (error) {
     // Expected to fail, but we continue
   }
@@ -154,4 +156,4 @@ async function multipleSpinnersDemo() {
   logger.success('Multiple spinners demo complete!');
 }
 
-multipleSpinnersDemo().catch(console.error); 
+multipleSpinnersDemo().catch(console.error);

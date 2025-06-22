@@ -10,15 +10,5 @@ export type { ListrTask, ListrTaskWrapper } from 'listr2';
 export { SpinnerUtils } from './utils';
 export type { SpinnerOptions } from './utils';
 
-// Internal utilities - available but not encouraged for direct use
-// Most users should use the Logger methods instead
-export {
-  LogConfiguration,
-  ThemeProvider,
-  MessageFormatter,
-  PrefixTracker,
-  StringUtils,
-  TerminalUtils,
-  EmojiUtils,
-  SafeStringUtils,
-} from './internal';
+// Essential configuration for users who need it
+export { LogConfiguration } from './internal';

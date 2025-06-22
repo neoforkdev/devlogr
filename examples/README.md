@@ -1,156 +1,74 @@
 # DevLogr Examples
 
-This directory contains focused examples demonstrating different features of DevLogr. Each example showcases a specific aspect of the library.
+This folder contains examples showing how to use DevLogr features.
 
-## Available Examples
-
-### 1. Logging Levels (`levels.ts`)
-Demonstrates all available logging methods and level control.
+## Running Examples
 
 ```bash
-npm run example:levels
+npm run example:levels          # Different log levels
+npm run example:single-spinner  # Basic spinner usage
+npm run example:multiple-spinners # Task management
+npm run example:env-variables   # Environment control
+npm run example:json-output     # Structured logging
 ```
 
-**Features shown:**
-- All log levels: `trace`, `debug`, `info`, `warn`, `error`, `success`
-- Special formatting: `title`, `task`, `plain`
-- Object logging with complex nested structures
-- Message formatting with placeholders (`%s`, `%d`, `%j`)
-- Runtime level changes with `Logger.setLevel()`
+## What Each Example Shows
 
-### 2. Single Spinner (`single-spinner.ts`)
-Shows how to use individual spinners for long-running operations.
+### `levels.ts` - Log Levels
+- Basic logging: `info()`, `error()`, `success()`, etc.
+- Object logging with nested data
+- Setting minimum log level
 
-```bash
-npm run example:single-spinner
-```
+### `single-spinner.ts` - Spinners
+- Start and stop spinners for long tasks
+- Update spinner text while running
+- Complete with success/error
 
-**Features shown:**
-- Basic spinner usage: `startSpinner()`, `completeSpinnerWithSuccess()`
-- Text updates during spinner execution: `updateSpinnerText()`
-- Different completion states: success, warning, error, info
-- Manual spinner control: `stopSpinner()`
+### `multiple-spinners.ts` - Task Management
+- Run multiple tasks sequentially or concurrently
+- Built-in task progress tracking
+- Handle task failures gracefully
 
-### 3. Multiple Spinners (`multiple-spinners.ts`)
-Demonstrates task management with listr2 integration.
+### `env-variables.ts` - Environment Control
+Control logging behavior with environment variables:
 
 ```bash
-npm run example:multiple-spinners
-```
-
-**Features shown:**
-- Sequential task execution: `runSequentialTasks()`
-- Concurrent task execution: `runConcurrentTasks()`
-- Nested tasks with subtasks: `createTaskList()`
-- Task output during execution
-- Different task outcomes: success, skip, failure
-
-### 4. Environment Variables (`env-variables.ts`)
-Shows how environment variables control DevLogr behavior.
-
-```bash
-npm run example:env-variables
-```
-
-**Environment variables demonstrated:**
-- `LOG_LEVEL`: Set minimum log level (trace, debug, info, warn, error)
-- `LOG_JSON`: Enable structured JSON output
-- `LOG_COLORS`: Control colored output
-- `LOG_TIMESTAMP`: Show/hide timestamps
-- `LOG_UNICODE`: Enable/disable Unicode symbols
-- `LOG_TIMESTAMP_FORMAT`: Choose timestamp format (time, iso)
-
-**Try different configurations:**
-```bash
-# Debug level with timestamps
+# Show debug messages with timestamps
 LOG_LEVEL=debug LOG_TIMESTAMP=true npm run example:env-variables
 
 # JSON output mode
 LOG_JSON=true npm run example:env-variables
 
-# No colors, error level only
-LOG_COLORS=false LOG_LEVEL=error npm run example:env-variables
-
-# ISO timestamps with Unicode disabled
-LOG_TIMESTAMP=true LOG_TIMESTAMP_FORMAT=iso LOG_UNICODE=false npm run example:env-variables
+# No colors
+LOG_COLORS=false npm run example:env-variables
 ```
 
-### 5. JSON Output (`json-output.ts`)
-Focuses specifically on structured JSON logging.
+### `json-output.ts` - Structured Logging
+- JSON format for log analysis
+- Object merging and arrays
+- Error serialization
 
-```bash
-# Standard run (shows how JSON mode should look)
-npm run example:json-output
+## Quick Usage
 
-# Force JSON mode via environment variable
-LOG_JSON=true npm run example:json-output
-```
-
-**Features shown:**
-- Structured JSON output format
-- Object merging in JSON logs
-- Multiple argument handling
-- Error object serialization
-- Complex nested data structures
-- Array logging
-
-## Common Usage Patterns
-
-### Basic Logger Setup
 ```typescript
 import { Logger } from '@neofork/devlogr';
 
-const logger = new Logger('MyApp');
-logger.info('Application started');
-```
+const log = new Logger('my-app');
 
-### Environment-Based Configuration
-```typescript
-// The logger automatically reads these environment variables:
-// LOG_LEVEL, LOG_JSON, LOG_COLORS, LOG_TIMESTAMP, LOG_UNICODE, LOG_TIMESTAMP_FORMAT
+// Basic logging
+log.info('Starting process');
+log.success('Task completed');
 
-const logger = new Logger('MyApp');
-// Behavior is controlled by environment variables
-```
+// Spinners
+log.startSpinner('Working...');
+log.completeSpinnerWithSuccess('Done!');
 
-### Task Management
-```typescript
-import { ListrTask } from 'listr2';
-
-const tasks: ListrTask[] = [
-  {
-    title: 'My Task',
-    task: async (ctx, task) => {
-      task.output = 'Processing...';
-      await doWork();
-    }
+// Tasks
+const tasks = [{
+  title: 'Build',
+  task: async () => {
+    // your work here
   }
-];
-
-await logger.runSequentialTasks('Build Process', tasks);
+}];
+await log.runSequentialTasks('Build Process', tasks);
 ```
-
-### Spinner Usage
-```typescript
-logger.startSpinner('Processing...');
-// ... do work ...
-logger.updateSpinnerText('Almost done...');
-// ... finish work ...
-logger.completeSpinnerWithSuccess('Done!');
-```
-
-## Running All Examples
-
-You can run all examples in sequence to see the full feature set:
-
-```bash
-npm run example:levels
-npm run example:single-spinner  
-npm run example:multiple-spinners
-npm run example:env-variables
-LOG_JSON=true npm run example:json-output
-```
-
-## Customizing Examples
-
-Feel free to modify these examples to test different scenarios or integrate them into your own applications. Each example is self-contained and demonstrates best practices for using DevLogr. 

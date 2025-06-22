@@ -1,6 +1,6 @@
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
-import { StringUtils } from '../src/utils/string';
-import { createLogger } from '../src/logger';
+import { StringUtils } from '../../src/utils/string';
+import { createLogger } from '../../src/logger';
 
 describe('Circular Object Handling', () => {
   // Store original environment variables

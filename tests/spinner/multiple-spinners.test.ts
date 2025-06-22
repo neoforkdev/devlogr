@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
-import { Logger } from '../src/logger';
-import { SpinnerUtils } from '../src/utils/spinner';
+import { Logger } from '../../src/logger';
+import { SpinnerUtils } from '../../src/utils/spinner';
 
 // Mock TTY for consistent testing
 Object.defineProperty(process.stdout, 'isTTY', {
@@ -212,7 +212,7 @@ describe('Multiple Spinners Management', () => {
       expect(SpinnerUtils.getSpinnerStats().totalSpinners).toBe(3);
 
       // Complete one spinner
-      logger1.completeSpinnerWithSuccess('Task 1 done');
+      logger1.succeedSpinner('Task 1 done');
 
       const stats = SpinnerUtils.getSpinnerStats();
       expect(stats.totalSpinners).toBe(2);
@@ -230,7 +230,7 @@ describe('Multiple Spinners Management', () => {
       expect(SpinnerUtils.getSpinnerStats().hasRotationCycle).toBe(true);
 
       // Complete one spinner
-      logger1.completeSpinnerWithSuccess('Task 1 done');
+      logger1.succeedSpinner('Task 1 done');
 
       const stats = SpinnerUtils.getSpinnerStats();
       expect(stats.hasRotationCycle).toBe(false); // Should stop rotation
@@ -244,8 +244,8 @@ describe('Multiple Spinners Management', () => {
       logger1.startSpinner('Task 1');
       logger2.startSpinner('Task 2');
 
-      logger1.completeSpinnerWithSuccess('Task 1 done');
-      logger2.completeSpinnerWithSuccess('Task 2 done');
+      logger1.succeedSpinner('Task 1 done');
+      logger2.succeedSpinner('Task 2 done');
 
       const stats = SpinnerUtils.getSpinnerStats();
       expect(stats.totalSpinners).toBe(0);
@@ -333,10 +333,10 @@ describe('Multiple Spinners Management', () => {
       logger1.updateSpinnerText('Still processing...');
       logger2.updateSpinnerText('Still loading...');
 
-      logger1.completeSpinnerWithSuccess('Done processing');
+      logger1.succeedSpinner('Done processing');
       expect(SpinnerUtils.getSpinnerStats().totalSpinners).toBe(1);
 
-      logger2.completeSpinnerWithError('Failed to load');
+      logger2.failSpinner('Failed to load');
       expect(SpinnerUtils.getSpinnerStats().totalSpinners).toBe(0);
     });
 
@@ -352,7 +352,7 @@ describe('Multiple Spinners Management', () => {
       logger2.updateSpinnerText('Service 2 updated');
 
       // Completing one should not affect the other
-      logger1.completeSpinnerWithSuccess('Service 1 complete');
+      logger1.succeedSpinner('Service 1 complete');
 
       const stats = SpinnerUtils.getSpinnerStats();
       expect(stats.totalSpinners).toBe(1);
@@ -396,9 +396,9 @@ describe('Multiple Spinners Management', () => {
       logger3.startSpinner('Build process...');
 
       // Complete them in different ways
-      logger1.completeSpinnerWithWarning('SECURITY completed with warnings');
-      logger2.completeSpinnerWithSuccess('PERF passed');
-      logger3.completeSpinnerWithError('BUILD failed');
+      logger1.warnSpinner('SECURITY completed with warnings');
+      logger2.succeedSpinner('PERF passed');
+      logger3.failSpinner('BUILD failed');
 
       // Verify all spinners were properly cleared to prevent artifacts
       mockSpinners.forEach((spinner, index) => {
@@ -438,7 +438,7 @@ describe('Multiple Spinners Management', () => {
       vi.advanceTimersByTime(2000);
 
       // Complete one spinner (should clear properly)
-      logger1.completeSpinnerWithSuccess('Task 1 complete');
+      logger1.succeedSpinner('Task 1 complete');
 
       // Verify the completed spinner was cleared
       expect(mockSpinner1.clear).toHaveBeenCalled();
@@ -465,7 +465,7 @@ describe('Multiple Spinners Management', () => {
 
       // Complete all spinners rapidly
       loggers.forEach((logger, i) => {
-        logger.completeSpinnerWithSuccess(`Rapid task ${i} done`);
+        logger.succeedSpinner(`Rapid task ${i} done`);
       });
 
       // Verify all spinners were properly cleared

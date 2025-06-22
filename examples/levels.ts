@@ -25,7 +25,7 @@ logger.info('Logging a simple object:', { name: 'DevLogr', version: '1.0.0' });
 logger.info('Logging a complex object:', {
   user: { id: 123, name: 'John Doe' },
   settings: { theme: 'dark', notifications: true },
-  metadata: { lastLogin: new Date(), roles: ['admin', 'user'] }
+  metadata: { lastLogin: new Date(), roles: ['admin', 'user'] },
 });
 
 logger.separator('Message Formatting');
@@ -49,4 +49,4 @@ console.log('\n--- Resetting to default level ---');
 Logger.resetLevel();
 
 logger.info('Back to default logging level');
-logger.success('Demo complete!'); 
+logger.success('Demo complete!');

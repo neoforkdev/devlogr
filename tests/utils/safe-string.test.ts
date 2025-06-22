@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach, afterEach } from 'vitest';
-import { SafeStringUtils } from '../src/utils';
+import { SafeStringUtils } from '../../src/utils';
 import chalk from 'chalk';
 
 describe('SafeStringUtils', () => {

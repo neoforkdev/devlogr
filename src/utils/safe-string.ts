@@ -7,21 +7,21 @@ type ColorFunction = (text: string) => string;
 
 /**
  * Safe string utilities that respect logger conventions
- * Simplified approach following KISS principle - removed premature optimization
+ * Provides color-aware string formatting with fallbacks
  */
 export class SafeStringUtils {
-  /**
-   * Reset cached values (no-op for compatibility with tests)
-   */
-  static resetCache(): void {
-    // No-op since we removed caching for simplicity
-  }
-
   /**
    * Creates a safe string with appropriate color styling
    */
   static color(text: string, colorFn: ColorFunction): string {
     return TerminalUtils.supportsColor() ? colorFn(text) : text;
+  }
+
+  /**
+   * Reset cached values (no-op - kept for test compatibility)
+   */
+  static resetCache(): void {
+    // No-op for test compatibility
   }
 
   /**

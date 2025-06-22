@@ -11,11 +11,11 @@ import { StringUtils } from './utils';
 import { SpinnerUtils, SpinnerOptions } from './utils';
 
 // ============================================================================
-// SIMPLIFIED LOGGER IMPLEMENTATION - KISS PRINCIPLE
+// LOGGER IMPLEMENTATION - CORE FUNCTIONALITY
 // ============================================================================
 
 /**
- * Simple, maintainable logger using console methods
+ * Logger with console output, spinner support, and task management
  */
 export class Logger {
   private readonly prefix: string;
@@ -86,7 +86,7 @@ export class Logger {
   }
 
   // ============================================================================
-  // SIMPLIFIED SPINNER METHODS
+  // SPINNER MANAGEMENT METHODS
   // ============================================================================
 
   /**
@@ -126,20 +126,17 @@ export class Logger {
    * Complete spinner with success, error, warning, or info
    */
   completeSpinner(type: 'success' | 'error' | 'warning' | 'info', text?: string): void {
+    const completionText = text || this.getDefaultCompletionText(type);
+
     if (this.config.useJson || !SpinnerUtils.supportsSpinners()) {
-      this[type](text || this.getDefaultCompletionText(type));
+      // In JSON mode or when spinners aren't supported, just log the message
+      this[type](completionText);
       return;
     }
 
-    // Use the SpinnerUtils completion methods
-    const completionMethods = {
-      success: SpinnerUtils.succeed,
-      error: SpinnerUtils.fail,
-      warning: SpinnerUtils.warn,
-      info: SpinnerUtils.info,
-    };
-
-    completionMethods[type](this.prefix, text);
+    // Stop the spinner first, then log the completion message
+    SpinnerUtils.stop(this.prefix);
+    this[type](completionText);
   }
 
   /**
@@ -158,6 +155,25 @@ export class Logger {
   }
 
   completeSpinnerWithInfo(text?: string): void {
+    this.completeSpinner('info', text);
+  }
+
+  /**
+   * Shorter convenience methods for spinner completion
+   */
+  succeedSpinner(text?: string): void {
+    this.completeSpinner('success', text);
+  }
+
+  failSpinner(text?: string): void {
+    this.completeSpinner('error', text);
+  }
+
+  warnSpinner(text?: string): void {
+    this.completeSpinner('warning', text);
+  }
+
+  infoSpinner(text?: string): void {
     this.completeSpinner('info', text);
   }
 
@@ -184,9 +200,9 @@ export class Logger {
     if (this.config.useJson) {
       // In JSON mode, just log task execution
       this.debug('Executing tasks:', { title, taskCount: tasks.length });
-      
-      // Execute tasks sequentially in JSON mode for simpler logging
-      const context = options?.context || {} as T;
+
+      // Execute tasks sequentially in JSON mode for consistent output
+      const context = options?.context || ({} as T);
       for (const task of tasks) {
         if (typeof task.task === 'function') {
           try {
@@ -259,11 +275,7 @@ export class Logger {
   /**
    * Execute concurrent tasks with proper logging
    */
-  async runConcurrentTasks<T = any>(
-    title: string,
-    tasks: ListrTask<T>[],
-    context?: T
-  ): Promise<T> {
+  async runConcurrentTasks<T = any>(title: string, tasks: ListrTask<T>[], context?: T): Promise<T> {
     return this.runTasks(title, tasks, {
       concurrent: true,
       exitOnError: false,
@@ -274,11 +286,7 @@ export class Logger {
   /**
    * Execute sequential tasks with proper logging
    */
-  async runSequentialTasks<T = any>(
-    title: string,
-    tasks: ListrTask<T>[],
-    context?: T
-  ): Promise<T> {
+  async runSequentialTasks<T = any>(title: string, tasks: ListrTask<T>[], context?: T): Promise<T> {
     return this.runTasks(title, tasks, {
       concurrent: false,
       exitOnError: true,
@@ -302,7 +310,7 @@ export class Logger {
     }
 
     const width = 50;
-    const line = title 
+    const line = title
       ? `--- ${title} ${'-'.repeat(Math.max(0, width - title.length - 8))}`
       : '-'.repeat(width);
 
@@ -310,7 +318,7 @@ export class Logger {
   }
 
   // ============================================================================
-  // PRIVATE IMPLEMENTATION - SIMPLIFIED
+  // PRIVATE IMPLEMENTATION METHODS
   // ============================================================================
 
   private getEffectiveLevel(): LogLevel {
@@ -318,7 +326,13 @@ export class Logger {
   }
 
   private shouldLog(level: LogLevel): boolean {
-    const levels = [LogLevel.ERROR, LogLevel.WARNING, LogLevel.INFO, LogLevel.DEBUG, LogLevel.TRACE];
+    const levels = [
+      LogLevel.ERROR,
+      LogLevel.WARNING,
+      LogLevel.INFO,
+      LogLevel.DEBUG,
+      LogLevel.TRACE,
+    ];
     const effectiveLevel = this.getEffectiveLevel();
     const currentIndex = levels.indexOf(level);
     const effectiveIndex = levels.indexOf(effectiveLevel);
@@ -342,7 +356,11 @@ export class Logger {
     console.log(JSON.stringify(logData));
   }
 
-  private buildJsonLogData(level: LogLevel, message: string, args: unknown[]): Record<string, unknown> {
+  private buildJsonLogData(
+    level: LogLevel,
+    message: string,
+    args: unknown[]
+  ): Record<string, unknown> {
     const logData: Record<string, unknown> = {
       level,
       message,
@@ -366,7 +384,11 @@ export class Logger {
     return arg !== null && typeof arg === 'object' && arg.constructor === Object;
   }
 
-  private mergeObjectArg(logData: Record<string, unknown>, arg: Record<string, unknown>, index: number): void {
+  private mergeObjectArg(
+    logData: Record<string, unknown>,
+    arg: Record<string, unknown>,
+    index: number
+  ): void {
     Object.keys(arg).forEach(key => {
       const safeKey = key in logData ? `arg${index}_${key}` : key;
       logData[safeKey] = arg[key];
@@ -385,7 +407,7 @@ export class Logger {
   private formatMessage(level: string, message: string, args: unknown[]): string {
     const theme = ThemeProvider.getTheme(level);
     const maxPrefixLength = PrefixTracker.getMaxLength();
-    
+
     let finalMessage = message;
     if (!this.config.supportsUnicode) {
       finalMessage = EmojiUtils.format(message);
@@ -423,7 +445,11 @@ export class Logger {
     }
   }
 
-  private buildSpinnerOptions(text: string, level: string, options?: Omit<SpinnerOptions, 'text'>): SpinnerOptions {
+  private buildSpinnerOptions(
+    text: string,
+    level: string,
+    options?: Omit<SpinnerOptions, 'text'>
+  ): SpinnerOptions {
     const theme = ThemeProvider.getTheme(level);
     return {
       text,
@@ -440,10 +466,10 @@ export class Logger {
 
   private getDefaultCompletionText(type: 'success' | 'error' | 'warning' | 'info'): string {
     const defaults = {
-      success: 'Complete',
+      success: 'Done',
       error: 'Failed',
-      warning: 'Completed with warnings',
-      info: 'Done',
+      warning: 'Warning',
+      info: 'Info',
     };
     return defaults[type];
   }
@@ -453,7 +479,7 @@ export class Logger {
     // Use 'task' level theme for listr2 items as they represent ongoing operations
     const theme = ThemeProvider.getTheme('task', undefined, this.config.supportsUnicode);
     const maxPrefixLength = PrefixTracker.getMaxLength();
-    
+
     return MessageFormatter.format({
       level: 'task',
       theme,
@@ -472,11 +498,11 @@ export class Logger {
     const prefix = this.buildListrPrefix();
     // Remove the trailing space from prefix and add symbol after it
     const cleanPrefix = prefix.replace(/\s+$/, '');
-    const formattedMessage = symbol ? `${cleanPrefix} ${symbol} ${message}` : `${cleanPrefix} ${message}`;
+    const formattedMessage = symbol
+      ? `${cleanPrefix} ${symbol} ${message}`
+      : `${cleanPrefix} ${message}`;
     console.log(formattedMessage);
   }
-
-
 }
 
 export function createLogger(prefix: string): Logger {
