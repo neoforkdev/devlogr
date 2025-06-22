@@ -1,0 +1,59 @@
+{
+  "$schema": "https://typedoc.org/schema.json",
+  "name": "@neofork/devlogr",
+  "entryPoints": ["src/index.ts"],
+  "out": "docs",
+  "theme": "default",
+  "includeVersion": true,
+  "excludePrivate": true,
+  "excludeProtected": false,
+  "excludeExternals": true,
+  "readme": "README.md",
+  "categorizeByGroup": true,
+  "defaultCategory": "Other",
+  "categoryOrder": ["Logger", "Formatters", "Configuration", "Utilities", "Types", "*"],
+  "sort": ["source-order"],
+  "kindSortOrder": [
+    "Document",
+    "Project",
+    "Module",
+    "Namespace",
+    "Enum",
+    "EnumMember",
+    "Class",
+    "Interface",
+    "TypeAlias",
+    "Constructor",
+    "Property",
+    "Variable",
+    "Function",
+    "Accessor",
+    "Method",
+    "Parameter",
+    "TypeParameter",
+    "TypeLiteral",
+    "CallSignature",
+    "ConstructorSignature",
+    "IndexSignature",
+    "GetSignature",
+    "SetSignature"
+  ],
+  "navigation": {
+    "includeCategories": true,
+    "includeGroups": true
+  },
+  "searchInComments": true,
+  "cleanOutputDir": true,
+  "titleLink": "https://github.com/neoforkdev/devlogr",
+  "navigationLinks": {
+    "GitHub": "https://github.com/neoforkdev/devlogr",
+    "NPM": "https://www.npmjs.com/package/@neofork/devlogr"
+  },
+  "sidebarLinks": {
+    "Examples": "https://github.com/neoforkdev/devlogr/tree/main/examples",
+    "Issues": "https://github.com/neoforkdev/devlogr/issues"
+  },
+  "hostedBaseUrl": "https://neoforkdev.github.io/devlogr/",
+  "gitRevision": "main",
+  "gitRemote": "origin"
+}

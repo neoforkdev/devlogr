@@ -36,6 +36,8 @@
     "test:utils": "node scripts/test-by-category.js utils",
     "test:config": "node scripts/test-by-category.js config",
     "test:all-categories": "node scripts/test-by-category.js --all",
+    "docs": "typedoc",
+    "docs:serve": "npm run docs && npx http-server docs -p 8080 -o",
     "clean": "rm -rf dist",
     "prepare": "npm run build",
     "prepublishOnly": "npm run clean && npm run build && npm test"
@@ -73,6 +75,8 @@
     "globals": "^16.2.0",
     "prettier": "^3.5.3",
     "tsx": "^4.0.0",
+    "typedoc": "^0.28.5",
+    "typedoc-plugin-markdown": "^4.7.0",
     "typescript": "^5.0.0",
     "vitest": "^1.0.0"
   },

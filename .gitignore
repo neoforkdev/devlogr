@@ -9,6 +9,9 @@ dist/
 build/
 *.tsbuildinfo
 
+# Documentation
+docs/
+
 # Coverage
 coverage/
 
