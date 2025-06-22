@@ -7,7 +7,7 @@ export type { LogTheme, LogConfig } from './types';
 export type { ListrTask, ListrTaskWrapper } from 'listr2';
 
 // Advanced utilities (for power users only)
-export { SpinnerUtils } from './utils';
+export { SpinnerUtils, SafeStringUtils, TerminalUtils, EmojiUtils } from './utils';
 export type { SpinnerOptions } from './utils';
 
 // Essential configuration for users who need it

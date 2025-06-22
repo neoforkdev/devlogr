@@ -97,8 +97,9 @@ Want to see DevLogr in action? Check out our comprehensive examples:
 **[👉 View Examples](./examples/README.md)**
 
 The examples directory contains working code samples for:
+
 - All logging levels and methods
-- Spinner usage patterns  
+- Spinner usage patterns
 - Task management with listr2
 - Environment variable configuration
 - JSON output mode

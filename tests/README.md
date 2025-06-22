@@ -5,7 +5,7 @@ Tests are organized by feature area for better maintainability.
 ## Test Structure
 
 - **`core/`** - Basic logger functionality and environment handling
-- **`format/`** - Message formatting and timestamps  
+- **`format/`** - Message formatting and timestamps
 - **`spinner/`** - Spinner functionality and task management
 - **`utils/`** - Utility functions and string handling
 - **`config/`** - Configuration and themes
