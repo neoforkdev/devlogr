@@ -1,7 +1,7 @@
 {
   "name": "@neofork/devlogr",
   "version": "0.0.1",
-  "description": "A simple, maintainable TypeScript logger with emoji support, themes, and multiple output formats",
+  "description": "A simple, maintainable TypeScript logger with emoji support, themes, listr2 task management, and multiple output formats",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "files": [
@@ -22,7 +22,11 @@
     "format:check": "prettier --check .",
     "check": "npm run format && npm run lint && npm run build && npm test",
     "fix": "npm run format:fix && npm run lint:fix",
-    "playground": "npm run build && node playground.js",
+    "example:levels": "tsx examples/levels.ts",
+    "example:single-spinner": "tsx examples/single-spinner.ts",
+    "example:multiple-spinners": "tsx examples/multiple-spinners.ts",
+    "example:env-variables": "tsx examples/env-variables.ts",
+    "example:json-output": "tsx examples/json-output.ts",
     "test:global-standards": "npm run build && node scripts/test-global-standards.js",
     "clean": "rm -rf dist",
     "prepare": "npm run build",
@@ -36,7 +40,10 @@
     "emoji",
     "json",
     "colors",
-    "terminal"
+    "terminal",
+    "listr2",
+    "tasks",
+    "spinner"
   ],
   "author": "Neofork",
   "license": "MIT",
@@ -57,12 +64,13 @@
     "eslint": "^8.57.1",
     "globals": "^16.2.0",
     "prettier": "^3.5.3",
+    "tsx": "^4.0.0",
     "typescript": "^5.0.0",
     "vitest": "^1.0.0"
   },
   "dependencies": {
     "chalk": "^4.1.2",
-    "ora": "^5.4.1"
+    "listr2": "^8.3.3"
   },
   "engines": {
     "node": ">=16.0.0"

@@ -3,69 +3,80 @@ import { LogTheme, TimestampFormat } from './types';
 import { StringUtils, EmojiUtils } from './utils';
 
 // ============================================================================
-// MESSAGE FORMATTING
+// SIMPLIFIED MESSAGE FORMATTING - KISS PRINCIPLE
 // ============================================================================
 
-interface FormatComponents {
-  timestamp: string;
-  symbol: string;
-  levelLabel: string;
-  prefix: string;
-  spacing: string;
+interface FormatOptions {
+  level?: string;
+  theme?: LogTheme;
+  prefix?: string;
+  maxPrefixLength?: number;
+  message?: string;
+  args?: unknown[];
+  showTimestamp?: boolean;
+  useColors?: boolean;
+  timestampFormat?: TimestampFormat;
+  stripEmojis?: boolean;
+  includeLevel?: boolean;
+  includePrefix?: boolean;
 }
 
 export class MessageFormatter {
   /**
-   * Creates core formatting components - SINGLE SOURCE OF TRUTH
+   * Universal formatter - handles all formatting scenarios
+   * This single method replaces multiple similar methods following KISS principle
    */
-  private static buildFormatComponents(
-    level: string,
-    theme: LogTheme,
-    prefix: string,
-    maxPrefixLength: number,
-    showTimestamp: boolean,
-    useColors: boolean,
-    timestampFormat: TimestampFormat = TimestampFormat.TIME,
-    includeLevel: boolean = true
-  ): FormatComponents {
-    const colorFn = useColors ? theme.color : (text: string) => text;
+  static format(options: FormatOptions): string {
+    const {
+      level = '',
+      theme = { symbol: '', label: '', color: (text: string) => text },
+      prefix = '',
+      maxPrefixLength = 0,
+      message = '',
+      args = [],
+      showTimestamp = false,
+      useColors = false,
+      timestampFormat = TimestampFormat.TIME,
+      stripEmojis = false,
+      includeLevel = true,
+      includePrefix = true,
+    } = options;
 
-    // Timestamp
-    const timestamp = showTimestamp
-      ? useColors
-        ? chalk.dim(`[${StringUtils.formatTime(timestampFormat)}]`)
-        : `[${StringUtils.formatTime(timestampFormat)}]`
-      : '';
+    const parts: string[] = [];
 
-    // Symbol
-    const symbol = theme.symbol ? colorFn(theme.symbol) : '';
+    // 1. Timestamp
+    if (showTimestamp) {
+      const timestamp = this.formatTimestamp(timestampFormat, useColors);
+      parts.push(timestamp);
+    }
 
-    // Level label (only if requested)
-    const levelLabel = includeLevel
-      ? useColors
-        ? chalk.bold(colorFn(theme.label.padEnd(7)))
-        : theme.label.padEnd(7)
-      : '';
+    // 2. Symbol and Level
+    if (theme.symbol || includeLevel) {
+      const formatted = this.formatSymbolAndLevel(theme, level, includeLevel, useColors);
+      if (formatted) parts.push(formatted);
+    }
 
-    // Prefix formatting
-    const prefixFormatted = useColors ? chalk.dim(`[${prefix}]`) : `[${prefix}]`;
-    const prefixTotalLength = prefix.length + 2; // +2 for the brackets []
-    const spacingBeforePrefix = StringUtils.repeat(
-      ' ',
-      Math.max(1, maxPrefixLength + 2 - prefixTotalLength + 1)
-    );
+    // 3. Prefix with proper spacing
+    if (includePrefix && prefix) {
+      const formatted = this.formatPrefix(prefix, maxPrefixLength, useColors);
+      parts.push(formatted);
+    }
 
-    return {
-      timestamp,
-      symbol,
-      levelLabel,
-      prefix: prefixFormatted,
-      spacing: spacingBeforePrefix,
-    };
+    // 4. Message with styling
+    if (message) {
+      const formatted = this.formatMessage(level, theme, message, args, useColors, stripEmojis);
+      parts.push(formatted);
+    }
+
+    return parts.join(' ').trim();
   }
 
+  // ============================================================================
+  // LEGACY COMPATIBILITY METHODS - SIMPLE WRAPPERS
+  // ============================================================================
+
   /**
-   * Creates a basic formatted prefix without log level (for simple logs)
+   * Format basic prefix (legacy compatibility)
    */
   static formatBasicPrefix(
     prefix: string,
@@ -74,28 +85,40 @@ export class MessageFormatter {
     useColors: boolean,
     timestampFormat: TimestampFormat = TimestampFormat.TIME
   ): string {
-    if (!showTimestamp) {
-      return '';
-    }
+    if (!showTimestamp) return '';
 
-    // Use dummy theme for basic formatting
-    const dummyTheme = { symbol: '', label: '', color: (text: string) => text };
-    const components = this.buildFormatComponents(
-      '',
-      dummyTheme,
-      prefix,
-      maxPrefixLength,
-      showTimestamp,
-      useColors,
-      timestampFormat,
-      false
-    );
-
-    return `${components.timestamp}        ${components.spacing}${components.prefix} `;
+    const timestamp = this.formatTimestamp(timestampFormat, useColors);
+    const prefixFormatted = this.formatPrefix(prefix, maxPrefixLength, useColors);
+    
+    return `${timestamp}        ${prefixFormatted} `;
   }
 
   /**
-   * Creates a formatted prefix for spinners with log level and theme
+   * Format simple message without timestamp/prefix (legacy compatibility)
+   */
+  static formatSimpleMessage(
+    level: string,
+    theme: LogTheme,
+    message: string,
+    args: unknown[],
+    useColors: boolean,
+    stripEmojis = false
+  ): string {
+    return this.format({
+      level,
+      theme,
+      message,
+      args,
+      useColors,
+      stripEmojis,
+      includeLevel: false,
+      includePrefix: false,
+      showTimestamp: false,
+    });
+  }
+
+  /**
+   * Format spinner prefix with level (legacy compatibility)
    */
   static formatSpinnerPrefixWithLevel(
     level: string,
@@ -106,11 +129,9 @@ export class MessageFormatter {
     useColors: boolean,
     timestampFormat: TimestampFormat = TimestampFormat.TIME
   ): string {
-    if (!showTimestamp) {
-      return '';
-    }
+    if (!showTimestamp) return '';
 
-    const components = this.buildFormatComponents(
+    return this.format({
       level,
       theme,
       prefix,
@@ -118,37 +139,12 @@ export class MessageFormatter {
       showTimestamp,
       useColors,
       timestampFormat,
-      true
-    );
-    const symbolPart = components.symbol ? `${components.symbol} ` : '  ';
-
-    return `${components.timestamp} ${symbolPart}${components.levelLabel}${components.spacing}${components.prefix} `;
+      includeLevel: true,
+    });
   }
 
   /**
-   * Formats a simple log message with symbol and colors (no timestamp/prefix)
-   */
-  static formatSimpleMessage(
-    level: string,
-    theme: LogTheme,
-    message: string,
-    args: unknown[],
-    useColors: boolean,
-    stripEmojis = false
-  ): string {
-    const colorFn = useColors ? theme.color : (text: string) => text;
-    const symbol = theme.symbol ? colorFn(theme.symbol) : '';
-    const styledMessage = this.applyMessageStyling(level, message, colorFn, useColors);
-    const formattedMessage = stripEmojis ? EmojiUtils.format(styledMessage) : styledMessage;
-    const formattedArgs = StringUtils.formatArgs(args);
-
-    return symbol
-      ? `${symbol} ${formattedMessage}${formattedArgs}`
-      : `${formattedMessage}${formattedArgs}`;
-  }
-
-  /**
-   * Formats a complete debug log message with timestamp, level, and prefix
+   * Format complete log message (legacy compatibility)
    */
   static formatCompleteLogMessage(
     level: string,
@@ -161,157 +157,101 @@ export class MessageFormatter {
     timestampFormat: TimestampFormat = TimestampFormat.TIME,
     stripEmojis = false
   ): string {
-    const components = this.buildFormatComponents(
-      level,
-      theme,
-      prefix,
-      maxPrefixLength,
-      true,
-      useColors,
-      timestampFormat,
-      true
-    );
-    const symbolPart = components.symbol ? `${components.symbol} ` : '  ';
-
-    const styledMessage = this.applyMessageStyling(
-      level,
-      message,
-      useColors ? theme.color : (text: string) => text,
-      useColors
-    );
-    const finalMessage = stripEmojis ? EmojiUtils.format(styledMessage) : styledMessage;
-    const formattedArgs = StringUtils.formatArgs(args);
-
-    return `${components.timestamp} ${symbolPart}${components.levelLabel}${components.spacing}${components.prefix} ${finalMessage}${formattedArgs}`;
-  }
-
-  /**
-   * Applies appropriate styling to message text based on log level
-   */
-  private static applyMessageStyling(
-    level: string,
-    message: string,
-    colorFn: (text: string) => string,
-    useColors: boolean
-  ): string {
-    const boldLevels = ['error', 'success'];
-    const coloredLevels = ['warn', 'title', 'task', 'plain'];
-    const dimLevels = ['trace'];
-
-    if (boldLevels.includes(level)) {
-      return useColors && colorFn === chalk.white
-        ? chalk.bold.white(message)
-        : useColors
-          ? chalk.bold(colorFn(message))
-          : message;
-    }
-
-    if (
-      coloredLevels.includes(level) ||
-      level === 'title' ||
-      level === 'task' ||
-      level === 'plain'
-    ) {
-      return useColors && colorFn === chalk.white
-        ? chalk.white(message)
-        : useColors
-          ? colorFn(message)
-          : message;
-    }
-
-    if (dimLevels.includes(level)) {
-      return useColors ? chalk.dim(message) : message;
-    }
-
-    return message;
-  }
-
-  // ============================================================================
-  // LEGACY METHODS (DEPRECATED - for backward compatibility)
-  // ============================================================================
-
-  /**
-   * @deprecated Use formatBasicPrefix() instead
-   */
-  static formatPrefix(
-    prefix: string,
-    maxPrefixLength: number,
-    showTimestamp: boolean,
-    useColors: boolean
-  ): string {
-    return this.formatBasicPrefix(prefix, maxPrefixLength, showTimestamp, useColors);
-  }
-
-  /**
-   * @deprecated Use formatSpinnerPrefixWithLevel() instead
-   */
-  static formatSpinnerPrefix(
-    level: string,
-    theme: LogTheme,
-    prefix: string,
-    maxPrefixLength: number,
-    showTimestamp: boolean,
-    useColors: boolean
-  ): string {
-    return this.formatSpinnerPrefixWithLevel(
-      level,
-      theme,
-      prefix,
-      maxPrefixLength,
-      showTimestamp,
-      useColors
-    );
-  }
-
-  /**
-   * @deprecated Use formatSimpleMessage() instead
-   */
-  static formatSimple(
-    level: string,
-    theme: LogTheme,
-    message: string,
-    args: unknown[],
-    useColors: boolean,
-    stripEmojis = false
-  ): string {
-    return this.formatSimpleMessage(level, theme, message, args, useColors, stripEmojis);
-  }
-
-  /**
-   * @deprecated Use formatCompleteLogMessage() instead
-   */
-  static formatDebug(
-    level: string,
-    theme: LogTheme,
-    message: string,
-    args: unknown[],
-    prefix: string,
-    maxPrefixLength: number,
-    useColors: boolean,
-    stripEmojis = false
-  ): string {
-    return this.formatCompleteLogMessage(
+    return this.format({
       level,
       theme,
       message,
       args,
       prefix,
       maxPrefixLength,
+      showTimestamp: true,
       useColors,
-      TimestampFormat.TIME,
-      stripEmojis
-    );
+      timestampFormat,
+      stripEmojis,
+    });
   }
 
-  /**
-   * @deprecated Use applyMessageStyling() instead (method is now private)
-   */
+  // ============================================================================
+  // PRIVATE HELPERS - EXTRACTED FOR CLARITY
+  // ============================================================================
+
+  private static formatTimestamp(timestampFormat: TimestampFormat, useColors: boolean): string {
+    const timestamp = StringUtils.formatTime(timestampFormat);
+    return useColors ? chalk.dim(`[${timestamp}]`) : `[${timestamp}]`;
+  }
+
+  private static formatSymbolAndLevel(
+    theme: LogTheme,
+    level: string,
+    includeLevel: boolean,
+    useColors: boolean
+  ): string {
+    const colorFn = useColors ? theme.color : (text: string) => text;
+    const symbol = theme.symbol ? colorFn(theme.symbol) : '';
+    const levelLabel = includeLevel
+      ? useColors
+        ? chalk.bold(colorFn(theme.label.padEnd(7)))
+        : theme.label.padEnd(7)
+      : '';
+
+    if (symbol && levelLabel) {
+      return `${symbol} ${levelLabel}`;
+    } else if (symbol) {
+      return symbol;
+    } else if (levelLabel) {
+      return `  ${levelLabel}`; // 2 spaces to align with symbol
+    }
+    return '';
+  }
+
+  private static formatPrefix(prefix: string, maxPrefixLength: number, useColors: boolean): string {
+    const prefixFormatted = useColors ? chalk.dim(`[${prefix}]`) : `[${prefix}]`;
+    const prefixTotalLength = prefix.length + 2; // +2 for brackets
+    const spacing = StringUtils.repeat(
+      ' ',
+      Math.max(1, maxPrefixLength + 2 - prefixTotalLength + 1)
+    );
+    return `${spacing}${prefixFormatted}`;
+  }
+
+  private static formatMessage(
+    level: string,
+    theme: LogTheme,
+    message: string,
+    args: unknown[],
+    useColors: boolean,
+    stripEmojis: boolean
+  ): string {
+    const colorFn = useColors ? theme.color : (text: string) => text;
+    const styledMessage = this.styleMessage(level, message, colorFn, useColors);
+    const finalMessage = stripEmojis ? EmojiUtils.format(styledMessage) : styledMessage;
+    const formattedArgs = StringUtils.formatArgs(args);
+    return `${finalMessage}${formattedArgs}`;
+  }
+
   private static styleMessage(
     level: string,
     message: string,
     colorFn: (text: string) => string,
     useColors: boolean
   ): string {
-    return this.applyMessageStyling(level, message, colorFn, useColors);
+    if (!useColors) return message;
+
+    // Bold levels for important messages
+    if (['error', 'success'].includes(level)) {
+      return chalk.bold(colorFn(message));
+    }
+
+    // Colored levels for contextual messages
+    if (['warn', 'title', 'task', 'plain'].includes(level)) {
+      return colorFn(message);
+    }
+
+    // Dimmed for debug/trace
+    if (level === 'trace') {
+      return chalk.dim(message);
+    }
+
+    return message;
   }
 }

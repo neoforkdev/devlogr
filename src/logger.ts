@@ -1,5 +1,7 @@
 import chalk from 'chalk';
+import { Listr, ListrTask, ListrTaskWrapper } from 'listr2';
 import { LogLevel, LogTheme, LogConfig } from './types';
+import { DevLogrRenderer } from './devlogr-renderer.js';
 import { LogConfiguration } from './config';
 import { ThemeProvider } from './themes';
 import { MessageFormatter } from './formatters';
@@ -9,7 +11,7 @@ import { StringUtils } from './utils';
 import { SpinnerUtils, SpinnerOptions } from './utils';
 
 // ============================================================================
-// CONSOLE LOGGER IMPLEMENTATION
+// SIMPLIFIED LOGGER IMPLEMENTATION - KISS PRINCIPLE
 // ============================================================================
 
 /**
@@ -23,7 +25,6 @@ export class Logger {
   constructor(prefix: string) {
     this.prefix = prefix;
     this.config = LogConfiguration.getConfig();
-
     PrefixTracker.register(prefix);
   }
 
@@ -85,31 +86,19 @@ export class Logger {
   }
 
   // ============================================================================
-  // SPINNER METHODS
+  // SIMPLIFIED SPINNER METHODS
   // ============================================================================
 
   /**
    * Start a spinner with optional text
    */
   startSpinner(text?: string, options?: Omit<SpinnerOptions, 'text'>): void {
-    // In JSON mode or non-TTY, just log the task
     if (this.config.useJson || !SpinnerUtils.supportsSpinners()) {
       this.task(text || 'Processing...');
       return;
     }
 
-    const theme = ThemeProvider.getTheme('task', undefined, this.config.supportsUnicode);
-    const spinnerOptions: SpinnerOptions = {
-      text: text || 'Processing...',
-      prefix: this.prefix,
-      showTimestamp: this.config.showTimestamp,
-      useColors: this.config.useColors,
-      timestampFormat: this.config.timestampFormat,
-      level: 'task',
-      theme: theme,
-      ...options,
-    };
-
+    const spinnerOptions = this.buildSpinnerOptions(text || 'Processing...', 'task', options);
     SpinnerUtils.start(this.prefix, spinnerOptions);
   }
 
@@ -120,7 +109,6 @@ export class Logger {
     if (this.config.useJson || !SpinnerUtils.supportsSpinners()) {
       return;
     }
-
     SpinnerUtils.updateText(this.prefix, text);
   }
 
@@ -131,115 +119,171 @@ export class Logger {
     if (this.config.useJson || !SpinnerUtils.supportsSpinners()) {
       return;
     }
-
     SpinnerUtils.stop(this.prefix);
   }
 
   /**
-   * Complete spinner with success message
+   * Complete spinner with success, error, warning, or info
+   */
+  completeSpinner(type: 'success' | 'error' | 'warning' | 'info', text?: string): void {
+    if (this.config.useJson || !SpinnerUtils.supportsSpinners()) {
+      this[type](text || this.getDefaultCompletionText(type));
+      return;
+    }
+
+    // Use the SpinnerUtils completion methods
+    const completionMethods = {
+      success: SpinnerUtils.succeed,
+      error: SpinnerUtils.fail,
+      warning: SpinnerUtils.warn,
+      info: SpinnerUtils.info,
+    };
+
+    completionMethods[type](this.prefix, text);
+  }
+
+  /**
+   * Convenience methods for spinner completion
    */
   completeSpinnerWithSuccess(text?: string): void {
-    if (this.config.useJson || !SpinnerUtils.supportsSpinners()) {
-      this.success(text || 'Done');
-      return;
-    }
-
-    const message = SpinnerUtils.succeed(this.prefix, text);
-    if (message !== undefined) {
-      this.success(message);
-    } else {
-      this.success('Done');
-    }
+    this.completeSpinner('success', text);
   }
 
-  /**
-   * Complete spinner with error message
-   */
   completeSpinnerWithError(text?: string): void {
-    if (this.config.useJson || !SpinnerUtils.supportsSpinners()) {
-      this.error(text || 'Failed');
-      return;
-    }
-
-    const message = SpinnerUtils.fail(this.prefix, text);
-    if (message !== undefined) {
-      this.error(message);
-    } else {
-      this.error('Failed');
-    }
+    this.completeSpinner('error', text);
   }
 
-  /**
-   * Complete spinner with warning message
-   */
   completeSpinnerWithWarning(text?: string): void {
-    if (this.config.useJson || !SpinnerUtils.supportsSpinners()) {
-      this.warning(text || 'Warning');
-      return;
-    }
-
-    const message = SpinnerUtils.warn(this.prefix, text);
-    if (message !== undefined) {
-      this.warning(message);
-    } else {
-      this.warning('Warning');
-    }
+    this.completeSpinner('warning', text);
   }
 
-  /**
-   * Complete spinner with info message
-   */
   completeSpinnerWithInfo(text?: string): void {
-    if (this.config.useJson || !SpinnerUtils.supportsSpinners()) {
-      this.info(text || 'Info');
-      return;
-    }
-
-    const message = SpinnerUtils.info(this.prefix, text);
-    if (message !== undefined) {
-      this.info(message);
-    } else {
-      this.info('Info');
-    }
+    this.completeSpinner('info', text);
   }
 
   // ============================================================================
-  // LEGACY SPINNER METHODS (DEPRECATED - for backward compatibility)
+  // LISTR2 INTEGRATION METHODS
   // ============================================================================
 
   /**
-   * @deprecated Use updateSpinnerText() instead
+   * Execute a listr2 task list with proper logger integration
    */
-  updateSpinner(text: string): void {
-    this.updateSpinnerText(text);
+  async runTasks<T = any>(
+    title: string,
+    tasks: ListrTask<T>[],
+    options?: {
+      concurrent?: boolean;
+      exitOnError?: boolean;
+      context?: T;
+      rendererOptions?: any;
+    }
+  ): Promise<T> {
+    // Show title with logger prefix
+    this.info(`${title}`);
+
+    if (this.config.useJson) {
+      // In JSON mode, just log task execution
+      this.debug('Executing tasks:', { title, taskCount: tasks.length });
+      
+      // Execute tasks sequentially in JSON mode for simpler logging
+      const context = options?.context || {} as T;
+      for (const task of tasks) {
+        if (typeof task.task === 'function') {
+          try {
+            this.debug(`Starting task: ${task.title}`);
+            await task.task(context, {} as ListrTaskWrapper<T, any, any>);
+            this.info(`✓ ${task.title}`);
+          } catch (error) {
+            this.error(`✗ ${task.title}`, error);
+            if (options?.exitOnError !== false) {
+              throw error;
+            }
+          }
+        }
+      }
+      return context;
+    }
+
+    // Create listr2 instance with DevLogr renderer
+    const listr = new Listr(tasks, {
+      concurrent: options?.concurrent ?? false,
+      exitOnError: options?.exitOnError ?? true,
+      ctx: options?.context,
+      renderer: DevLogrRenderer,
+      rendererOptions: {
+        prefix: this.prefix,
+        showTimestamp: this.config.showTimestamp,
+        useColors: this.config.useColors,
+        timestampFormat: this.config.timestampFormat,
+        supportsUnicode: this.config.supportsUnicode,
+        ...options?.rendererOptions,
+      },
+    });
+
+    try {
+      const result = await listr.run();
+      this.success(`✅ ${title} completed successfully`);
+      return result;
+    } catch (error) {
+      this.error(`❌ ${title} failed`, error);
+      throw error;
+    }
   }
 
   /**
-   * @deprecated Use completeSpinnerWithSuccess() instead
+   * Create a task list with the logger's prefix integration
    */
-  succeedSpinner(text?: string): void {
-    this.completeSpinnerWithSuccess(text);
+  createTaskList<T = any>(
+    tasks: ListrTask<T>[],
+    options?: {
+      concurrent?: boolean;
+      exitOnError?: boolean;
+      context?: T;
+    }
+  ): Listr<T, typeof DevLogrRenderer> {
+    return new Listr(tasks, {
+      concurrent: options?.concurrent ?? false,
+      exitOnError: options?.exitOnError ?? true,
+      ctx: options?.context,
+      renderer: DevLogrRenderer,
+      rendererOptions: {
+        prefix: this.prefix,
+        showTimestamp: this.config.showTimestamp,
+        useColors: this.config.useColors,
+        timestampFormat: this.config.timestampFormat,
+        supportsUnicode: this.config.supportsUnicode,
+      },
+    });
   }
 
   /**
-   * @deprecated Use completeSpinnerWithError() instead
+   * Execute concurrent tasks with proper logging
    */
-  failSpinner(text?: string): void {
-    this.completeSpinnerWithError(text);
+  async runConcurrentTasks<T = any>(
+    title: string,
+    tasks: ListrTask<T>[],
+    context?: T
+  ): Promise<T> {
+    return this.runTasks(title, tasks, {
+      concurrent: true,
+      exitOnError: false,
+      context,
+    });
   }
 
   /**
-   * @deprecated Use completeSpinnerWithWarning() instead
+   * Execute sequential tasks with proper logging
    */
-  warnSpinner(text?: string): void {
-    this.completeSpinnerWithWarning(text);
-  }
-
-  /**
-   * @deprecated Use completeSpinnerWithInfo() instead
-   */
-  infoSpinner(text?: string): void {
-    this.completeSpinnerWithInfo(text);
+  async runSequentialTasks<T = any>(
+    title: string,
+    tasks: ListrTask<T>[],
+    context?: T
+  ): Promise<T> {
+    return this.runTasks(title, tasks, {
+      concurrent: false,
+      exitOnError: true,
+      context,
+    });
   }
 
   // ============================================================================
@@ -247,10 +291,9 @@ export class Logger {
   // ============================================================================
 
   spacer(): void {
-    if (this.config.useJson) {
-      return;
+    if (!this.config.useJson) {
+      console.log();
     }
-    console.log();
   }
 
   separator(title?: string): void {
@@ -259,21 +302,15 @@ export class Logger {
     }
 
     const width = 50;
+    const line = title 
+      ? `--- ${title} ${'-'.repeat(Math.max(0, width - title.length - 8))}`
+      : '-'.repeat(width);
 
-    if (title) {
-      const sideLength = Math.max(1, Math.floor((width - title.length - 2) / 2));
-      const leftSide = '-'.repeat(sideLength);
-      const rightSide = '-'.repeat(width - title.length - 2 - sideLength);
-      const line = `${leftSide} ${title} ${rightSide}`;
-      console.log(this.config.useColors ? chalk.dim(line) : line);
-    } else {
-      const line = '-'.repeat(width);
-      console.log(this.config.useColors ? chalk.dim(line) : line);
-    }
+    console.log(this.config.useColors ? chalk.dim(line) : line);
   }
 
   // ============================================================================
-  // PRIVATE IMPLEMENTATION
+  // PRIVATE IMPLEMENTATION - SIMPLIFIED
   // ============================================================================
 
   private getEffectiveLevel(): LogLevel {
@@ -281,31 +318,11 @@ export class Logger {
   }
 
   private shouldLog(level: LogLevel): boolean {
-    const levels = [
-      LogLevel.ERROR,
-      LogLevel.WARNING,
-      LogLevel.INFO,
-      LogLevel.DEBUG,
-      LogLevel.TRACE,
-    ];
-    const currentLevelIndex = levels.indexOf(this.getEffectiveLevel());
-    const messageLevelIndex = levels.indexOf(level);
-    return messageLevelIndex <= currentLevelIndex;
-  }
-
-  private supportsEmoji(): boolean {
-    // In JSON mode, never use emojis
-    if (this.config.useJson) {
-      return false;
-    }
-
-    // Use centralized emoji support detection
-    return EmojiUtils.supportsEmoji();
-  }
-
-  private stripEmojis(text: string): string {
-    // Force strip emojis regardless of environment detection
-    return EmojiUtils.forceStripEmojis(text);
+    const levels = [LogLevel.ERROR, LogLevel.WARNING, LogLevel.INFO, LogLevel.DEBUG, LogLevel.TRACE];
+    const effectiveLevel = this.getEffectiveLevel();
+    const currentIndex = levels.indexOf(level);
+    const effectiveIndex = levels.indexOf(effectiveLevel);
+    return currentIndex <= effectiveIndex;
   }
 
   private log(level: LogLevel, logLevel: string, message: string, ...args: unknown[]): void {
@@ -321,34 +338,43 @@ export class Logger {
   }
 
   private logJson(level: LogLevel, message: string, args: unknown[]): void {
+    const logData = this.buildJsonLogData(level, message, args);
+    console.log(JSON.stringify(logData));
+  }
+
+  private buildJsonLogData(level: LogLevel, message: string, args: unknown[]): Record<string, unknown> {
     const logData: Record<string, unknown> = {
       level,
+      message,
       prefix: this.prefix,
-      message: this.stripEmojis(message), // Strip emojis from message
       timestamp: new Date().toISOString(),
     };
 
+    // Add arguments to log data
     args.forEach((arg, index) => {
-      if (typeof arg === 'object' && arg !== null) {
-        // For objects, try to merge properties, but handle circular references
-        try {
-          // Use a simple check to see if we can safely merge
-          const testStringify = JSON.stringify(arg);
-          Object.assign(logData, arg);
-        } catch {
-          // If circular or other serialization issues, store as a separate property
-          logData[`arg${index}`] = arg;
-        }
+      if (this.isPlainObject(arg)) {
+        this.mergeObjectArg(logData, arg as Record<string, unknown>, index);
       } else {
-        // Strip emojis from string arguments too
-        const argValue = typeof arg === 'string' ? this.stripEmojis(arg) : arg;
-        logData[`arg${index}`] = argValue;
+        this.addSimpleArg(logData, arg, index);
       }
     });
 
-    // Use safe JSON stringify to handle circular references
-    const safeJson = StringUtils.safeJsonStringify(logData, 0); // No indentation for logs
-    this.outputToConsole(level, safeJson);
+    return logData;
+  }
+
+  private isPlainObject(arg: unknown): arg is Record<string, unknown> {
+    return arg !== null && typeof arg === 'object' && arg.constructor === Object;
+  }
+
+  private mergeObjectArg(logData: Record<string, unknown>, arg: Record<string, unknown>, index: number): void {
+    Object.keys(arg).forEach(key => {
+      const safeKey = key in logData ? `arg${index}_${key}` : key;
+      logData[safeKey] = arg[key];
+    });
+  }
+
+  private addSimpleArg(logData: Record<string, unknown>, arg: unknown, index: number): void {
+    logData[`arg${index}`] = arg;
   }
 
   private logFormatted(level: LogLevel, logLevel: string, message: string, args: unknown[]): void {
@@ -357,29 +383,26 @@ export class Logger {
   }
 
   private formatMessage(level: string, message: string, args: unknown[]): string {
-    const theme = ThemeProvider.getTheme(level, undefined, this.config.supportsUnicode);
-    const shouldStripEmojis = !this.supportsEmoji();
+    const theme = ThemeProvider.getTheme(level);
+    const maxPrefixLength = PrefixTracker.getMaxLength();
+    
+    let finalMessage = message;
+    if (!this.config.supportsUnicode) {
+      finalMessage = EmojiUtils.format(message);
+    }
 
-    return this.config.showTimestamp
-      ? MessageFormatter.formatCompleteLogMessage(
-          level,
-          theme,
-          message,
-          args,
-          this.prefix,
-          PrefixTracker.getMaxLength(),
-          this.config.useColors,
-          this.config.timestampFormat,
-          shouldStripEmojis
-        )
-      : MessageFormatter.formatSimpleMessage(
-          level,
-          theme,
-          message,
-          args,
-          this.config.useColors,
-          shouldStripEmojis
-        );
+    return MessageFormatter.format({
+      level,
+      theme,
+      prefix: this.prefix,
+      maxPrefixLength,
+      message: finalMessage,
+      args,
+      showTimestamp: this.config.showTimestamp,
+      useColors: this.config.useColors,
+      timestampFormat: this.config.timestampFormat,
+      stripEmojis: !this.config.supportsUnicode,
+    });
   }
 
   private outputToConsole(level: LogLevel, message: string): void {
@@ -399,11 +422,62 @@ export class Logger {
         break;
     }
   }
-}
 
-// ============================================================================
-// FACTORY FUNCTION
-// ============================================================================
+  private buildSpinnerOptions(text: string, level: string, options?: Omit<SpinnerOptions, 'text'>): SpinnerOptions {
+    const theme = ThemeProvider.getTheme(level);
+    return {
+      text,
+      color: 'cyan',
+      prefix: this.prefix,
+      showTimestamp: this.config.showTimestamp,
+      useColors: this.config.useColors,
+      level,
+      theme,
+      timestampFormat: this.config.timestampFormat,
+      ...options,
+    };
+  }
+
+  private getDefaultCompletionText(type: 'success' | 'error' | 'warning' | 'info'): string {
+    const defaults = {
+      success: 'Complete',
+      error: 'Failed',
+      warning: 'Completed with warnings',
+      info: 'Done',
+    };
+    return defaults[type];
+  }
+
+  private buildListrPrefix(): string {
+    // Build a prefix that matches the logger's format for listr2 tasks
+    // Use 'task' level theme for listr2 items as they represent ongoing operations
+    const theme = ThemeProvider.getTheme('task', undefined, this.config.supportsUnicode);
+    const maxPrefixLength = PrefixTracker.getMaxLength();
+    
+    return MessageFormatter.format({
+      level: 'task',
+      theme,
+      prefix: this.prefix,
+      maxPrefixLength,
+      showTimestamp: this.config.showTimestamp,
+      useColors: this.config.useColors,
+      timestampFormat: this.config.timestampFormat,
+      stripEmojis: !this.config.supportsUnicode,
+      includeLevel: true,
+      includePrefix: true,
+    });
+  }
+
+  private outputDevLogrFormattedTask(message: string, symbol?: string): void {
+    const prefix = this.buildListrPrefix();
+    // Remove the trailing space from prefix and add symbol after it
+    const cleanPrefix = prefix.replace(/\s+$/, '');
+    const formattedMessage = symbol ? `${cleanPrefix} ${symbol} ${message}` : `${cleanPrefix} ${message}`;
+    console.log(formattedMessage);
+  }
+
+
+}
 
 export function createLogger(prefix: string): Logger {
   return new Logger(prefix);

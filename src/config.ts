@@ -85,12 +85,4 @@ export class LogConfiguration {
     // Default to TIME format for any other truthy value
     return { show: true, format: TimestampFormat.TIME };
   }
-
-  /**
-   * @deprecated Use getTimestampConfig() instead
-   * Checks if timestamps should be shown
-   */
-  private static shouldShowTimestamp(): boolean {
-    return this.getTimestampConfig().show;
-  }
 }
