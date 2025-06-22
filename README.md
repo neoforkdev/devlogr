@@ -1,22 +1,20 @@
 # @neofork/devlogr
 
-> Because dev tools deserve better than sad `console.log()`s.
+> Because deployment tools deserve better than sad `console.log()`s.
 
 ![devlogr demo animation](./.github/demo.gif)
 
-<div align="center"><strong>⚡ UX-first logger for modern CLI tools ⚡</strong><br/>Clean visuals, emoji joy, animated spinners, and smart formatting—<em>zero config required</em>.</div>
-
-> **🚧 Early Development**: This package is in active development (v0.0.x). API may change based on feedback. Perfect for testing and early adoption!
+<div align="center"><strong>⚡ The logger for UX-friendly deployment tools ⚡</strong><br/>CLI-native, CI-compliant, emoji-sprinkled delight. No setup. All signal.</div>
 
 ---
 
-## 🎯 Made for CLI tools. Seriously.
+## 🎯 Built for CLI tools. Like, actually.
 
-Most loggers are backend-first. `devlogr` isn't.
+Most loggers are backend-first or some sad cousin of `console.log`. `devlogr` isn’t.
 
-It's built for the command line. For dev tools. For you—the developer who cares about UX even when nobody else does.
+This is structured logging with style, made for devtools, task runners, release scripts, and CLI utilities that _actually_ run in terminals—whether it's your local shell or your CI pipeline.
 
-Forget boring output. Ditch brittle hacks. This is structured logging with personality and power.
+No brittle hacks. No bland output. Just focused feedback, clean visuals, and useful context—designed for the humans running your tools.
 
 ---
 
@@ -42,17 +40,17 @@ log.completeSpinnerWithSuccess('All done!');
 
 ---
 
-## ✨ Features Developers Actually Want
+## ✨ Features That Make DevOps Swoon
 
-- 🎨 **Looks Amazing** – Stylish output with color, emoji, and Unicode (where supported)
-- 🧠 **Built for Humans** – Messages that make sense at a glance
-- 🌀 **Animated Spinners** – Fully interactive, fallback-safe
-- ⚙️ **Zero Config** – No setup needed, but fully customizable
-- 🧱 **CLI-Native Design** – Terminal aware, CI/CD compatible
-- 📄 **JSON Mode** – Machine-readable output when you need it
-- 🔐 **Safe Logging** – Circular references? Handled.
-- 🧪 **Fully Tested** – 200+ tests, real-world hardened
-- 🙅 **No Visual Junk** – Automatically disables color/emojis on outdated terminals
+- 🎨 **Looks Amazing** – Styled output with color, emoji, and Unicode where supported
+- 🧠 **Made for Humans** – Clear, scannable messages designed for fast reading
+- 🌀 **Animated Spinners** – Fully interactive, CI-safe feedback loops
+- ⚙️ **Zero Config** – Drop-in defaults, full customization optional
+- 🧱 **CLI-Native Design** – Terminal-aware and CI-friendly
+- 📄 **JSON Mode** – Structured logs when you need machine parsing
+- 🔐 **Safe Logging** – Handles circular refs and edge cases gracefully
+- 🧪 **Fully Tested** – 200+ tests across scenarios
+- 🙅 **No Visual Junk** – Disables emoji, color, or Unicode when terminals can't handle them
 
 ---
 
@@ -75,37 +73,47 @@ log.plain('No formatting here.');
 
 ```ts
 log.startSpinner('Loading...');
+log.updateSpinnerText('Still loading...');
 log.succeedSpinner('Loaded');
 log.failSpinner('Failed');
-```
-
-Or use named spinners for more control:
-
-```ts
-import { SpinnerUtils } from '@neofork/devlogr';
-
-SpinnerUtils.start('build', { text: 'Building...', color: 'yellow' });
-SpinnerUtils.succeed('build', 'Build done!');
+log.completeSpinnerWithSuccess('Mission accomplished');
 ```
 
 ---
 
-## 📚 See Examples
+## 📚 Examples Directory
 
 Want to see DevLogr in action? Check out our comprehensive examples:
 
 **[👉 View Examples](./examples/README.md)**
 
-The examples directory contains working code samples for:
+The examples include:
 
-- All logging levels and methods
-- Spinner usage patterns
-- Task management with listr2
-- Environment variable configuration
+- All logging methods
+- Task sequencing and spinner chaining
 - JSON output mode
-- And more!
+- Environment config toggles
+- Integration with tools like `listr2`
 
 Run any example with: `npm run example:<name>`
+
+---
+
+## 📖 API Documentation
+
+Complete API documentation is available at: **[https://neoforkdev.github.io/devlogr/](https://neoforkdev.github.io/devlogr/)**
+
+### Generate Documentation Locally
+
+```bash
+npm run docs          # Generate TypeDoc documentation
+npm run docs:serve    # Generate and serve documentation locally
+```
+
+The documentation is automatically generated and deployed:
+
+- **Latest**: Updated on every push to `main` → [/latest/](https://neoforkdev.github.io/devlogr/latest/)
+- **Versioned**: Created for each git tag → [/v0.0.1/](https://neoforkdev.github.io/devlogr/v0.0.1/), etc.
 
 ---
 
@@ -133,44 +141,32 @@ Run any example with: `npm run example:<name>`
 
 ## 🛠️ Development Scripts
 
-The package includes useful development commands:
-
 ```bash
-# Check code formatting
-npm run format
-
-# Fix formatting issues
-npm run format:fix
-
-# Run linter
-npm run lint
-
-# Fix linting issues
-npm run lint:fix
-
-# Run all checks (format + lint + build + test)
-npm run check
-
-# Fix all issues automatically
-npm run fix
+npm run format        # Check code formatting
+npm run format:fix    # Fix formatting
+npm run lint          # Lint check
+npm run lint:fix      # Fix linting issues
+npm run check         # Run all checks
+npm run fix           # Fix everything
 ```
 
 ---
 
-## 🧠 Smart Defaults, Powerful Options
+## 🧠 Smart Defaults, Powerful Control
 
-- **Automatically detects** terminal features and disables bells and whistles when needed
-- **Timestamps** off by default—turn on with `DEVLOGR_SHOW_TIMESTAMP=true` or `=iso`
-- **JSON mode** disables animations—great for CI logs and structured output
+- **Terminal detection** for auto-adjusted output
+- **JSON-first mode** disables visual effects for clean CI/CD output
+- **Timestamps** are optional and configurable
+- **Visuals adapt** for broken or minimal terminals
 
 ---
 
 ## 📜 License
 
-MIT — Use it, fork it, ship it.
+MIT — Use it, fork it, log it.
 
 ---
 
 ## 🤝 Contribute
 
-Pull requests welcome. Tests are required. Opinions are free.
+Pull requests welcome. Tests required. Style optional but encouraged.
