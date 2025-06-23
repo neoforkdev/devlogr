@@ -61,12 +61,12 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/neofork/devlogr.git"
+    "url": "https://github.com/neoforkdev/devlogr.git"
   },
   "bugs": {
-    "url": "https://github.com/neofork/devlogr/issues"
+    "url": "https://github.com/neoforkdev/devlogr/issues"
   },
-  "homepage": "https://github.com/neofork/devlogr#readme",
+  "homepage": "https://github.com/neoforkdev/devlogr#readme",
   "devDependencies": {
     "@eslint/js": "^9.29.0",
     "@types/node": "^20.0.0",
