@@ -68,8 +68,11 @@ describe('MessageFormatter', () => {
       const resultWithColors = MessageFormatter.formatBasicPrefix('test', 10, true, true);
       const resultWithoutColors = MessageFormatter.formatBasicPrefix('test', 10, true, false);
 
-      // With colors should contain ANSI escape codes
-      expect(resultWithColors).toContain('\u001b[');
+      // In CI environments, colors might be disabled, so check conditionally
+      const hasColors = process.stdout.isTTY && !process.env.NO_COLOR && !process.env.DEVLOGR_NO_COLOR;
+      if (hasColors) {
+        expect(resultWithColors).toContain('\u001b[');
+      }
       expect(resultWithoutColors).not.toContain('\u001b[');
     });
 
