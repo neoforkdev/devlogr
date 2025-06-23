@@ -1,7 +1,7 @@
 {
   "name": "@neofork/devlogr",
   "version": "0.0.1",
-  "description": "A simple, maintainable TypeScript logger with emoji support, themes, listr2 task management, and multiple output formats",
+  "description": "Smart, stylish logging for dev tools that live in terminals and ship through CI.",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "files": [

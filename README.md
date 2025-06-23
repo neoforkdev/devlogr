@@ -1,6 +1,6 @@
 # @neofork/devlogr
 
-> Because deployment tools deserve better than sad `console.log()`s.
+> Logs that look great in your terminal—and make sense in your CI.
 
 <p align="center">
   <img src="https://raw.githubusercontent.com/neoforkdev/devlogr/refs/heads/main/.github/demo.gif" alt="devlogr demo animation" width="100%" style="max-width: 800px; border: 2px solid #e1e4e8; border-radius: 8px; padding: 20px; margin: 20px auto;">
