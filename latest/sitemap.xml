@@ -2,62 +2,62 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 	<url>
 		<loc>https://neoforkdev.github.io/devlogr/index.html</loc>
-		<lastmod>2025-06-23T00:02:22.786Z</lastmod>
+		<lastmod>2025-06-23T00:06:20.407Z</lastmod>
 	</url>
 	<url>
 		<loc>https://neoforkdev.github.io/devlogr/modules.html</loc>
-		<lastmod>2025-06-23T00:02:22.786Z</lastmod>
+		<lastmod>2025-06-23T00:06:20.407Z</lastmod>
 	</url>
 	<url>
 		<loc>https://neoforkdev.github.io/devlogr/hierarchy.html</loc>
-		<lastmod>2025-06-23T00:02:22.786Z</lastmod>
+		<lastmod>2025-06-23T00:06:20.407Z</lastmod>
 	</url>
 	<url>
 		<loc>https://neoforkdev.github.io/devlogr/classes/LogConfiguration.html</loc>
-		<lastmod>2025-06-23T00:02:22.786Z</lastmod>
+		<lastmod>2025-06-23T00:06:20.407Z</lastmod>
 	</url>
 	<url>
 		<loc>https://neoforkdev.github.io/devlogr/classes/Logger.html</loc>
-		<lastmod>2025-06-23T00:02:22.786Z</lastmod>
+		<lastmod>2025-06-23T00:06:20.407Z</lastmod>
 	</url>
 	<url>
 		<loc>https://neoforkdev.github.io/devlogr/functions/createLogger.html</loc>
-		<lastmod>2025-06-23T00:02:22.786Z</lastmod>
+		<lastmod>2025-06-23T00:06:20.407Z</lastmod>
 	</url>
 	<url>
 		<loc>https://neoforkdev.github.io/devlogr/enums/LogLevel.html</loc>
-		<lastmod>2025-06-23T00:02:22.786Z</lastmod>
+		<lastmod>2025-06-23T00:06:20.407Z</lastmod>
 	</url>
 	<url>
 		<loc>https://neoforkdev.github.io/devlogr/enums/TimestampFormat.html</loc>
-		<lastmod>2025-06-23T00:02:22.786Z</lastmod>
+		<lastmod>2025-06-23T00:06:20.407Z</lastmod>
 	</url>
 	<url>
 		<loc>https://neoforkdev.github.io/devlogr/interfaces/LogTheme.html</loc>
-		<lastmod>2025-06-23T00:02:22.786Z</lastmod>
+		<lastmod>2025-06-23T00:06:20.407Z</lastmod>
 	</url>
 	<url>
 		<loc>https://neoforkdev.github.io/devlogr/interfaces/LogConfig.html</loc>
-		<lastmod>2025-06-23T00:02:22.786Z</lastmod>
+		<lastmod>2025-06-23T00:06:20.407Z</lastmod>
 	</url>
 	<url>
 		<loc>https://neoforkdev.github.io/devlogr/classes/EmojiUtils.html</loc>
-		<lastmod>2025-06-23T00:02:22.786Z</lastmod>
+		<lastmod>2025-06-23T00:06:20.407Z</lastmod>
 	</url>
 	<url>
 		<loc>https://neoforkdev.github.io/devlogr/classes/SafeStringUtils.html</loc>
-		<lastmod>2025-06-23T00:02:22.786Z</lastmod>
+		<lastmod>2025-06-23T00:06:20.407Z</lastmod>
 	</url>
 	<url>
 		<loc>https://neoforkdev.github.io/devlogr/interfaces/SpinnerOptions.html</loc>
-		<lastmod>2025-06-23T00:02:22.786Z</lastmod>
+		<lastmod>2025-06-23T00:06:20.407Z</lastmod>
 	</url>
 	<url>
 		<loc>https://neoforkdev.github.io/devlogr/classes/SpinnerUtils.html</loc>
-		<lastmod>2025-06-23T00:02:22.786Z</lastmod>
+		<lastmod>2025-06-23T00:06:20.407Z</lastmod>
 	</url>
 	<url>
 		<loc>https://neoforkdev.github.io/devlogr/classes/TerminalUtils.html</loc>
-		<lastmod>2025-06-23T00:02:22.786Z</lastmod>
+		<lastmod>2025-06-23T00:06:20.407Z</lastmod>
 	</url>
 </urlset>
