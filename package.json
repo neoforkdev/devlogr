@@ -29,6 +29,8 @@
     "example:env-variables": "tsx examples/env-variables.ts",
     "example:json-output": "tsx examples/json-output.ts",
     "example:safe-string-utils": "tsx examples/safe-string-utils.ts",
+    "example:demo": "tsx examples/demo.ts",
+    "demo": "./scripts/demo.sh",
     "test:global-standards": "npm run build && node scripts/test-global-standards.js",
     "test:core": "node scripts/test-by-category.js core",
     "test:format": "node scripts/test-by-category.js format",

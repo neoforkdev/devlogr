@@ -267,7 +267,7 @@ export class Logger {
       return;
     }
 
-    // Stop the spinner first, then log the completion message
+    // Stop the spinner first with proper cleanup, then log the completion message
     SpinnerUtils.stop(this.prefix);
     this[type](completionText);
   }

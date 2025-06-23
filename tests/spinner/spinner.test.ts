@@ -524,10 +524,10 @@ describe('Spinner functionality', () => {
       expect(mockSpinner.stop).toHaveBeenCalled();
       expect(mockSpinner.clear).toHaveBeenCalled();
 
-      // Verify clear() was called after stop() to ensure proper cleanup order
+      // Verify clear() was called before stop() to ensure proper cleanup order
       const stopCallOrder = mockSpinner.stop.mock.invocationCallOrder[0];
       const clearCallOrder = mockSpinner.clear.mock.invocationCallOrder[0];
-      expect(clearCallOrder).toBeGreaterThan(stopCallOrder);
+      expect(clearCallOrder).toBeLessThan(stopCallOrder);
     });
 
     it('should clear spinner artifacts for all completion types', () => {

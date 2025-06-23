@@ -3,9 +3,7 @@
 > Because deployment tools deserve better than sad `console.log()`s.
 
 <p align="center">
-  <div style="border: 2px solid #e1e4e8; border-radius: 8px; padding: 20px; margin: 20px 0;">
-    <img src="https://raw.githubusercontent.com/neoforkdev/devlogr/refs/heads/main/.github/demo.gif" alt="devlogr demo animation" width="100%" style="max-width: 800px;">
-  </div>
+  <img src="https://raw.githubusercontent.com/neoforkdev/devlogr/refs/heads/main/.github/demo.gif" alt="devlogr demo animation" width="100%" style="max-width: 800px; border: 2px solid #e1e4e8; border-radius: 8px; padding: 20px; margin: 20px auto;">
 </p>
 
 <div align="center"><strong>⚡ The logger for UX-friendly deployment tools ⚡</strong><br/>CLI-native, CI-compliant, emoji-sprinkled delight. No setup. All signal.</div>

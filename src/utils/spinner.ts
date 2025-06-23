@@ -178,9 +178,25 @@ export class SpinnerUtils {
   static stop(key: string): void {
     const taskInfo = SpinnerUtils.tasks.get(key);
     if (taskInfo) {
-      if (taskInfo.spinner?.stop) taskInfo.spinner.stop();
+      // First, stop the listr2 renderer to prevent further updates
+      if (taskInfo.listr && (taskInfo.listr as any).renderer) {
+        const renderer = (taskInfo.listr as any).renderer;
+        if (renderer.end) {
+          renderer.end();
+        }
+      }
+      
+      // Clear the spinner display to prevent artifacts
       if (taskInfo.spinner?.clear) taskInfo.spinner.clear();
+      if (taskInfo.spinner?.stop) taskInfo.spinner.stop();
+      
+      // Resolve the promise to complete the task
       if (taskInfo.resolver) taskInfo.resolver();
+      
+      // Clear the display and ensure clean state
+      if (process.stdout.isTTY) {
+        process.stdout.write('\u001b[2K\r'); // Clear current line and move cursor to beginning
+      }
     }
     SpinnerUtils.tasks.delete(key);
 
@@ -220,9 +236,25 @@ export class SpinnerUtils {
         taskInfo.listr.tasks[0].title = text;
       }
 
-      if (taskInfo.spinner?.stop) taskInfo.spinner.stop();
+      // First, stop the listr2 renderer to prevent further updates
+      if (taskInfo.listr && (taskInfo.listr as any).renderer) {
+        const renderer = (taskInfo.listr as any).renderer;
+        if (renderer.end) {
+          renderer.end();
+        }
+      }
+      
+      // Clear the spinner display to prevent artifacts
       if (taskInfo.spinner?.clear) taskInfo.spinner.clear();
+      if (taskInfo.spinner?.stop) taskInfo.spinner.stop();
+      
       if (taskInfo.resolver) taskInfo.resolver();
+      
+      // Clear the display to ensure clean state
+      if (process.stdout.isTTY) {
+        process.stdout.write('\u001b[2K\r'); // Clear current line and move cursor to beginning
+      }
+      
       return text;
     }
     return undefined;
@@ -242,11 +274,27 @@ export class SpinnerUtils {
         taskInfo.listr.tasks[0].title = text;
       }
 
-      if (taskInfo.spinner?.stop) taskInfo.spinner.stop();
+      // First, stop the listr2 renderer to prevent further updates
+      if (taskInfo.listr && (taskInfo.listr as any).renderer) {
+        const renderer = (taskInfo.listr as any).renderer;
+        if (renderer.end) {
+          renderer.end();
+        }
+      }
+      
+      // Clear the spinner display to prevent artifacts
       if (taskInfo.spinner?.clear) taskInfo.spinner.clear();
+      if (taskInfo.spinner?.stop) taskInfo.spinner.stop();
+      
       if (taskInfo.rejecter) {
         taskInfo.rejecter(new Error(text || 'Task failed'));
       }
+      
+      // Clear the display to ensure clean state
+      if (process.stdout.isTTY) {
+        process.stdout.write('\u001b[2K\r'); // Clear current line and move cursor to beginning
+      }
+      
       return text;
     }
     return undefined;
@@ -289,10 +337,26 @@ export class SpinnerUtils {
    */
   static stopAllSpinners(): void {
     for (const [, taskInfo] of SpinnerUtils.tasks.entries()) {
-      if (taskInfo.spinner?.stop) taskInfo.spinner.stop();
+      // First, stop the listr2 renderer to prevent further updates
+      if (taskInfo.listr && (taskInfo.listr as any).renderer) {
+        const renderer = (taskInfo.listr as any).renderer;
+        if (renderer.end) {
+          renderer.end();
+        }
+      }
+      
+      // Clear the spinner display to prevent artifacts
       if (taskInfo.spinner?.clear) taskInfo.spinner.clear();
+      if (taskInfo.spinner?.stop) taskInfo.spinner.stop();
+      
       if (taskInfo.resolver) taskInfo.resolver();
     }
+    
+    // Clear the display to ensure clean state
+    if (process.stdout.isTTY) {
+      process.stdout.write('\u001b[2K\r'); // Clear current line and move cursor to beginning
+    }
+    
     SpinnerUtils.tasks.clear();
     SpinnerUtils.stopRotation();
     SpinnerUtils.currentActiveIndex = 0; // Reset rotation index

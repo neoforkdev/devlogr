@@ -412,7 +412,7 @@ describe('Multiple Spinners Management', () => {
         ) {
           const stopOrder = spinner.stop.mock.invocationCallOrder[0];
           const clearOrder = spinner.clear.mock.invocationCallOrder[0];
-          expect(clearOrder).toBeGreaterThanOrEqual(stopOrder);
+          expect(clearOrder).toBeLessThanOrEqual(stopOrder);
         }
       });
     });
