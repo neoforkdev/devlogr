@@ -5,7 +5,7 @@
 export class TerminalUtils {
   /**
    * Check if the current terminal supports Unicode characters.
-   * 
+   *
    * @returns True if Unicode symbols can be displayed, false otherwise
    */
   static supportsUnicode(): boolean {
@@ -86,7 +86,7 @@ export class TerminalUtils {
 
   /**
    * Check if the current terminal supports ANSI color codes.
-   * 
+   *
    * @returns True if colors can be displayed, false otherwise
    */
   static supportsColor(): boolean {
@@ -189,7 +189,7 @@ export class TerminalUtils {
 
   /**
    * Get ASCII fallback symbols for terminals that don't support Unicode.
-   * 
+   *
    * @returns Object mapping log levels to ASCII symbols
    */
   static getFallbackSymbols(): Record<string, string> {

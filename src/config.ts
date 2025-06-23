@@ -17,7 +17,7 @@ export class LogConfiguration {
 
   /**
    * Get complete logger configuration from environment and terminal detection.
-   * 
+   *
    * @returns Complete configuration object with all logger settings
    */
   static getConfig(): LogConfig {

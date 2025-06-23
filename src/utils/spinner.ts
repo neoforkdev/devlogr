@@ -13,34 +13,34 @@ import { DevLogrRenderer } from '../devlogr-renderer.js';
 export interface SpinnerOptions {
   /** Text to display with the spinner */
   text?: string;
-  
+
   /** Symbol to use for the spinner animation */
   symbol?: string;
-  
+
   /** Color for the spinner and text */
   color?: string;
-  
+
   /** Additional text to prefix before the spinner */
   prefixText?: string;
-  
+
   /** Indentation level for nested display */
   indent?: number;
-  
+
   /** Unique prefix identifier for the spinner */
   prefix?: string;
-  
+
   /** Whether to show timestamps */
   showTimestamp?: boolean;
-  
+
   /** Whether to use colors in output */
   useColors?: boolean;
-  
+
   /** Log level for the spinner message */
   level?: string;
-  
+
   /** Theme configuration for styling */
   theme?: LogTheme;
-  
+
   /** Format for timestamp display */
   timestampFormat?: TimestampFormat;
 }
@@ -55,24 +55,24 @@ interface TaskInfo {
 
 /**
  * Low-level spinner management utilities using listr2.
- * 
+ *
  * Provides direct control over spinners for advanced use cases.
  * Most users should use the Logger class spinner methods instead.
- * 
+ *
  * @example Basic Usage
  * ```typescript
  * import { SpinnerUtils } from '@neofork/devlogr';
- * 
+ *
  * SpinnerUtils.start('deploy', { text: 'Deploying...' });
  * // ... do work ...
  * SpinnerUtils.succeed('deploy', 'Deployed successfully!');
  * ```
- * 
+ *
  * @example Multiple Spinners
  * ```typescript
  * SpinnerUtils.start('build', { text: 'Building...' });
  * SpinnerUtils.start('test', { text: 'Testing...' });
- * 
+ *
  * SpinnerUtils.succeed('build', 'Build complete');
  * SpinnerUtils.fail('test', 'Tests failed');
  * ```
@@ -82,7 +82,7 @@ export class SpinnerUtils {
 
   /**
    * Start a named spinner with the specified options.
-   * 
+   *
    * @param key - Unique identifier for this spinner
    * @param options - Spinner configuration options
    * @returns Listr instance for the spinner
@@ -148,7 +148,7 @@ export class SpinnerUtils {
 
   /**
    * Stop a named spinner without completion message.
-   * 
+   *
    * @param key - Unique identifier of the spinner to stop
    */
   static stop(key: string): void {
@@ -163,7 +163,7 @@ export class SpinnerUtils {
 
   /**
    * Update the display text of an active spinner.
-   * 
+   *
    * @param key - Unique identifier of the spinner
    * @param text - New text to display
    */
@@ -179,7 +179,7 @@ export class SpinnerUtils {
 
   /**
    * Complete a spinner with success status.
-   * 
+   *
    * @param key - Unique identifier of the spinner
    * @param text - Optional success message
    * @returns The completion text or undefined
@@ -201,7 +201,7 @@ export class SpinnerUtils {
 
   /**
    * Complete a spinner with failure status.
-   * 
+   *
    * @param key - Unique identifier of the spinner
    * @param text - Optional failure message
    * @returns The completion text or undefined
@@ -283,7 +283,7 @@ export class SpinnerUtils {
 
   /**
    * Check if spinners are supported in the current environment.
-   * 
+   *
    * @returns True if spinners can be displayed, false otherwise
    */
   static supportsSpinners(): boolean {

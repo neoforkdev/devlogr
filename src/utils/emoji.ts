@@ -20,7 +20,7 @@ export class EmojiUtils {
 
   /**
    * Check if the current terminal supports emoji display.
-   * 
+   *
    * @returns True if emoji should be displayed, false otherwise
    */
   static supportsEmoji(): boolean {
@@ -89,7 +89,7 @@ export class EmojiUtils {
 
   /**
    * Template literal function for conditional emoji display.
-   * 
+   *
    * @param strings - Template literal strings
    * @param values - Template literal values
    * @returns Text with emoji if supported, or text with emoji stripped
@@ -101,7 +101,7 @@ export class EmojiUtils {
 
   /**
    * Format text with conditional emoji support.
-   * 
+   *
    * @param text - Text that may contain emoji
    * @returns Text with emoji if supported, or text with emoji stripped
    */
@@ -111,7 +111,7 @@ export class EmojiUtils {
 
   /**
    * Remove emoji from text regardless of terminal support.
-   * 
+   *
    * @param text - Text that may contain emoji
    * @returns Text with all emoji removed
    */

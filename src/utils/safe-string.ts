@@ -12,7 +12,7 @@ type ColorFunction = (text: string) => string;
 export class SafeStringUtils {
   /**
    * Apply color styling to text with automatic fallback for unsupported terminals.
-   * 
+   *
    * @param text - Text to colorize
    * @param colorFn - Color function (e.g., chalk.red)
    * @returns Colored text or plain text if colors not supported
@@ -30,7 +30,7 @@ export class SafeStringUtils {
 
   /**
    * Display Unicode symbol with ASCII fallback for unsupported terminals.
-   * 
+   *
    * @param unicodeSymbol - Preferred Unicode symbol
    * @param fallback - ASCII fallback character
    * @returns Unicode symbol or fallback based on terminal support

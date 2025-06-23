@@ -1,6 +1,6 @@
 /**
  * @fileoverview Utility modules for advanced DevLogr functionality
- * 
+ *
  * These utilities provide low-level access to DevLogr's internal functionality.
  * Most users will not need to use these directly - they are primarily for
  * power users and advanced integration scenarios.
