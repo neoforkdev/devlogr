@@ -148,7 +148,7 @@ export class SpinnerUtils {
           supportsUnicode: options.theme?.symbol ? true : false,
         },
       }
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
     ) as any;
 
     SpinnerUtils.tasks.set(key, { listr, title, spinner: spinnerInstance });
@@ -183,7 +183,7 @@ export class SpinnerUtils {
       if (taskInfo.resolver) taskInfo.resolver();
     }
     SpinnerUtils.tasks.delete(key);
-    
+
     // Stop rotation if we have 1 or fewer spinners
     if (SpinnerUtils.tasks.size <= 1) {
       SpinnerUtils.stopRotation();
@@ -312,7 +312,7 @@ export class SpinnerUtils {
     const keys = SpinnerUtils.getActiveSpinnerKeys();
     if (keys.length === 0) return null;
     if (keys.length === 1) return keys[0];
-    
+
     // Return the current active spinner based on rotation index
     return keys[SpinnerUtils.currentActiveIndex % keys.length];
   }
@@ -322,7 +322,7 @@ export class SpinnerUtils {
    */
   private static startRotation(): void {
     if (SpinnerUtils.rotationTimer) return; // Already running
-    
+
     SpinnerUtils.rotationTimer = setInterval(() => {
       const keys = SpinnerUtils.getActiveSpinnerKeys();
       if (keys.length > 1) {

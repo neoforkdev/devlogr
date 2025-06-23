@@ -537,7 +537,7 @@ export class Logger {
     // In JSON mode, always strip emojis for clean machine-readable output
     const shouldStripEmojis = true;
     const finalMessage = shouldStripEmojis ? EmojiUtils.forceStripEmojis(message) : message;
-    
+
     const logData: Record<string, unknown> = {
       level,
       message: finalMessage,
