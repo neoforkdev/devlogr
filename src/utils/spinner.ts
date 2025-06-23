@@ -185,14 +185,14 @@ export class SpinnerUtils {
           renderer.end();
         }
       }
-      
+
       // Clear the spinner display to prevent artifacts
       if (taskInfo.spinner?.clear) taskInfo.spinner.clear();
       if (taskInfo.spinner?.stop) taskInfo.spinner.stop();
-      
+
       // Resolve the promise to complete the task
       if (taskInfo.resolver) taskInfo.resolver();
-      
+
       // Clear the display and ensure clean state
       if (process.stdout.isTTY) {
         process.stdout.write('\u001b[2K\r'); // Clear current line and move cursor to beginning
@@ -243,18 +243,18 @@ export class SpinnerUtils {
           renderer.end();
         }
       }
-      
+
       // Clear the spinner display to prevent artifacts
       if (taskInfo.spinner?.clear) taskInfo.spinner.clear();
       if (taskInfo.spinner?.stop) taskInfo.spinner.stop();
-      
+
       if (taskInfo.resolver) taskInfo.resolver();
-      
+
       // Clear the display to ensure clean state
       if (process.stdout.isTTY) {
         process.stdout.write('\u001b[2K\r'); // Clear current line and move cursor to beginning
       }
-      
+
       return text;
     }
     return undefined;
@@ -281,20 +281,20 @@ export class SpinnerUtils {
           renderer.end();
         }
       }
-      
+
       // Clear the spinner display to prevent artifacts
       if (taskInfo.spinner?.clear) taskInfo.spinner.clear();
       if (taskInfo.spinner?.stop) taskInfo.spinner.stop();
-      
+
       if (taskInfo.rejecter) {
         taskInfo.rejecter(new Error(text || 'Task failed'));
       }
-      
+
       // Clear the display to ensure clean state
       if (process.stdout.isTTY) {
         process.stdout.write('\u001b[2K\r'); // Clear current line and move cursor to beginning
       }
-      
+
       return text;
     }
     return undefined;
@@ -344,19 +344,19 @@ export class SpinnerUtils {
           renderer.end();
         }
       }
-      
+
       // Clear the spinner display to prevent artifacts
       if (taskInfo.spinner?.clear) taskInfo.spinner.clear();
       if (taskInfo.spinner?.stop) taskInfo.spinner.stop();
-      
+
       if (taskInfo.resolver) taskInfo.resolver();
     }
-    
+
     // Clear the display to ensure clean state
     if (process.stdout.isTTY) {
       process.stdout.write('\u001b[2K\r'); // Clear current line and move cursor to beginning
     }
-    
+
     SpinnerUtils.tasks.clear();
     SpinnerUtils.stopRotation();
     SpinnerUtils.currentActiveIndex = 0; // Reset rotation index

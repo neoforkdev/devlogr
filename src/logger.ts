@@ -61,6 +61,11 @@ export class Logger {
   private readonly config: LogConfig;
   private static globalLevel?: LogLevel;
 
+  // Single spinner state - wraps around multi-spinner API
+  private singleSpinnerListr: Listr | null = null;
+  private singleSpinnerTask: { resolver?: () => void; rejecter?: (error: Error) => void } | null =
+    null;
+
   constructor(prefix: string) {
     this.prefix = prefix;
     this.config = LogConfiguration.getConfig();
@@ -226,8 +231,39 @@ export class Logger {
       return;
     }
 
-    const spinnerOptions = this.buildSpinnerOptions(text || 'Processing...', 'task', options);
-    SpinnerUtils.start(this.prefix, spinnerOptions);
+    // Stop any existing single spinner
+    this.stopSpinner();
+
+    const spinnerText = text || 'Processing...';
+
+    // Create a single task that will be managed as a multi-spinner with one item
+    const singleTask: ListrTask = {
+      title: spinnerText,
+      task: () => {
+        return new Promise<void>((resolve, reject) => {
+          this.singleSpinnerTask = { resolver: resolve, rejecter: reject };
+        });
+      },
+    };
+
+    // Create listr instance using the multi-spinner infrastructure
+    this.singleSpinnerListr = new Listr([singleTask], {
+      concurrent: false,
+      exitOnError: false,
+      renderer: DevLogrRenderer,
+      rendererOptions: {
+        prefix: this.prefix,
+        showTimestamp: this.config.showTimestamp,
+        useColors: this.config.useColors,
+        timestampFormat: this.config.timestampFormat,
+        supportsUnicode: this.config.supportsUnicode,
+      },
+    });
+
+    // Start the spinner task (don't await, let it run in background)
+    this.singleSpinnerListr.run().catch(() => {
+      // Handle errors silently, as they're expected when we complete with error
+    });
   }
 
   /**
@@ -239,7 +275,11 @@ export class Logger {
     if (this.config.useJson || !SpinnerUtils.supportsSpinners()) {
       return;
     }
-    SpinnerUtils.updateText(this.prefix, text);
+
+    // Update the task title in the single spinner listr instance
+    if (this.singleSpinnerListr && this.singleSpinnerListr.tasks?.[0]) {
+      this.singleSpinnerListr.tasks[0].title = text;
+    }
   }
 
   /**
@@ -249,7 +289,24 @@ export class Logger {
     if (this.config.useJson || !SpinnerUtils.supportsSpinners()) {
       return;
     }
-    SpinnerUtils.stop(this.prefix);
+
+    // For manual stops, we don't want to show any completion symbol
+    // Instead of resolving, we'll clean up the state without resolving the Promise
+    // This should make the spinner disappear without showing success/failure
+    if (this.singleSpinnerListr) {
+      // Try to stop the listr renderer directly
+      try {
+        if ((this.singleSpinnerListr as any).renderer?.end) {
+          (this.singleSpinnerListr as any).renderer.end();
+        }
+      } catch (error) {
+        // Ignore errors during cleanup
+      }
+    }
+
+    // Clean up state without resolving the Promise
+    this.singleSpinnerListr = null;
+    this.singleSpinnerTask = null;
   }
 
   /**
@@ -267,9 +324,33 @@ export class Logger {
       return;
     }
 
-    // Stop the spinner first with proper cleanup, then log the completion message
-    SpinnerUtils.stop(this.prefix);
-    this[type](completionText);
+    // If no spinner is active, fall back to regular logging
+    if (!this.singleSpinnerListr || !this.singleSpinnerTask) {
+      this[type](completionText);
+      return;
+    }
+
+    // Update the task title with completion text and complete the spinner
+    if (this.singleSpinnerListr.tasks?.[0]) {
+      this.singleSpinnerListr.tasks[0].title = completionText;
+    }
+
+    // Complete the task based on type
+    if (type === 'error') {
+      if (this.singleSpinnerTask.rejecter) {
+        this.singleSpinnerTask.rejecter(new Error(completionText));
+      }
+    } else {
+      if (this.singleSpinnerTask.resolver) {
+        this.singleSpinnerTask.resolver();
+      }
+    }
+
+    // Clean up state
+    this.singleSpinnerListr = null;
+    this.singleSpinnerTask = null;
+
+    // No additional logging needed - the task title update handles the visual completion
   }
 
   /**
