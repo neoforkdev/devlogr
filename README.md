@@ -2,7 +2,9 @@
 
 > Because deployment tools deserve better than sad `console.log()`s.
 
-![devlogr demo animation](https://raw.githubusercontent.com/neoforkdev/devlogr/refs/heads/main/.github/demo.gif)
+<p align="center">
+  <img src="https://raw.githubusercontent.com/neoforkdev/devlogr/refs/heads/main/.github/demo.gif" alt="devlogr demo animation" width="100%" style="max-width: 800px;">
+</p>
 
 <div align="center"><strong>⚡ The logger for UX-friendly deployment tools ⚡</strong><br/>CLI-native, CI-compliant, emoji-sprinkled delight. No setup. All signal.</div>
 
