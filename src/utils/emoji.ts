@@ -1,6 +1,6 @@
 /**
- * Practical emoji detection and handling utilities
- * Covers 95% of emoji use cases with much simpler implementation
+ * Emoji detection and handling utilities for terminal output.
+ * Automatically detects terminal support and provides fallbacks.
  */
 export class EmojiUtils {
   // Improved emoji detection regex - covers more symbols while staying simple
@@ -19,7 +19,9 @@ export class EmojiUtils {
   }
 
   /**
-   * Enhanced emoji support detection with terminal capability analysis
+   * Check if the current terminal supports emoji display.
+   * 
+   * @returns True if emoji should be displayed, false otherwise
    */
   static supportsEmoji(): boolean {
     // Explicit disable via environment variables (check global standards first)
@@ -86,7 +88,11 @@ export class EmojiUtils {
   }
 
   /**
-   * Template literal support for conditional emoji
+   * Template literal function for conditional emoji display.
+   * 
+   * @param strings - Template literal strings
+   * @param values - Template literal values
+   * @returns Text with emoji if supported, or text with emoji stripped
    */
   static emoji(strings: TemplateStringsArray, ...values: unknown[]): string {
     const full = strings.reduce((acc, str, i) => acc + str + (values[i] ?? ''), '');
@@ -94,15 +100,20 @@ export class EmojiUtils {
   }
 
   /**
-   * Format text with conditional emoji support
+   * Format text with conditional emoji support.
+   * 
+   * @param text - Text that may contain emoji
+   * @returns Text with emoji if supported, or text with emoji stripped
    */
   static format(text: string): string {
     return this.supportsEmoji() ? text : this.stripEmojisAndFixSpaces(text);
   }
 
   /**
-   * Force strip emojis regardless of environment/support detection
-   * Used for JSON mode and explicit stripping
+   * Remove emoji from text regardless of terminal support.
+   * 
+   * @param text - Text that may contain emoji
+   * @returns Text with all emoji removed
    */
   static forceStripEmojis(text: string): string {
     return this.stripEmojisAndFixSpaces(text);

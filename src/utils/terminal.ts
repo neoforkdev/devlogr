@@ -1,10 +1,12 @@
 /**
- * Terminal capability detection utilities
- * Handles Unicode, color, and other terminal feature detection
+ * Terminal capability detection utilities for cross-platform compatibility.
+ * Automatically detects color, Unicode, and other terminal features.
  */
 export class TerminalUtils {
   /**
-   * Checks if the current terminal supports Unicode characters
+   * Check if the current terminal supports Unicode characters.
+   * 
+   * @returns True if Unicode symbols can be displayed, false otherwise
    */
   static supportsUnicode(): boolean {
     // Check environment variables that indicate Unicode support
@@ -83,7 +85,9 @@ export class TerminalUtils {
   }
 
   /**
-   * Checks if the current terminal supports colors
+   * Check if the current terminal supports ANSI color codes.
+   * 
+   * @returns True if colors can be displayed, false otherwise
    */
   static supportsColor(): boolean {
     // Check global standards first (NO_COLOR is the established standard)
@@ -184,7 +188,9 @@ export class TerminalUtils {
   }
 
   /**
-   * Gets the appropriate fallback symbols for non-Unicode terminals
+   * Get ASCII fallback symbols for terminals that don't support Unicode.
+   * 
+   * @returns Object mapping log levels to ASCII symbols
    */
   static getFallbackSymbols(): Record<string, string> {
     return {

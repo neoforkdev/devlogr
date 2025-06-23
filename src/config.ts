@@ -5,6 +5,9 @@ import { TerminalUtils } from './utils';
 // CONFIGURATION MANAGEMENT
 // ============================================================================
 
+/**
+ * Manages logger configuration from environment variables and terminal detection.
+ */
 export class LogConfiguration {
   private static readonly ENV_LOG_LEVEL = 'DEVLOGR_LOG_LEVEL';
   private static readonly ENV_OUTPUT_JSON = 'DEVLOGR_OUTPUT_JSON';
@@ -13,7 +16,9 @@ export class LogConfiguration {
   private static readonly ENV_SHOW_TIMESTAMP = 'DEVLOGR_SHOW_TIMESTAMP';
 
   /**
-   * Gets complete logger configuration from environment
+   * Get complete logger configuration from environment and terminal detection.
+   * 
+   * @returns Complete configuration object with all logger settings
    */
   static getConfig(): LogConfig {
     const timestampConfig = this.getTimestampConfig();

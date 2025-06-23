@@ -6,12 +6,16 @@ import chalk from 'chalk';
 type ColorFunction = (text: string) => string;
 
 /**
- * Safe string utilities that respect logger conventions
- * Provides color-aware string formatting with fallbacks
+ * Safe string formatting utilities with automatic fallbacks for terminal compatibility.
+ * Handles color, Unicode, and emoji formatting with appropriate fallbacks.
  */
 export class SafeStringUtils {
   /**
-   * Creates a safe string with appropriate color styling
+   * Apply color styling to text with automatic fallback for unsupported terminals.
+   * 
+   * @param text - Text to colorize
+   * @param colorFn - Color function (e.g., chalk.red)
+   * @returns Colored text or plain text if colors not supported
    */
   static color(text: string, colorFn: ColorFunction): string {
     return TerminalUtils.supportsColor() ? colorFn(text) : text;
@@ -25,7 +29,11 @@ export class SafeStringUtils {
   }
 
   /**
-   * Creates a safe symbol that works across all terminals
+   * Display Unicode symbol with ASCII fallback for unsupported terminals.
+   * 
+   * @param unicodeSymbol - Preferred Unicode symbol
+   * @param fallback - ASCII fallback character
+   * @returns Unicode symbol or fallback based on terminal support
    */
   static symbol(unicodeSymbol: string, fallback: string): string {
     return TerminalUtils.supportsUnicode() ? unicodeSymbol : fallback;

@@ -7,17 +7,41 @@ import { DevLogrRenderer } from '../devlogr-renderer.js';
 // SPINNER UTILITY - LISTR2 TASK MANAGEMENT
 // ============================================================================
 
+/**
+ * Configuration options for customizing spinner appearance and behavior.
+ */
 export interface SpinnerOptions {
+  /** Text to display with the spinner */
   text?: string;
+  
+  /** Symbol to use for the spinner animation */
   symbol?: string;
+  
+  /** Color for the spinner and text */
   color?: string;
+  
+  /** Additional text to prefix before the spinner */
   prefixText?: string;
+  
+  /** Indentation level for nested display */
   indent?: number;
+  
+  /** Unique prefix identifier for the spinner */
   prefix?: string;
+  
+  /** Whether to show timestamps */
   showTimestamp?: boolean;
+  
+  /** Whether to use colors in output */
   useColors?: boolean;
+  
+  /** Log level for the spinner message */
   level?: string;
+  
+  /** Theme configuration for styling */
   theme?: LogTheme;
+  
+  /** Format for timestamp display */
   timestampFormat?: TimestampFormat;
 }
 
@@ -30,14 +54,38 @@ interface TaskInfo {
 }
 
 /**
- * Spinner utility using listr2 for reliable task management
- * Supports multiple concurrent spinners with automatic cleanup
+ * Low-level spinner management utilities using listr2.
+ * 
+ * Provides direct control over spinners for advanced use cases.
+ * Most users should use the Logger class spinner methods instead.
+ * 
+ * @example Basic Usage
+ * ```typescript
+ * import { SpinnerUtils } from '@neofork/devlogr';
+ * 
+ * SpinnerUtils.start('deploy', { text: 'Deploying...' });
+ * // ... do work ...
+ * SpinnerUtils.succeed('deploy', 'Deployed successfully!');
+ * ```
+ * 
+ * @example Multiple Spinners
+ * ```typescript
+ * SpinnerUtils.start('build', { text: 'Building...' });
+ * SpinnerUtils.start('test', { text: 'Testing...' });
+ * 
+ * SpinnerUtils.succeed('build', 'Build complete');
+ * SpinnerUtils.fail('test', 'Tests failed');
+ * ```
  */
 export class SpinnerUtils {
   private static tasks = new Map<string, TaskInfo>();
 
   /**
-   * Start a named task/spinner
+   * Start a named spinner with the specified options.
+   * 
+   * @param key - Unique identifier for this spinner
+   * @param options - Spinner configuration options
+   * @returns Listr instance for the spinner
    */
   static start(key: string, options: SpinnerOptions = {}): Listr {
     // Stop existing task with same key
@@ -99,7 +147,9 @@ export class SpinnerUtils {
   }
 
   /**
-   * Stop a named task
+   * Stop a named spinner without completion message.
+   * 
+   * @param key - Unique identifier of the spinner to stop
    */
   static stop(key: string): void {
     const taskInfo = SpinnerUtils.tasks.get(key);
@@ -112,7 +162,10 @@ export class SpinnerUtils {
   }
 
   /**
-   * Update text of a named task
+   * Update the display text of an active spinner.
+   * 
+   * @param key - Unique identifier of the spinner
+   * @param text - New text to display
    */
   static updateText(key: string, text: string): void {
     const taskInfo = SpinnerUtils.tasks.get(key);
@@ -125,7 +178,11 @@ export class SpinnerUtils {
   }
 
   /**
-   * Complete task with success
+   * Complete a spinner with success status.
+   * 
+   * @param key - Unique identifier of the spinner
+   * @param text - Optional success message
+   * @returns The completion text or undefined
    */
   static succeed(key: string, text?: string): string | undefined {
     const taskInfo = SpinnerUtils.tasks.get(key);
@@ -143,7 +200,11 @@ export class SpinnerUtils {
   }
 
   /**
-   * Complete task with failure
+   * Complete a spinner with failure status.
+   * 
+   * @param key - Unique identifier of the spinner
+   * @param text - Optional failure message
+   * @returns The completion text or undefined
    */
   static fail(key: string, text?: string): string | undefined {
     const taskInfo = SpinnerUtils.tasks.get(key);
@@ -221,7 +282,9 @@ export class SpinnerUtils {
   }
 
   /**
-   * Check if spinners are supported in current environment
+   * Check if spinners are supported in the current environment.
+   * 
+   * @returns True if spinners can be displayed, false otherwise
    */
   static supportsSpinners(): boolean {
     return (
