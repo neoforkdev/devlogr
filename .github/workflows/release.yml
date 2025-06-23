@@ -44,6 +44,7 @@ jobs:
         run: npm publish --provenance --access public
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+          FORCE_COLOR: '1'
 
       - name: Create GitHub release summary
         run: |
