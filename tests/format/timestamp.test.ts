@@ -282,7 +282,7 @@ describe('Logger Timestamp Behavior', () => {
 
       expect(consoleSpy).toHaveBeenCalled();
       const output = consoleSpy.mock.calls[0][0];
-      expect(output).toMatch(/"timestamp":"\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z"/);
+      expect(output).toMatch(/"timestamp"\s*:\s*"\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z"/);
 
       delete process.env.DEVLOGR_OUTPUT_JSON;
     });

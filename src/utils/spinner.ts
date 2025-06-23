@@ -1,4 +1,4 @@
-import { Listr, ListrTask } from 'listr2';
+import { Listr } from 'listr2';
 import { TerminalUtils } from './terminal';
 import { LogTheme, TimestampFormat } from '../types';
 import { DevLogrRenderer } from '../devlogr-renderer.js';
@@ -45,12 +45,24 @@ export interface SpinnerOptions {
   timestampFormat?: TimestampFormat;
 }
 
+interface SpinnerInstance {
+  start?: () => void;
+  stop?: () => void;
+  clear?: () => void;
+  succeed?: () => void;
+  fail?: () => void;
+  warn?: () => void;
+  info?: () => void;
+  render?: () => void;
+  text?: string;
+}
+
 interface TaskInfo {
   listr: Listr;
   resolver?: () => void;
   rejecter?: (error: Error) => void;
   title: string;
-  spinner?: any;
+  spinner?: SpinnerInstance;
 }
 
 /**
@@ -79,6 +91,8 @@ interface TaskInfo {
  */
 export class SpinnerUtils {
   private static tasks = new Map<string, TaskInfo>();
+  private static rotationTimer: ReturnType<typeof setInterval> | null = null;
+  private static currentActiveIndex = 0;
 
   /**
    * Start a named spinner with the specified options.
@@ -95,7 +109,7 @@ export class SpinnerUtils {
 
     if (!SpinnerUtils.supportsSpinners()) {
       // Fallback: just store the task info without actually showing spinner
-      const mockListr = { run: () => Promise.resolve() } as any;
+      const mockListr = { run: () => Promise.resolve() } as Listr;
       SpinnerUtils.tasks.set(key, { listr: mockListr, title });
       return mockListr;
     }
@@ -134,13 +148,23 @@ export class SpinnerUtils {
           supportsUnicode: options.theme?.symbol ? true : false,
         },
       }
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     ) as any;
 
     SpinnerUtils.tasks.set(key, { listr, title, spinner: spinnerInstance });
 
+    // Start rotation if we have multiple spinners
+    if (SpinnerUtils.tasks.size > 1) {
+      SpinnerUtils.startRotation();
+    }
+
     // Start the task and handle cleanup
     listr.run().finally(() => {
       SpinnerUtils.tasks.delete(key);
+      // Stop rotation if we have 1 or fewer spinners
+      if (SpinnerUtils.tasks.size <= 1) {
+        SpinnerUtils.stopRotation();
+      }
     });
 
     return listr;
@@ -159,6 +183,11 @@ export class SpinnerUtils {
       if (taskInfo.resolver) taskInfo.resolver();
     }
     SpinnerUtils.tasks.delete(key);
+    
+    // Stop rotation if we have 1 or fewer spinners
+    if (SpinnerUtils.tasks.size <= 1) {
+      SpinnerUtils.stopRotation();
+    }
   }
 
   /**
@@ -233,7 +262,7 @@ export class SpinnerUtils {
   /**
    * Create a mock spinner for testing
    */
-  static create(options: SpinnerOptions = {}): any {
+  static create(options: SpinnerOptions = {}): SpinnerInstance {
     return {
       text: options.text || '',
       start: () => {},
@@ -250,7 +279,7 @@ export class SpinnerUtils {
   /**
    * Get a named task runner by key
    */
-  static getSpinner(key: string): { text?: string; listr?: any } | undefined {
+  static getSpinner(key: string): { text?: string; listr?: Listr } | undefined {
     const taskInfo = SpinnerUtils.tasks.get(key);
     return taskInfo ? { text: taskInfo.title, listr: taskInfo.listr } : undefined;
   }
@@ -259,12 +288,14 @@ export class SpinnerUtils {
    * Stop all active tasks
    */
   static stopAllSpinners(): void {
-    for (const [key, taskInfo] of SpinnerUtils.tasks.entries()) {
+    for (const [, taskInfo] of SpinnerUtils.tasks.entries()) {
       if (taskInfo.spinner?.stop) taskInfo.spinner.stop();
       if (taskInfo.spinner?.clear) taskInfo.spinner.clear();
       if (taskInfo.resolver) taskInfo.resolver();
     }
     SpinnerUtils.tasks.clear();
+    SpinnerUtils.stopRotation();
+    SpinnerUtils.currentActiveIndex = 0; // Reset rotation index
   }
 
   /**
@@ -275,10 +306,39 @@ export class SpinnerUtils {
   }
 
   /**
-   * Get currently active spinner (first one)
+   * Get currently active spinner (rotates automatically)
    */
   static getCurrentActiveSpinner(): string | null {
-    return SpinnerUtils.getActiveSpinnerKeys()[0] || null;
+    const keys = SpinnerUtils.getActiveSpinnerKeys();
+    if (keys.length === 0) return null;
+    if (keys.length === 1) return keys[0];
+    
+    // Return the current active spinner based on rotation index
+    return keys[SpinnerUtils.currentActiveIndex % keys.length];
+  }
+
+  /**
+   * Start automatic rotation between spinners
+   */
+  private static startRotation(): void {
+    if (SpinnerUtils.rotationTimer) return; // Already running
+    
+    SpinnerUtils.rotationTimer = setInterval(() => {
+      const keys = SpinnerUtils.getActiveSpinnerKeys();
+      if (keys.length > 1) {
+        SpinnerUtils.currentActiveIndex = (SpinnerUtils.currentActiveIndex + 1) % keys.length;
+      }
+    }, 2000); // Rotate every 2 seconds
+  }
+
+  /**
+   * Stop automatic rotation
+   */
+  private static stopRotation(): void {
+    if (SpinnerUtils.rotationTimer) {
+      clearInterval(SpinnerUtils.rotationTimer);
+      SpinnerUtils.rotationTimer = null;
+    }
   }
 
   /**
@@ -301,10 +361,11 @@ export class SpinnerUtils {
     hasRotationCycle: boolean;
     isSpinnerPaused: boolean;
   } {
+    const totalSpinners = SpinnerUtils.tasks.size;
     return {
-      totalSpinners: SpinnerUtils.tasks.size,
+      totalSpinners,
       activeSpinner: SpinnerUtils.getCurrentActiveSpinner(),
-      hasRotationCycle: false, // Removed rotation complexity
+      hasRotationCycle: totalSpinners > 1, // True when multiple spinners are active
       isSpinnerPaused: false,
     };
   }

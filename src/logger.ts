@@ -526,7 +526,7 @@ export class Logger {
 
   private logJson(level: LogLevel, message: string, args: unknown[]): void {
     const logData = this.buildJsonLogData(level, message, args);
-    console.log(JSON.stringify(logData));
+    this.outputToConsole(level, StringUtils.safeJsonStringify(logData));
   }
 
   private buildJsonLogData(
@@ -534,19 +534,27 @@ export class Logger {
     message: string,
     args: unknown[]
   ): Record<string, unknown> {
+    // In JSON mode, always strip emojis for clean machine-readable output
+    const shouldStripEmojis = true;
+    const finalMessage = shouldStripEmojis ? EmojiUtils.forceStripEmojis(message) : message;
+    
     const logData: Record<string, unknown> = {
       level,
-      message,
+      message: finalMessage,
       prefix: this.prefix,
       timestamp: new Date().toISOString(),
     };
 
-    // Add arguments to log data
+    // Add arguments to log data with emoji stripping
     args.forEach((arg, index) => {
-      if (this.isPlainObject(arg)) {
-        this.mergeObjectArg(logData, arg as Record<string, unknown>, index);
+      if (this.isPlainObject(arg) && !this.hasCircularReferences(arg)) {
+        this.mergeObjectArg(logData, arg as Record<string, unknown>, index, shouldStripEmojis);
       } else {
-        this.addSimpleArg(logData, arg, index);
+        let processedArg = arg;
+        if (shouldStripEmojis && typeof arg === 'string') {
+          processedArg = EmojiUtils.forceStripEmojis(arg);
+        }
+        this.addSimpleArg(logData, processedArg, index);
       }
     });
 
@@ -557,14 +565,28 @@ export class Logger {
     return arg !== null && typeof arg === 'object' && arg.constructor === Object;
   }
 
+  private hasCircularReferences(obj: unknown): boolean {
+    try {
+      JSON.stringify(obj);
+      return false;
+    } catch (error) {
+      return error instanceof TypeError && error.message.includes('circular');
+    }
+  }
+
   private mergeObjectArg(
     logData: Record<string, unknown>,
     arg: Record<string, unknown>,
-    index: number
+    index: number,
+    shouldStripEmojis: boolean
   ): void {
     Object.keys(arg).forEach(key => {
       const safeKey = key in logData ? `arg${index}_${key}` : key;
-      logData[safeKey] = arg[key];
+      let value = arg[key];
+      if (shouldStripEmojis && typeof value === 'string') {
+        value = EmojiUtils.forceStripEmojis(value);
+      }
+      logData[safeKey] = value;
     });
   }
 
@@ -581,9 +603,10 @@ export class Logger {
     const theme = ThemeProvider.getTheme(level);
     const maxPrefixLength = PrefixTracker.getMaxLength();
 
+    const shouldStripEmojis = !EmojiUtils.supportsEmoji();
     let finalMessage = message;
-    if (!this.config.supportsUnicode) {
-      finalMessage = EmojiUtils.format(message);
+    if (shouldStripEmojis) {
+      finalMessage = EmojiUtils.forceStripEmojis(message);
     }
 
     return MessageFormatter.format({
@@ -596,7 +619,7 @@ export class Logger {
       showTimestamp: this.config.showTimestamp,
       useColors: this.config.useColors,
       timestampFormat: this.config.timestampFormat,
-      stripEmojis: !this.config.supportsUnicode,
+      stripEmojis: shouldStripEmojis,
     });
   }
 
