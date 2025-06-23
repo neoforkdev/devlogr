@@ -71,7 +71,8 @@ describe('Spinner Colors Integration', () => {
     const output = (renderer as any).createOutput();
 
     // In CI environments, colors might be disabled, so check conditionally
-    const hasColors = process.stdout.isTTY && !process.env.NO_COLOR && !process.env.DEVLOGR_NO_COLOR;
+    const hasColors =
+      process.stdout.isTTY && !process.env.NO_COLOR && !process.env.DEVLOGR_NO_COLOR;
     if (hasColors) {
       expect(output).toContain('\u001b['); // Contains ANSI escape sequences
     }
@@ -118,7 +119,8 @@ describe('Spinner Colors Integration', () => {
     const output = (renderer as any).createOutput();
 
     // In CI environments, colors might be disabled, so check conditionally
-    const hasColors = process.stdout.isTTY && !process.env.NO_COLOR && !process.env.DEVLOGR_NO_COLOR;
+    const hasColors =
+      process.stdout.isTTY && !process.env.NO_COLOR && !process.env.DEVLOGR_NO_COLOR;
     if (hasColors) {
       // Check for specific color codes
       expect(output).toContain('\u001b[34m'); // Blue for loading (spinner)
@@ -141,14 +143,15 @@ describe('Spinner Colors Integration', () => {
     const yellowCircle = chalk.yellow('◯');
 
     // In CI environments, colors might be disabled, so check conditionally
-    const hasColors = process.stdout.isTTY && !process.env.NO_COLOR && !process.env.DEVLOGR_NO_COLOR;
+    const hasColors =
+      process.stdout.isTTY && !process.env.NO_COLOR && !process.env.DEVLOGR_NO_COLOR;
     if (hasColors) {
       // Verify that our color application produces the expected strings
       expect(blueSpinner).toContain('\u001b[34m');
       expect(redX).toContain('\u001b[31m');
       expect(yellowCircle).toContain('\u001b[33m');
     }
-    
+
     // These should always contain the symbols regardless of color support
     expect(blueSpinner).toContain('⠋');
     expect(greenCheck).toContain('✔');
@@ -181,8 +184,9 @@ describe('Spinner Colors Integration', () => {
 
     const output = (renderer as any).createOutput();
 
-    // In CI environments, colors might be disabled, so check conditionally  
-    const hasColors = process.stdout.isTTY && !process.env.NO_COLOR && !process.env.DEVLOGR_NO_COLOR;
+    // In CI environments, colors might be disabled, so check conditionally
+    const hasColors =
+      process.stdout.isTTY && !process.env.NO_COLOR && !process.env.DEVLOGR_NO_COLOR;
     if (hasColors) {
       expect(output).toContain('\u001b[36m'); // Cyan color code
     }

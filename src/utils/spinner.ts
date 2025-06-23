@@ -57,6 +57,21 @@ interface SpinnerInstance {
   text?: string;
 }
 
+interface ListrRenderer {
+  end?: () => void;
+}
+
+// Helper function to safely access Listr renderer
+function getListrRenderer(listr: Listr): ListrRenderer | null {
+  try {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const renderer = (listr as any).renderer;
+    return renderer && typeof renderer.end === 'function' ? renderer : null;
+  } catch {
+    return null;
+  }
+}
+
 interface TaskInfo {
   listr: Listr;
   resolver?: () => void;
@@ -179,11 +194,9 @@ export class SpinnerUtils {
     const taskInfo = SpinnerUtils.tasks.get(key);
     if (taskInfo) {
       // First, stop the listr2 renderer to prevent further updates
-      if (taskInfo.listr && (taskInfo.listr as any).renderer) {
-        const renderer = (taskInfo.listr as any).renderer;
-        if (renderer.end) {
-          renderer.end();
-        }
+      const renderer = getListrRenderer(taskInfo.listr);
+      if (renderer?.end) {
+        renderer.end();
       }
 
       // Clear the spinner display to prevent artifacts
@@ -237,11 +250,9 @@ export class SpinnerUtils {
       }
 
       // First, stop the listr2 renderer to prevent further updates
-      if (taskInfo.listr && (taskInfo.listr as any).renderer) {
-        const renderer = (taskInfo.listr as any).renderer;
-        if (renderer.end) {
-          renderer.end();
-        }
+      const renderer = getListrRenderer(taskInfo.listr);
+      if (renderer?.end) {
+        renderer.end();
       }
 
       // Clear the spinner display to prevent artifacts
@@ -275,11 +286,9 @@ export class SpinnerUtils {
       }
 
       // First, stop the listr2 renderer to prevent further updates
-      if (taskInfo.listr && (taskInfo.listr as any).renderer) {
-        const renderer = (taskInfo.listr as any).renderer;
-        if (renderer.end) {
-          renderer.end();
-        }
+      const renderer = getListrRenderer(taskInfo.listr);
+      if (renderer?.end) {
+        renderer.end();
       }
 
       // Clear the spinner display to prevent artifacts
@@ -338,11 +347,9 @@ export class SpinnerUtils {
   static stopAllSpinners(): void {
     for (const [, taskInfo] of SpinnerUtils.tasks.entries()) {
       // First, stop the listr2 renderer to prevent further updates
-      if (taskInfo.listr && (taskInfo.listr as any).renderer) {
-        const renderer = (taskInfo.listr as any).renderer;
-        if (renderer.end) {
-          renderer.end();
-        }
+      const renderer = getListrRenderer(taskInfo.listr);
+      if (renderer?.end) {
+        renderer.end();
       }
 
       // Clear the spinner display to prevent artifacts

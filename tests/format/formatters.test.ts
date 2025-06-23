@@ -69,7 +69,8 @@ describe('MessageFormatter', () => {
       const resultWithoutColors = MessageFormatter.formatBasicPrefix('test', 10, true, false);
 
       // In CI environments, colors might be disabled, so check conditionally
-      const hasColors = process.stdout.isTTY && !process.env.NO_COLOR && !process.env.DEVLOGR_NO_COLOR;
+      const hasColors =
+        process.stdout.isTTY && !process.env.NO_COLOR && !process.env.DEVLOGR_NO_COLOR;
       if (hasColors) {
         expect(resultWithColors).toContain('\u001b[');
       }

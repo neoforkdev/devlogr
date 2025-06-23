@@ -48,7 +48,8 @@ describe('Comprehensive Feature Coverage Tests', () => {
 
         // Verify colors are applied (contains ANSI escape sequences)
         // Only check if we actually have TTY support and colors aren't disabled
-        const hasColors = process.stdout.isTTY && !process.env.NO_COLOR && !process.env.DEVLOGR_NO_COLOR;
+        const hasColors =
+          process.stdout.isTTY && !process.env.NO_COLOR && !process.env.DEVLOGR_NO_COLOR;
         if (hasColors) {
           expect(consoleSpy).toHaveBeenCalledWith(expect.stringMatching(/\u001b\[/));
           expect(errorSpy).toHaveBeenCalledWith(expect.stringMatching(/\u001b\[/));
@@ -193,7 +194,8 @@ describe('Comprehensive Feature Coverage Tests', () => {
         const successColored = themes.success.color('test');
 
         // In CI environments, colors might be disabled, so we need to check if colors are actually enabled
-        const hasColors = process.stdout.isTTY && !process.env.NO_COLOR && !process.env.DEVLOGR_NO_COLOR;
+        const hasColors =
+          process.stdout.isTTY && !process.env.NO_COLOR && !process.env.DEVLOGR_NO_COLOR;
         if (hasColors) {
           expect(infoColored).not.toBe('test'); // Should be modified by color
           expect(successColored).not.toBe('test'); // Should be modified by color
@@ -523,11 +525,12 @@ describe('Comprehensive Feature Coverage Tests', () => {
       const output = (renderer as any).createOutput();
 
       // In CI environments, colors might be disabled, so check conditionally
-      const hasColors = process.stdout.isTTY && !process.env.NO_COLOR && !process.env.DEVLOGR_NO_COLOR;
+      const hasColors =
+        process.stdout.isTTY && !process.env.NO_COLOR && !process.env.DEVLOGR_NO_COLOR;
       if (hasColors) {
         expect(output).toContain('\u001b['); // ANSI color codes
       }
-      
+
       // Strip ANSI codes for timestamp check
       const cleanOutput = output.replace(/\u001b\[[0-9;]*m/g, '');
       expect(cleanOutput).toMatch(/^\[[\d:]+\]/); // Timestamp
