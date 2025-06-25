@@ -19,6 +19,7 @@ describe('Logger Environment Variables', () => {
       NO_EMOJI: process.env.NO_EMOJI,
       DEVLOGR_NO_EMOJI: process.env.DEVLOGR_NO_EMOJI,
       DEVLOGR_SHOW_TIMESTAMP: process.env.DEVLOGR_SHOW_TIMESTAMP,
+      DEVLOGR_NO_ICONS: process.env.DEVLOGR_NO_ICONS,
     };
 
     // Clear environment variables for clean slate
@@ -317,6 +318,77 @@ describe('Logger Environment Variables', () => {
       process.env.DEVLOGR_UNICODE = 'true';
       const config = LogConfiguration.getConfig();
       expect(config.supportsUnicode).toBe(true);
+    });
+  });
+
+  describe('Icon Environment Variables', () => {
+    it('should respect DEVLOGR_NO_ICONS environment variable', () => {
+      process.env.DEVLOGR_NO_ICONS = 'true';
+      const config = LogConfiguration.getConfig();
+      expect(config.showIcons).toBe(false);
+    });
+
+    it('should respect DEVLOGR_NO_ICONS=1 environment variable', () => {
+      process.env.DEVLOGR_NO_ICONS = '1';
+      const config = LogConfiguration.getConfig();
+      expect(config.showIcons).toBe(false);
+    });
+
+    it('should show icons by default when DEVLOGR_NO_ICONS is not set', () => {
+      delete process.env.DEVLOGR_NO_ICONS;
+      const config = LogConfiguration.getConfig();
+      expect(config.showIcons).toBe(true);
+    });
+
+    it('should show icons when DEVLOGR_NO_ICONS is set to false', () => {
+      process.env.DEVLOGR_NO_ICONS = 'false';
+      const config = LogConfiguration.getConfig();
+      expect(config.showIcons).toBe(true);
+    });
+
+    it('should hide icons in log output when DEVLOGR_NO_ICONS=true', () => {
+      process.env.DEVLOGR_NO_ICONS = 'true';
+      const logger = createLogger('TEST');
+
+      const consoleSpy = vi.spyOn(console, 'log').mockImplementation(() => {});
+
+      logger.info('Test message');
+      logger.success('Success message');
+      logger.error('Error message');
+
+      expect(consoleSpy).toHaveBeenCalled();
+
+      // Check that no Unicode symbols appear in the output
+      const loggedMessages = consoleSpy.mock.calls.map(call => call[0] as string);
+      loggedMessages.forEach(message => {
+        expect(message).not.toMatch(/[✓✗!?•→●]/); // Common log symbols
+      });
+
+      consoleSpy.mockRestore();
+    });
+
+    it('should remove icon padding when DEVLOGR_NO_ICONS=true and DEVLOGR_SHOW_PREFIX=true', () => {
+      process.env.DEVLOGR_NO_ICONS = 'true';
+      process.env.DEVLOGR_SHOW_PREFIX = 'true';
+      const logger = createLogger('TEST');
+
+      const consoleSpy = vi.spyOn(console, 'log').mockImplementation(() => {});
+
+      logger.info('Test message');
+
+      expect(consoleSpy).toHaveBeenCalled();
+
+      const loggedMessage = consoleSpy.mock.calls[0][0] as string;
+      // Strip ANSI color codes for testing
+      const cleanMessage = loggedMessage.replace(/\u001b\[[0-9;]*m/g, '');
+
+      // When icons are disabled, there should be no extra spacing before the log level
+      // The message should start with the level label directly (no leading spaces for icon alignment)
+      expect(cleanMessage).toMatch(/^INFO\s+\[TEST\]/);
+      // Should NOT have the typical 2-space icon padding
+      expect(cleanMessage).not.toMatch(/^\s{2}INFO/);
+
+      consoleSpy.mockRestore();
     });
   });
 

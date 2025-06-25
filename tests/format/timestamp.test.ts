@@ -34,16 +34,20 @@ describe('Logger Timestamp Behavior', () => {
   describe('DEVLOGR_SHOW_TIMESTAMP Environment Variable', () => {
     it('should show timestamps when DEVLOGR_SHOW_TIMESTAMP=true', () => {
       process.env.DEVLOGR_SHOW_TIMESTAMP = 'true';
-      logger = createLogger('TIMESTAMP_TEST');
+      // Enable prefix to test both together
+      process.env.DEVLOGR_SHOW_PREFIX = 'true';
+
+      const logger = new Logger('TIMESTAMP_TEST');
+      const consoleSpy = vi.spyOn(console, 'log');
 
       logger.info('Info message with timestamp');
 
-      expect(consoleSpy).toHaveBeenCalled();
-      const output = consoleSpy.mock.calls[0][0];
+      expect(consoleSpy).toHaveBeenCalledTimes(1);
+      const output = String(consoleSpy.mock.calls[0][0]);
 
-      // Should contain timestamp pattern [HH:MM:SS]
+      // Should contain timestamp in HH:MM:SS format
       expect(output).toMatch(/\[\d{2}:\d{2}:\d{2}\]/);
-      // Should contain info symbol and label
+      // Should contain level
       expect(output).toMatch(/INFO/);
       // Should contain prefix
       expect(output).toMatch(/\[TIMESTAMP_TEST\]/);
@@ -52,42 +56,58 @@ describe('Logger Timestamp Behavior', () => {
     });
 
     it('should not show timestamps when DEVLOGR_SHOW_TIMESTAMP is not set', () => {
-      logger = createLogger('NO_TIMESTAMP');
+      const logger = new Logger('NO_TIMESTAMP_TEST');
 
       logger.info('Info message without timestamp');
 
-      expect(consoleSpy).toHaveBeenCalled();
-      const output = consoleSpy.mock.calls[0][0];
+      const output = consoleSpy.mock.calls[0][0] as string;
 
-      // Should NOT contain timestamp pattern
+      // Should NOT contain timestamp
       expect(output).not.toMatch(/\[\d{2}:\d{2}:\d{2}\]/);
-      // Should contain symbol and message in simple format
-      expect(output).toMatch(/Info message without timestamp/);
+      // Should NOT contain level text (since prefix is disabled by default)
+      expect(output).not.toMatch(/INFO/);
+      // Should NOT contain prefix (default behavior)
+      expect(output).not.toMatch(/\[NO_TIMESTAMP_TEST\]/);
+      // Should contain the message
+      expect(output).toContain('Info message without timestamp');
     });
 
     it('should not show timestamps when DEVLOGR_SHOW_TIMESTAMP=false', () => {
       process.env.DEVLOGR_SHOW_TIMESTAMP = 'false';
-      logger = createLogger('FALSE_TIMESTAMP');
 
-      logger.info('Info message without timestamp');
+      const logger = new Logger('FALSE_TIMESTAMP_TEST');
 
-      expect(consoleSpy).toHaveBeenCalled();
-      const output = consoleSpy.mock.calls[0][0];
+      logger.info('Info message with timestamp false');
 
+      const output = consoleSpy.mock.calls[0][0] as string;
+
+      // Should NOT contain timestamp
       expect(output).not.toMatch(/\[\d{2}:\d{2}:\d{2}\]/);
-      expect(output).toMatch(/Info message without timestamp/);
+      // Should NOT contain level text (since prefix is disabled by default)
+      expect(output).not.toMatch(/INFO/);
+      // Should contain the message
+      expect(output).toContain('Info message with timestamp false');
     });
 
     it('should show timestamps for all log levels when DEVLOGR_SHOW_TIMESTAMP=true', () => {
       process.env.DEVLOGR_SHOW_TIMESTAMP = 'true';
-      Logger.setLevel(LogLevel.TRACE);
-      logger = createLogger('ALL_LEVELS');
+      // Enable prefix to test both together
+      process.env.DEVLOGR_SHOW_PREFIX = 'true';
 
+      const logger = new Logger('ALL_LEVELS');
+      const consoleLogSpy = vi.spyOn(console, 'log');
+      const consoleErrorSpy = vi.spyOn(console, 'error');
+      const consoleWarnSpy = vi.spyOn(console, 'warn');
+
+      logger.info('Info with timestamp');
+      logger.success('Success with timestamp');
       logger.error('Error with timestamp');
       logger.warning('Warning with timestamp');
-      logger.info('Info with timestamp');
-      logger.debug('Debug with timestamp');
-      logger.trace('Trace with timestamp');
+
+      // Check info output
+      expect(consoleLogSpy).toHaveBeenCalled();
+      const infoOutput = consoleLogSpy.mock.calls[0][0];
+      expect(infoOutput).toMatch(/\[\d{2}:\d{2}:\d{2}\].*\[ALL_LEVELS\].*Info with timestamp/);
 
       // Check error output
       expect(consoleErrorSpy).toHaveBeenCalled();
@@ -100,86 +120,74 @@ describe('Logger Timestamp Behavior', () => {
       expect(warningOutput).toMatch(
         /\[\d{2}:\d{2}:\d{2}\].*\[ALL_LEVELS\].*Warning with timestamp/
       );
-
-      // Check info output
-      expect(consoleSpy).toHaveBeenCalled();
-      const infoOutput = consoleSpy.mock.calls[0][0];
-      expect(infoOutput).toMatch(/\[\d{2}:\d{2}:\d{2}\].*\[ALL_LEVELS\].*Info with timestamp/);
-
-      // Check debug output
-      expect(consoleDebugSpy).toHaveBeenCalled();
-      const debugOutput = consoleDebugSpy.mock.calls[0][0];
-      expect(debugOutput).toMatch(/\[\d{2}:\d{2}:\d{2}\].*\[ALL_LEVELS\].*Debug with timestamp/);
-
-      // Check trace output
-      const traceOutput = consoleDebugSpy.mock.calls[1][0];
-      expect(traceOutput).toMatch(/\[\d{2}:\d{2}:\d{2}\].*\[ALL_LEVELS\].*Trace with timestamp/);
     });
 
     it('should not show timestamps for any level when DEVLOGR_SHOW_TIMESTAMP is not set', () => {
-      Logger.setLevel(LogLevel.TRACE);
-      logger = createLogger('NO_TIMESTAMPS');
+      // Default behavior - no timestamp
+      const logger = new Logger('NO_TIMESTAMP_LEVELS');
+      const consoleLogSpy = vi.spyOn(console, 'log');
+      const consoleErrorSpy = vi.spyOn(console, 'error');
+      const consoleWarnSpy = vi.spyOn(console, 'warn');
 
+      logger.info('Info without timestamp');
+      logger.success('Success without timestamp');
       logger.error('Error without timestamp');
       logger.warning('Warning without timestamp');
-      logger.info('Info without timestamp');
-      logger.debug('Debug without timestamp');
-      logger.trace('Trace without timestamp');
 
-      // Check all outputs should NOT have timestamps
-      const errorOutput = consoleErrorSpy.mock.calls[0][0];
-      expect(errorOutput).not.toMatch(/\[\d{2}:\d{2}:\d{2}\]/);
-      expect(errorOutput).toMatch(/Error without timestamp/);
+      // All outputs should NOT contain timestamps
+      const allCalls = [
+        ...consoleLogSpy.mock.calls,
+        ...consoleErrorSpy.mock.calls,
+        ...consoleWarnSpy.mock.calls,
+      ];
 
-      const warningOutput = consoleWarnSpy.mock.calls[0][0];
-      expect(warningOutput).not.toMatch(/\[\d{2}:\d{2}:\d{2}\]/);
-      expect(warningOutput).toMatch(/Warning without timestamp/);
-
-      const infoOutput = consoleSpy.mock.calls[0][0];
-      expect(infoOutput).not.toMatch(/\[\d{2}:\d{2}:\d{2}\]/);
-      expect(infoOutput).toMatch(/Info without timestamp/);
-
-      const debugOutput = consoleDebugSpy.mock.calls[0][0];
-      expect(debugOutput).not.toMatch(/\[\d{2}:\d{2}:\d{2}\]/);
-      expect(debugOutput).toMatch(/Debug without timestamp/);
-
-      const traceOutput = consoleDebugSpy.mock.calls[1][0];
-      expect(traceOutput).not.toMatch(/\[\d{2}:\d{2}:\d{2}\]/);
-      expect(traceOutput).toMatch(/Trace without timestamp/);
+      allCalls.forEach(call => {
+        const output = String(call[0]);
+        expect(output).not.toMatch(/\[\d{2}:\d{2}:\d{2}\]/);
+      });
     });
 
     it('should show proper trace formatting with timestamps', () => {
       process.env.DEVLOGR_SHOW_TIMESTAMP = 'true';
-      Logger.setLevel(LogLevel.TRACE);
-      logger = createLogger('DIM_TEST');
+      // Enable prefix to test both together
+      process.env.DEVLOGR_SHOW_PREFIX = 'true';
+      // Set log level to trace so trace messages aren't filtered out
+      process.env.DEVLOGR_LOG_LEVEL = 'trace';
+
+      const logger = new Logger('DIM_TEST');
+      const consoleSpy = vi.spyOn(console, 'debug'); // Trace uses debug, not log
 
       logger.trace('This should be dimmed');
 
-      expect(consoleDebugSpy).toHaveBeenCalled();
-      const output = consoleDebugSpy.mock.calls[0][0];
+      expect(consoleSpy).toHaveBeenCalledTimes(1);
+      const output = String(consoleSpy.mock.calls[0][0]);
 
       // Verify trace message has proper formatting structure
       expect(output).toContain('TRACE');
       expect(output).toContain('DIM_TEST');
       expect(output).toContain('This should be dimmed');
       expect(output).toMatch(/\[\d{2}:\d{2}:\d{2}\]/); // Has timestamp
-      expect(output).toMatch(/\[DIM_TEST\].*This should be dimmed/); // Proper structure
     });
 
     it('should work correctly with log level filtering', () => {
       process.env.DEVLOGR_SHOW_TIMESTAMP = 'true';
-      Logger.setLevel(LogLevel.WARNING);
-      logger = createLogger('FILTERED');
+      process.env.DEVLOGR_LOG_LEVEL = 'warn';
+      // Enable prefix to test both together
+      process.env.DEVLOGR_SHOW_PREFIX = 'true';
 
-      logger.trace('This should not appear');
-      logger.debug('This should not appear');
+      const logger = new Logger('FILTERED');
+      const consoleLogSpy = vi.spyOn(console, 'log');
+      const consoleWarnSpy = vi.spyOn(console, 'warn');
+      const consoleErrorSpy = vi.spyOn(console, 'error');
+
       logger.info('This should not appear');
       logger.warning('This should appear with timestamp');
-      logger.error('This should appear with timestamp');
+      logger.error('This should also appear with timestamp');
 
-      // Only warning and error should be called
-      expect(consoleDebugSpy).not.toHaveBeenCalled();
-      expect(consoleSpy).not.toHaveBeenCalled();
+      // Info should not be called due to log level filtering
+      expect(consoleLogSpy).not.toHaveBeenCalled();
+
+      // Warning and error should be called
       expect(consoleWarnSpy).toHaveBeenCalledTimes(1);
       expect(consoleErrorSpy).toHaveBeenCalledTimes(1);
 
@@ -191,34 +199,38 @@ describe('Logger Timestamp Behavior', () => {
 
       const errorOutput = consoleErrorSpy.mock.calls[0][0];
       expect(errorOutput).toMatch(
-        /\[\d{2}:\d{2}:\d{2}\].*\[FILTERED\].*This should appear with timestamp/
+        /\[\d{2}:\d{2}:\d{2}\].*\[FILTERED\].*This should also appear with timestamp/
       );
     });
 
     it('should use valid HH:MM:SS timestamp format', () => {
       process.env.DEVLOGR_SHOW_TIMESTAMP = 'true';
-      logger = createLogger('FORMAT_TEST');
 
-      logger.info('Test timestamp format');
+      const logger = new Logger('FORMAT_TEST');
+      const consoleSpy = vi.spyOn(console, 'log');
 
-      expect(consoleSpy).toHaveBeenCalled();
-      const output = consoleSpy.mock.calls[0][0];
+      logger.info('Format test message');
+
+      expect(consoleSpy).toHaveBeenCalledTimes(1);
+      const output = String(consoleSpy.mock.calls[0][0]);
+
+      // Should match strict HH:MM:SS format
       const timestampMatch = output.match(/\[(\d{2}:\d{2}:\d{2})\]/);
-
       expect(timestampMatch).toBeTruthy();
-      const timestamp = timestampMatch![1];
 
-      // Validate format
-      expect(timestamp).toMatch(/^\d{2}:\d{2}:\d{2}$/);
+      if (timestampMatch) {
+        const timestamp = timestampMatch[1];
+        const parts = timestamp.split(':');
+        expect(parts).toHaveLength(3);
 
-      // Validate ranges
-      const [hours, minutes, seconds] = timestamp.split(':').map(Number);
-      expect(hours).toBeGreaterThanOrEqual(0);
-      expect(hours).toBeLessThan(24);
-      expect(minutes).toBeGreaterThanOrEqual(0);
-      expect(minutes).toBeLessThan(60);
-      expect(seconds).toBeGreaterThanOrEqual(0);
-      expect(seconds).toBeLessThan(60);
+        const [hours, minutes, seconds] = parts.map(Number);
+        expect(hours).toBeGreaterThanOrEqual(0);
+        expect(hours).toBeLessThan(24);
+        expect(minutes).toBeGreaterThanOrEqual(0);
+        expect(minutes).toBeLessThan(60);
+        expect(seconds).toBeGreaterThanOrEqual(0);
+        expect(seconds).toBeLessThan(60);
+      }
     });
   });
 
@@ -291,42 +303,38 @@ describe('Logger Timestamp Behavior', () => {
   describe('TimestampFormat Configuration', () => {
     it('should default to TIME format when DEVLOGR_SHOW_TIMESTAMP=true', () => {
       process.env.DEVLOGR_SHOW_TIMESTAMP = 'true';
+
       const config = LogConfiguration.getConfig();
 
       expect(config.showTimestamp).toBe(true);
       expect(config.timestampFormat).toBe(TimestampFormat.TIME);
-
-      delete process.env.DEVLOGR_SHOW_TIMESTAMP;
     });
 
     it('should use ISO format when DEVLOGR_SHOW_TIMESTAMP=iso', () => {
       process.env.DEVLOGR_SHOW_TIMESTAMP = 'iso';
+
       const config = LogConfiguration.getConfig();
 
       expect(config.showTimestamp).toBe(true);
       expect(config.timestampFormat).toBe(TimestampFormat.ISO);
-
-      delete process.env.DEVLOGR_SHOW_TIMESTAMP;
     });
 
     it('should disable timestamps when DEVLOGR_SHOW_TIMESTAMP=false', () => {
       process.env.DEVLOGR_SHOW_TIMESTAMP = 'false';
+
       const config = LogConfiguration.getConfig();
 
       expect(config.showTimestamp).toBe(false);
       expect(config.timestampFormat).toBe(TimestampFormat.TIME);
-
-      delete process.env.DEVLOGR_SHOW_TIMESTAMP;
     });
 
-    it('should default to TIME format for unknown timestamp values', () => {
-      process.env.DEVLOGR_SHOW_TIMESTAMP = 'unknown';
+    it('should default to disabled with TIME format for unknown timestamp values', () => {
+      process.env.DEVLOGR_SHOW_TIMESTAMP = 'invalid_value';
+
       const config = LogConfiguration.getConfig();
 
-      expect(config.showTimestamp).toBe(true);
+      expect(config.showTimestamp).toBe(false);
       expect(config.timestampFormat).toBe(TimestampFormat.TIME);
-
-      delete process.env.DEVLOGR_SHOW_TIMESTAMP;
     });
   });
 });

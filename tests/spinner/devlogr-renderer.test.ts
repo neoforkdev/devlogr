@@ -41,23 +41,45 @@ describe('DevLogrRenderer', () => {
   });
 
   it('should render a simple task that completes successfully', () => {
-    // Create a running task
-    const runningTask = createMockTask('My Task', { started: true });
-    renderer = new DevLogrRenderer([runningTask as any], options);
+    // Enable prefix for this test
+    process.env.DEVLOGR_SHOW_PREFIX = 'true';
 
-    // Test running state
+    const mockTasks = [
+      {
+        title: 'My Task',
+        isEnabled: () => true,
+        isStarted: () => true,
+        isCompleted: () => false,
+        hasFailed: () => false,
+        isSkipped: () => false,
+        hasSubtasks: () => false,
+        output: null,
+        message: {},
+        on: vi.fn(), // Mock event listener
+      },
+    ];
+
+    const renderer = new DevLogrRenderer(mockTasks as any, {
+      useColors: false,
+      showTimestamp: false,
+      supportsUnicode: true,
+      prefix: 'test',
+    });
+
+    // Mock spinner
+    (renderer as any).spinner = { fetch: () => '⠋' };
+
+    // Should render task in running state
     const runningOutput = (renderer as any).createOutput();
     expect(runningOutput).toContain('⠋ My Task');
     expect(runningOutput).toContain('[test]');
 
     // Change to completed state
-    runningTask.isStarted = () => false;
-    runningTask.isCompleted = () => true;
-    runningTask.title = 'My Task (completed)';
+    mockTasks[0].isStarted = () => false;
+    mockTasks[0].isCompleted = () => true;
 
-    // Test completed state
-    const completedOutput = (renderer as any).createOutput({ done: true });
-    expect(completedOutput).toContain('✔ My Task (completed)');
+    const completedOutput = (renderer as any).createOutput();
+    expect(completedOutput).toContain('✔ My Task');
     expect(completedOutput).toContain('[test]');
   });
 

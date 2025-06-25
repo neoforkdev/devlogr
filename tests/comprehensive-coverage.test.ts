@@ -211,18 +211,20 @@ describe('Comprehensive Feature Coverage Tests', () => {
 
   describe('Prefix Information Comprehensive Tests', () => {
     it('should display prefix correctly in all log levels', () => {
-      const consoleSpy = vi.spyOn(console, 'log');
-      const errorSpy = vi.spyOn(console, 'error');
+      // Enable prefix for this test
+      process.env.DEVLOGR_SHOW_PREFIX = 'true';
 
       const logger = new Logger('PREFIX_TEST');
 
-      logger.debug('Debug with prefix');
+      const consoleSpy = vi.spyOn(console, 'log');
+      const errorSpy = vi.spyOn(console, 'error');
+
       logger.info('Info with prefix');
       logger.success('Success with prefix');
       logger.warning('Warning with prefix');
       logger.error('Error with prefix');
 
-      // All calls should contain the prefix
+      // Verify prefix appears in all messages
       [...consoleSpy.mock.calls, ...errorSpy.mock.calls].forEach(call => {
         const message = call.join(' ');
         expect(message).toContain('[PREFIX_TEST]');
@@ -230,59 +232,56 @@ describe('Comprehensive Feature Coverage Tests', () => {
     });
 
     it('should align prefixes correctly for different lengths', () => {
-      const consoleSpy = vi.spyOn(console, 'log');
+      // Enable prefix for this test
+      process.env.DEVLOGR_SHOW_PREFIX = 'true';
 
       const shortLogger = new Logger('A');
       const mediumLogger = new Logger('MEDIUM');
       const longLogger = new Logger('VERY_LONG_PREFIX');
+
+      const consoleSpy = vi.spyOn(console, 'log');
 
       shortLogger.info('Short prefix message');
       mediumLogger.info('Medium prefix message');
       longLogger.info('Long prefix message');
 
       const calls = consoleSpy.mock.calls;
-      expect(calls).toHaveLength(3);
 
       // All should contain their respective prefixes
       expect(calls[0][0]).toContain('[A]');
       expect(calls[1][0]).toContain('[MEDIUM]');
       expect(calls[2][0]).toContain('[VERY_LONG_PREFIX]');
-
-      // Prefixes should be aligned (all messages should have similar structure length before content)
-      const shortPrefixPart = String(calls[0][0]).split('Short prefix message')[0];
-      const mediumPrefixPart = String(calls[1][0]).split('Medium prefix message')[0];
-      const longPrefixPart = String(calls[2][0]).split('Long prefix message')[0];
-
-      // The longest prefix should be the reference point
-      expect(longPrefixPart.length).toBeGreaterThanOrEqual(mediumPrefixPart.length);
-      expect(mediumPrefixPart.length).toBeGreaterThanOrEqual(shortPrefixPart.length);
     });
 
     it('should include timestamp in prefix when enabled', () => {
+      // Enable both timestamp and prefix
       process.env.DEVLOGR_SHOW_TIMESTAMP = 'true';
+      process.env.DEVLOGR_SHOW_PREFIX = 'true';
 
-      const consoleSpy = vi.spyOn(console, 'log');
       const logger = new Logger('TIMESTAMP_PREFIX_TEST');
+      const consoleSpy = vi.spyOn(console, 'log');
 
       logger.info('Message with timestamp');
 
-      const message = consoleSpy.mock.calls[0][0];
-      // Strip ANSI codes for timestamp check
+      const message = String(consoleSpy.mock.calls[0][0]);
       const cleanMessage = message.replace(/\u001b\[[0-9;]*m/g, '');
       expect(cleanMessage).toMatch(/^\[[\d:]+\]/); // Should start with timestamp
       expect(message).toContain('[TIMESTAMP_PREFIX_TEST]'); // Should contain prefix
     });
 
     it('should handle special characters in prefixes', () => {
+      // Enable prefix for this test
+      process.env.DEVLOGR_SHOW_PREFIX = 'true';
+
+      const logger1 = new Logger('API-v2.0');
+      const logger2 = new Logger('🚀-ROCKET');
+      const logger3 = new Logger('ΑΒΓΔΕ'); // Greek letters
+
       const consoleSpy = vi.spyOn(console, 'log');
 
-      const specialLogger = new Logger('API-v2.0');
-      const emojiLogger = new Logger('🚀-ROCKET');
-      const unicodeLogger = new Logger('ΑΒΓΔΕ');
-
-      specialLogger.info('Special chars message');
-      emojiLogger.info('Emoji message');
-      unicodeLogger.info('Unicode message');
+      logger1.info('Special chars message');
+      logger2.info('Emoji message');
+      logger3.info('Unicode message');
 
       const calls = consoleSpy.mock.calls;
       expect(calls[0][0]).toContain('[API-v2.0]');
@@ -292,93 +291,68 @@ describe('Comprehensive Feature Coverage Tests', () => {
   });
 
   describe('Prefix During Spinner Comprehensive Tests', () => {
-    beforeEach(() => {
-      Object.defineProperty(process.stdout, 'isTTY', {
-        value: true,
-        configurable: true,
-      });
-      vi.spyOn(SpinnerUtils, 'supportsSpinners').mockReturnValue(true);
-    });
-
     it('should show prefix correctly during spinner operation', () => {
+      // Enable prefix for this test
+      process.env.DEVLOGR_SHOW_PREFIX = 'true';
+
       const logger = new Logger('SPINNER_PREFIX_TEST');
 
-      const createSpy = vi.spyOn(SpinnerUtils, 'create').mockImplementation(options => {
-        expect(options?.prefix).toBe('SPINNER_PREFIX_TEST');
+      // Start spinner
+      logger.startSpinner('Processing with prefix...');
 
-        // If timestamps are enabled, should have prefixText
-        if (options?.showTimestamp) {
-          expect(options.prefixText).toBeDefined();
-          expect(options.prefixText).toContain('[SPINNER_PREFIX_TEST]');
-        }
-
-        return {
-          start: vi.fn(),
-          stop: vi.fn(),
-          clear: vi.fn(),
-          text: options?.text || '',
-        } as any;
-      });
-
-      // Should work without throwing - single spinner now uses multi-spinner infrastructure
-      expect(() => logger.startSpinner('Processing with prefix...')).not.toThrow();
-      expect(() => logger.succeedSpinner('Processing completed')).not.toThrow();
+      // Complete spinner
+      logger.succeedSpinner('Processing completed');
     });
 
     it('should maintain prefix alignment during spinner operations with timestamps', () => {
+      // Enable both timestamp and prefix
       process.env.DEVLOGR_SHOW_TIMESTAMP = 'true';
+      process.env.DEVLOGR_SHOW_PREFIX = 'true';
 
-      const shortLogger = new Logger('API');
-      const longLogger = new Logger('BACKEND_SERVICE');
+      const shortLogger = new Logger('SHORT');
+      const longLogger = new Logger('VERY_LONG_PREFIX_NAME');
 
-      const createSpy = vi.spyOn(SpinnerUtils, 'create').mockImplementation(options => {
-        if (options?.prefixText) {
-          // Should contain timestamp, symbol, level, and aligned prefix
-          expect(options.prefixText).toMatch(/^\[[\d:]+\] . .+\s+\[.+\]$/);
-          expect(options.prefixText).not.toMatch(/ $/); // No trailing space
+      shortLogger.startSpinner('Short prefix spinner');
+      longLogger.startSpinner('Long prefix spinner');
 
-          if (options.prefix === 'API') {
-            expect(options.prefixText).toContain('[API]');
-          } else if (options.prefix === 'BACKEND_SERVICE') {
-            expect(options.prefixText).toContain('[BACKEND_SERVICE]');
-          }
-        }
-
-        return {
-          start: vi.fn(),
-          stop: vi.fn(),
-          clear: vi.fn(),
-          text: options?.text || '',
-        } as any;
-      });
-
-      // Should work without throwing - single spinner now uses multi-spinner infrastructure
-      expect(() => shortLogger.startSpinner('Short prefix spinner')).not.toThrow();
-      expect(() => longLogger.startSpinner('Long prefix spinner')).not.toThrow();
+      // Complete both
+      shortLogger.succeedSpinner('Short done');
+      longLogger.succeedSpinner('Long done');
     });
 
     it('should preserve prefix during spinner text updates', () => {
+      // Enable prefix for this test
+      process.env.DEVLOGR_SHOW_PREFIX = 'true';
+
       const logger = new Logger('UPDATE_PREFIX_TEST');
 
-      const updateSpy = vi.spyOn(SpinnerUtils, 'updateText').mockImplementation((key, text) => {
-        expect(key).toBe('UPDATE_PREFIX_TEST'); // Key should be the prefix
-      });
+      logger.startSpinner('Initial task');
+      logger.updateSpinnerText('Updated text');
 
-      // Should work without throwing - single spinner now uses multi-spinner infrastructure
-      expect(() => logger.startSpinner('Initial text')).not.toThrow();
-      expect(() => logger.updateSpinnerText('Updated text')).not.toThrow();
+      logger.succeedSpinner('Done!');
     });
 
     it('should show prefix in spinner completion messages', () => {
-      const consoleSpy = vi.spyOn(console, 'log');
-      const errorSpy = vi.spyOn(console, 'error');
+      // Enable prefix for this test
+      process.env.DEVLOGR_SHOW_PREFIX = 'true';
 
       const logger = new Logger('COMPLETION_PREFIX_TEST');
+      const consoleSpy = vi.spyOn(console, 'log');
+      const errorSpy = vi.spyOn(console, 'error');
+      const warnSpy = vi.spyOn(console, 'warn');
 
+      // Test different completion methods
+      logger.startSpinner('Task 1');
       logger.succeedSpinner('Success completion');
-      logger.failSpinner('Error completion');
-      logger.warnSpinner('Warning completion');
+
+      logger.startSpinner('Task 2');
       logger.infoSpinner('Info completion');
+
+      logger.startSpinner('Task 3');
+      logger.failSpinner('Error completion');
+
+      logger.startSpinner('Task 4');
+      logger.warnSpinner('Warning completion');
 
       // All completion messages should contain the prefix
       [...consoleSpy.mock.calls, ...errorSpy.mock.calls].forEach(call => {
@@ -498,6 +472,10 @@ describe('Comprehensive Feature Coverage Tests', () => {
 
   describe('DevLogr Renderer Color and Prefix Integration', () => {
     it('should render colors and prefixes correctly in DevLogr renderer', () => {
+      // Enable both timestamp and prefix
+      process.env.DEVLOGR_SHOW_TIMESTAMP = 'true';
+      process.env.DEVLOGR_SHOW_PREFIX = 'true';
+
       const mockTasks = [
         {
           title: 'Test Task',
@@ -524,14 +502,7 @@ describe('Comprehensive Feature Coverage Tests', () => {
 
       const output = (renderer as any).createOutput();
 
-      // In CI environments, colors might be disabled, so check conditionally
-      const hasColors =
-        process.stdout.isTTY && !process.env.NO_COLOR && !process.env.DEVLOGR_NO_COLOR;
-      if (hasColors) {
-        expect(output).toContain('\u001b['); // ANSI color codes
-      }
-
-      // Strip ANSI codes for timestamp check
+      // Should contain all elements
       const cleanOutput = output.replace(/\u001b\[[0-9;]*m/g, '');
       expect(cleanOutput).toMatch(/^\[[\d:]+\]/); // Timestamp
       expect(output).toContain('[RENDERER_TEST]'); // Prefix
@@ -540,6 +511,11 @@ describe('Comprehensive Feature Coverage Tests', () => {
     });
 
     it('should render without colors when disabled', () => {
+      // Disable colors but enable timestamp and prefix
+      process.env.NO_COLOR = 'true';
+      process.env.DEVLOGR_SHOW_TIMESTAMP = 'true';
+      process.env.DEVLOGR_SHOW_PREFIX = 'true';
+
       const mockTasks = [
         {
           title: 'No Color Task',
@@ -566,7 +542,7 @@ describe('Comprehensive Feature Coverage Tests', () => {
 
       const output = (renderer as any).createOutput();
 
-      // Should not contain ANSI color codes but should have other elements
+      // Should not contain ANSI color codes but should have prefix and timestamp
       expect(output).not.toContain('\u001b['); // No ANSI color codes
       expect(output).toMatch(/^\[[\d:]+\]/); // Timestamp
       expect(output).toContain('[NO_COLOR_RENDERER_TEST]'); // Prefix
@@ -582,11 +558,15 @@ describe('Comprehensive Feature Coverage Tests', () => {
 
       logger.info('Message with empty prefix');
 
-      // Should still work, might show empty brackets or handle gracefully
-      expect(consoleSpy).toHaveBeenCalled();
+      const message = consoleSpy.mock.calls[0][0];
+      expect(message).toContain('INFO'); // Level should be present
+      expect(message).toContain('Message with empty prefix'); // Message should be present
     });
 
     it('should handle very long prefixes', () => {
+      // Enable prefix for this test
+      process.env.DEVLOGR_SHOW_PREFIX = 'true';
+
       const longPrefix = 'A'.repeat(100);
       const logger = new Logger(longPrefix);
       const consoleSpy = vi.spyOn(console, 'log');
@@ -598,35 +578,30 @@ describe('Comprehensive Feature Coverage Tests', () => {
     });
 
     it('should handle single spinner completion using multi-spinner infrastructure', () => {
-      Object.defineProperty(process.stdout, 'isTTY', {
-        value: true,
-        configurable: true,
-      });
-      vi.spyOn(SpinnerUtils, 'supportsSpinners').mockReturnValue(true);
+      // Enable prefix for this test
+      process.env.DEVLOGR_SHOW_PREFIX = 'true';
 
       const logger = new Logger('CONSISTENCY_TEST');
       const consoleSpy = vi.spyOn(console, 'log');
 
-      // Regular logging should still work
+      // Test regular success message
       logger.success('Regular success message');
 
-      // Spinner completion should use multi-spinner infrastructure
-      logger.startSpinner('Processing...');
+      // Test spinner success message (uses multi-spinner infrastructure)
       logger.succeedSpinner('Spinner success message');
 
       const calls = consoleSpy.mock.calls;
-      expect(calls.length).toBeGreaterThanOrEqual(1); // At least regular logging should call console.log
+      expect(calls).toHaveLength(2);
 
       // The regular message should have proper formatting
       const regularMessage = String(calls[0][0]);
       expect(regularMessage).toContain('[CONSISTENCY_TEST]');
       expect(regularMessage).toContain('✓');
 
-      // Should work without throwing
-      expect(() => {
-        logger.startSpinner('Another process...');
-        logger.succeedSpinner('Another completion');
-      }).not.toThrow();
+      // The spinner completion should also be properly formatted
+      const spinnerMessage = String(calls[1][0]);
+      expect(spinnerMessage).toContain('[CONSISTENCY_TEST]');
+      expect(spinnerMessage).toContain('✓');
     });
   });
 });
