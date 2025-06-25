@@ -199,6 +199,7 @@ Configure behavior via env vars:
 | `DEVLOGR_OUTPUT_JSON`                | Structured JSON logs              | `true`        |
 | `DEVLOGR_SHOW_TIMESTAMP`             | Enables timestamps                | `true`/`iso`  |
 | `DEVLOGR_SHOW_PREFIX`                | Show level prefixes & logger name | `true`        |
+| `DEVLOGR_DISABLE_CI_DETECTION`       | Disable automatic CI optimization | `true`        |
 | `DEVLOGR_NO_COLOR`                   | Disable colors                    | `true`        |
 | `DEVLOGR_FORCE_COLOR`                | Force colors                      | `true`        |
 | `DEVLOGR_NO_EMOJI`                   | Disable emojis                    | `true`        |
@@ -206,6 +207,36 @@ Configure behavior via env vars:
 | `DEVLOGR_UNICODE`                    | Force Unicode support             | `true`/`auto` |
 | `DEVLOGR_NO_ICONS`                   | Hide all icons                    | `true`        |
 | `NO_COLOR`, `NO_EMOJI`, `NO_UNICODE` | Global disable standards          | `1`           |
+
+### 🤖 CI Detection & Optimization
+
+DevLogr automatically detects CI environments and applies optimized settings for better log readability:
+
+**Supported CI Systems:**
+
+- GitHub Actions, GitLab CI, CircleCI, Travis CI
+- Jenkins, Azure DevOps, TeamCity, AppVeyor
+- AWS CodeBuild, Netlify, Vercel, Buildkite, Drone
+- Generic CI detection via `CI=true`
+
+**CI Optimizations:**
+
+- ✅ **Prefixes enabled** – Better log identification
+- ✅ **Timestamps enabled** – Debugging and correlation
+- ❌ **Icons disabled** – Maximum compatibility
+- 🎨 **Dynamic colors/emoji** – Based on CI capabilities
+
+**Control CI Detection:**
+
+```bash
+# Disable CI detection entirely (use default behavior)
+DEVLOGR_DISABLE_CI_DETECTION=true
+
+# Override specific CI defaults
+DEVLOGR_SHOW_PREFIX=false          # Disable prefixes even in CI
+DEVLOGR_SHOW_TIMESTAMP=false       # Disable timestamps even in CI
+DEVLOGR_NO_ICONS=false             # Enable icons even in CI
+```
 
 ---
 

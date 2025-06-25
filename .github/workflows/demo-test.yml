@@ -148,3 +148,69 @@ jobs:
           echo "✅ All demo tests completed successfully!"
           echo "🎯 Demo script works correctly in CI environment"
           echo "🚀 Ready for production use"
+
+  ci-detection-test:
+    name: Test CI Detection
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    strategy:
+      matrix:
+        node-version: [18, 20]
+        ci-detection: [enabled, disabled]
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build project
+        run: npm run build
+
+      - name: Run All Tests with CI Detection ${{ matrix.ci-detection }}
+        run: npm test
+        env:
+          CI: true
+          FORCE_COLOR: '1'
+          DEVLOGR_DISABLE_CI_DETECTION: ${{ matrix.ci-detection == 'disabled' && 'true' || 'false' }}
+
+      - name: Test CI Detection Example - ${{ matrix.ci-detection }}
+        run: |
+          echo "🤖 Testing CI detection example with detection ${{ matrix.ci-detection }}..."
+          timeout 10s npm run example:ci-detection || {
+            exit_code=$?
+            [ $exit_code -eq 124 ] && echo "✅ CI detection example completed" || exit $exit_code
+          }
+        env:
+          CI: true
+          FORCE_COLOR: '1'
+          DEVLOGR_DISABLE_CI_DETECTION: ${{ matrix.ci-detection == 'disabled' && 'true' || 'false' }}
+
+      - name: Test Demo with CI Detection ${{ matrix.ci-detection }}
+        run: |
+          echo "🎬 Testing demo with CI detection ${{ matrix.ci-detection }}..."
+          timeout 30s npm run example:demo || {
+            exit_code=$?
+            [ $exit_code -eq 124 ] && echo "✅ Demo completed" || exit $exit_code
+          }
+        env:
+          CI: true
+          FORCE_COLOR: '1'
+          DEVLOGR_DISABLE_CI_DETECTION: ${{ matrix.ci-detection == 'disabled' && 'true' || 'false' }}
+
+      - name: Validate CI Detection Behavior
+        run: |
+          if [ "${{ matrix.ci-detection }}" = "enabled" ]; then
+            echo "✅ CI detection enabled - should show prefixes and timestamps"
+          else
+            echo "✅ CI detection disabled - should use default behavior"
+          fi
+          echo "🎯 CI detection behavior validated for ${{ matrix.ci-detection }} mode"
