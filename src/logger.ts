@@ -555,7 +555,7 @@ export class Logger {
       concurrent: true,
       exitOnError: false,
       context,
-      rendererOptions: taskLevel ? { taskLevel } : undefined,
+      rendererOptions: { taskLevel },
     });
   }
 
@@ -588,7 +588,7 @@ export class Logger {
       concurrent: false,
       exitOnError: true,
       context,
-      rendererOptions: taskLevel ? { taskLevel } : undefined,
+      rendererOptions: { taskLevel },
     });
   }
 
