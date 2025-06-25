@@ -1,4 +1,4 @@
-# @neofork/devlogr
+# devlogr
 
 > Logs that look great in your terminal—and make sense in your CI.
 
@@ -71,7 +71,11 @@ log.plain('No formatting here.');
 
 ---
 
-## 🕹 Spinner Control
+## 🌀 Advanced Spinner System
+
+DevLogr provides a powerful spinner system that works seamlessly with both single tasks and complex multi-step operations.
+
+### Basic Spinner Control
 
 ```ts
 log.startSpinner('Loading...');
@@ -81,14 +85,158 @@ log.failSpinner('Failed');
 log.completeSpinnerWithSuccess('Mission accomplished');
 ```
 
-Or named spinners:
+### Complex Task Management with Listr2
+
+DevLogr integrates beautifully with Listr2 for sophisticated task orchestration:
 
 ```ts
-import { SpinnerUtils } from '@neofork/devlogr';
+import { Logger } from '@neofork/devlogr';
+import { ListrTask } from 'listr2';
 
-SpinnerUtils.start('build', { text: 'Building...', color: 'yellow' });
-SpinnerUtils.succeed('build', 'Build done!');
+const logger = new Logger('Deploy');
+
+// Sequential tasks with progress updates
+const buildTasks: ListrTask[] = [
+  {
+    title: 'Installing dependencies',
+    task: async (ctx, task) => {
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      task.output = 'Downloading packages...';
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      task.output = 'Resolving dependencies...';
+      await new Promise(resolve => setTimeout(resolve, 1000));
+    },
+  },
+  {
+    title: 'Building project',
+    task: async (ctx, task) => {
+      task.output = 'Compiling TypeScript...';
+      await new Promise(resolve => setTimeout(resolve, 800));
+      task.output = 'Bundling assets...';
+      await new Promise(resolve => setTimeout(resolve, 800));
+    },
+  },
+];
+
+await logger.runTasks('Build Process', buildTasks);
 ```
+
+### Concurrent Task Execution
+
+Run multiple tasks simultaneously with visual feedback:
+
+```ts
+// Concurrent quality checks
+const qualityTasks: ListrTask[] = [
+  {
+    title: 'Linting code',
+    task: async (ctx, task) => {
+      await new Promise(resolve => setTimeout(resolve, 2000));
+      task.output = 'ESLint completed with 0 errors';
+    },
+  },
+  {
+    title: 'Type checking',
+    task: async (ctx, task) => {
+      await new Promise(resolve => setTimeout(resolve, 1800));
+      task.output = 'TypeScript compilation successful';
+    },
+  },
+  {
+    title: 'Running unit tests',
+    task: async (ctx, task) => {
+      await new Promise(resolve => setTimeout(resolve, 2200));
+      task.output = 'All 42 tests passed';
+    },
+  },
+];
+
+await logger.runTasks('Quality Checks', qualityTasks, { concurrent: true });
+```
+
+### Nested Task Hierarchies
+
+Create complex nested task structures for sophisticated workflows:
+
+```ts
+const deploymentTasks: ListrTask[] = [
+  {
+    title: 'Database operations',
+    task: () =>
+      logger.createTaskList([
+        {
+          title: 'Creating tables',
+          task: async () => await new Promise(resolve => setTimeout(resolve, 1000)),
+        },
+        {
+          title: 'Seeding data',
+          task: async (ctx, task) => {
+            task.output = 'Inserting user records...';
+            await new Promise(resolve => setTimeout(resolve, 800));
+            task.output = 'Inserting product records...';
+            await new Promise(resolve => setTimeout(resolve, 800));
+          },
+        },
+        {
+          title: 'Creating indexes',
+          task: async () => await new Promise(resolve => setTimeout(resolve, 600)),
+        },
+      ]),
+  },
+  {
+    title: 'Cache operations',
+    task: () =>
+      logger.createTaskList([
+        {
+          title: 'Warming Redis cache',
+          task: async () => await new Promise(resolve => setTimeout(resolve, 1200)),
+        },
+        {
+          title: 'Precomputing queries',
+          task: async () => await new Promise(resolve => setTimeout(resolve, 900)),
+        },
+      ]),
+  },
+];
+
+await logger.runTasks('System Initialization', deploymentTasks);
+```
+
+### Handling Different Task Outcomes
+
+DevLogr gracefully handles success, failure, and skip scenarios:
+
+```ts
+const mixedTasks: ListrTask[] = [
+  {
+    title: 'Task that succeeds',
+    task: async () => {
+      await new Promise(resolve => setTimeout(resolve, 1000));
+    },
+  },
+  {
+    title: 'Task that gets skipped',
+    task: (ctx, task) => task.skip('Feature disabled in development mode'),
+  },
+  {
+    title: 'Task that fails',
+    task: async () => {
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      throw new Error('Simulated failure for demo purposes');
+    },
+  },
+];
+
+try {
+  await logger.runTasks('Mixed Outcome Demo', mixedTasks);
+} catch (error) {
+  logger.error('Some tasks failed, but we can continue');
+}
+```
+
+### CI/Non-TTY Fallback
+
+Spinners automatically fall back to simple log messages in CI environments or when TTY is not available, ensuring your output remains clean and readable everywhere.
 
 ---
 
