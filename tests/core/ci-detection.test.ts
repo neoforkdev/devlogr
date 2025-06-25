@@ -99,6 +99,24 @@ describe('CI Detection', () => {
       expect(config.showIcons).toBe(true);
     });
 
+    it('should return default behavior when CI detection is disabled', () => {
+      process.env = { CI: 'true', DEVLOGR_DISABLE_CI_DETECTION: 'true' };
+      const config = TerminalUtils.getCIConfig();
+
+      expect(config.showPrefix).toBe(false);
+      expect(config.showTimestamp).toBe(false);
+      expect(config.showIcons).toBe(true);
+    });
+
+    it('should still apply CI config when disable flag is not true', () => {
+      process.env = { CI: 'true', DEVLOGR_DISABLE_CI_DETECTION: 'false' };
+      const config = TerminalUtils.getCIConfig();
+
+      expect(config.showPrefix).toBe(true);
+      expect(config.showTimestamp).toBe(true);
+      expect(config.showIcons).toBe(false);
+    });
+
     it('should keep dynamic color detection in CI', () => {
       process.env = { CI: 'true', FORCE_COLOR: '1' };
       const config = TerminalUtils.getCIConfig();
@@ -191,6 +209,32 @@ describe('CI Detection', () => {
       expect(config.showTimestamp).toBe(true); // Environment variable
       expect(config.showIcons).toBe(false); // CI default
       expect(config.useColors).toBe(false); // NO_COLOR respected
+    });
+
+    it('should disable CI detection when DEVLOGR_DISABLE_CI_DETECTION is true', () => {
+      process.env = {
+        CI: 'true',
+        DEVLOGR_DISABLE_CI_DETECTION: 'true',
+      };
+      const config = LogConfiguration.getConfig();
+
+      expect(config.showPrefix).toBe(false); // Default behavior
+      expect(config.showTimestamp).toBe(false); // Default behavior
+      expect(config.showIcons).toBe(true); // Default behavior
+    });
+
+    it('should allow environment variables to override even when CI detection is disabled', () => {
+      process.env = {
+        CI: 'true',
+        DEVLOGR_DISABLE_CI_DETECTION: 'true',
+        DEVLOGR_SHOW_PREFIX: 'true',
+        DEVLOGR_SHOW_TIMESTAMP: 'true',
+      };
+      const config = LogConfiguration.getConfig();
+
+      expect(config.showPrefix).toBe(true); // Environment variable override
+      expect(config.showTimestamp).toBe(true); // Environment variable override
+      expect(config.showIcons).toBe(true); // Default behavior (no override)
     });
   });
 

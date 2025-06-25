@@ -84,15 +84,31 @@ async function demonstrateCIDetection() {
   }
 
   logger.spacer();
+  logger.separator('CI Detection Control');
+  logger.spacer();
+
+  const ciDetectionDisabled = process.env.DEVLOGR_DISABLE_CI_DETECTION === 'true';
+  if (ciDetectionDisabled) {
+    logger.warning('🚫 CI Detection is DISABLED via DEVLOGR_DISABLE_CI_DETECTION=true');
+    logger.info('Using default (non-CI) behavior regardless of CI environment');
+  } else {
+    logger.info('✅ CI Detection is ENABLED (default behavior)');
+    if (isCI) {
+      logger.info('Applying CI-optimized settings automatically');
+    }
+  }
+
+  logger.spacer();
   logger.separator('Override Examples');
   logger.spacer();
 
-  logger.info('You can override CI defaults with environment variables:');
-  logger.plain('  DEVLOGR_SHOW_PREFIX=false     # Disable prefixes even in CI');
-  logger.plain('  DEVLOGR_SHOW_TIMESTAMP=false  # Disable timestamps even in CI');
-  logger.plain('  DEVLOGR_NO_ICONS=false        # Enable icons even in CI');
-  logger.plain('  NO_COLOR=1                    # Disable colors everywhere');
-  logger.plain('  DEVLOGR_NO_EMOJI=true         # Disable emoji specifically');
+  logger.info('You can control CI detection and override defaults:');
+  logger.plain('  DEVLOGR_DISABLE_CI_DETECTION=true  # Disable CI detection entirely');
+  logger.plain('  DEVLOGR_SHOW_PREFIX=false          # Disable prefixes even in CI');
+  logger.plain('  DEVLOGR_SHOW_TIMESTAMP=false       # Disable timestamps even in CI');
+  logger.plain('  DEVLOGR_NO_ICONS=false             # Enable icons even in CI');
+  logger.plain('  NO_COLOR=1                         # Disable colors everywhere');
+  logger.plain('  DEVLOGR_NO_EMOJI=true              # Disable emoji specifically');
 
   logger.spacer();
   logger.title('✅ CI Detection Demo Complete');

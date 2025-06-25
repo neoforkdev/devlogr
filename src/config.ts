@@ -16,10 +16,12 @@ export class LogConfiguration {
   private static readonly ENV_SHOW_TIMESTAMP = 'DEVLOGR_SHOW_TIMESTAMP';
   private static readonly ENV_SHOW_PREFIX = 'DEVLOGR_SHOW_PREFIX';
   private static readonly ENV_NO_ICONS = 'DEVLOGR_NO_ICONS';
+  private static readonly ENV_DISABLE_CI_DETECTION = 'DEVLOGR_DISABLE_CI_DETECTION';
 
   /**
    * Get complete logger configuration from environment and terminal detection.
    * Automatically applies CI-optimized settings when running in CI environments.
+   * CI detection can be disabled via DEVLOGR_DISABLE_CI_DETECTION=true.
    *
    * @returns Complete configuration object with all logger settings
    */

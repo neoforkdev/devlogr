@@ -202,6 +202,8 @@ export class TerminalUtils {
    * - No icons to avoid Unicode issues in some CI systems
    * - Dynamic color/emoji support based on CI capabilities
    *
+   * Can be disabled via DEVLOGR_DISABLE_CI_DETECTION environment variable.
+   *
    * @returns CI-specific configuration overrides
    */
   static getCIConfig(): {
@@ -211,6 +213,18 @@ export class TerminalUtils {
     useColors: boolean;
     supportsEmoji: boolean;
   } {
+    // Check if CI detection is disabled
+    if (process.env.DEVLOGR_DISABLE_CI_DETECTION === 'true') {
+      // Return default (non-CI) behavior when disabled
+      return {
+        showPrefix: false,
+        showTimestamp: false,
+        showIcons: true,
+        useColors: this.supportsColor(), // Keep dynamic color detection
+        supportsEmoji: this.supportsEmoji(), // Keep dynamic emoji detection
+      };
+    }
+
     const isCI = this.isCI();
 
     return {
