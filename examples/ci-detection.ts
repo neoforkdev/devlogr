@@ -71,37 +71,33 @@ async function demonstrateCIDetection() {
   logger.separator('Benefits in CI');
   logger.spacer();
 
-  if (isCI) {
-    logger.success('CI environment detected! DevLogR automatically configured for:');
-    logger.info('  📝 Better log identification with prefixes');
-    logger.info('  ⏰ Timestamps for debugging and correlation');
-    logger.info('  🎯 No icons for maximum compatibility');
-    logger.info('  🌈 Dynamic color support based on CI capabilities');
-    logger.info('  😊 Smart emoji detection');
-  } else {
-    logger.info('Not running in CI - using terminal-optimized settings');
-    logger.info('To test CI mode, set CI=true environment variable');
-  }
+  // Show benefits
+  logger.success('CI environment detected! DevLogR automatically configured for:');
+  logger.info('  📝 Better log identification with prefixes');
+  logger.info('  ⏰ Timestamps for debugging and correlation');
+  logger.info('  🎯 No icons for maximum compatibility');
+  logger.info('  🌈 Dynamic color support based on CI capabilities');
+  logger.info('  😊 Smart emoji detection');
 
   logger.spacer();
   logger.separator('CI Detection Control');
   logger.spacer();
 
-  const ciDetectionDisabled = process.env.DEVLOGR_DISABLE_CI_DETECTION === 'true';
-  if (ciDetectionDisabled) {
-    logger.warning('🚫 CI Detection is DISABLED via DEVLOGR_DISABLE_CI_DETECTION=true');
+  // Show control options
+  const isDisabled = process.env.DEVLOGR_DISABLE_CI_DETECTION === 'true';
+  if (isDisabled) {
+    logger.warn('🚫 CI Detection is DISABLED via DEVLOGR_DISABLE_CI_DETECTION=true');
     logger.info('Using default (non-CI) behavior regardless of CI environment');
   } else {
     logger.info('✅ CI Detection is ENABLED (default behavior)');
-    if (isCI) {
-      logger.info('Applying CI-optimized settings automatically');
-    }
+    logger.info('Applying CI-optimized settings automatically');
   }
 
   logger.spacer();
   logger.separator('Override Examples');
   logger.spacer();
 
+  // Show override options
   logger.info('You can control CI detection and override defaults:');
   logger.plain('  DEVLOGR_DISABLE_CI_DETECTION=true  # Disable CI detection entirely');
   logger.plain('  DEVLOGR_SHOW_PREFIX=false          # Disable prefixes even in CI');
@@ -111,6 +107,28 @@ async function demonstrateCIDetection() {
   logger.plain('  DEVLOGR_NO_EMOJI=true              # Disable emoji specifically');
 
   logger.spacer();
+
+  // NEW: Demonstrate spinner behavior in CI
+  if (isCI) {
+    logger.separator('Spinner Behavior in CI');
+    logger.spacer();
+
+    logger.info('Testing spinner with prefix and timestamp in CI...');
+
+    // Start a spinner to show it works with prefixes and timestamps
+    logger.startSpinner('Processing CI deployment...');
+
+    // Simulate some work
+    await new Promise(resolve => setTimeout(resolve, 1000));
+
+    // Complete the spinner
+    logger.succeedSpinner('CI deployment completed successfully!');
+
+    logger.spacer();
+    logger.info('✅ Spinner correctly shows prefix and timestamp in CI environment');
+    logger.spacer();
+  }
+
   logger.title('✅ CI Detection Demo Complete');
 }
 
