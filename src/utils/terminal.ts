@@ -172,7 +172,7 @@ export class TerminalUtils {
   /**
    * Detects if we're running in a CI environment
    */
-  private static isCI(): boolean {
+  static isCI(): boolean {
     return !!(
       process.env.CI ||
       process.env.CONTINUOUS_INTEGRATION ||
@@ -183,8 +183,69 @@ export class TerminalUtils {
       process.env.TRAVIS ||
       process.env.JENKINS_URL ||
       process.env.BUILDKITE ||
-      process.env.DRONE
+      process.env.DRONE ||
+      process.env.TEAMCITY_VERSION ||
+      process.env.TF_BUILD ||
+      process.env.APPVEYOR ||
+      process.env.CODEBUILD_BUILD_ID ||
+      process.env.NETLIFY ||
+      process.env.VERCEL
     );
+  }
+
+  /**
+   * Get CI-optimized configuration for better log readability in CI environments.
+   *
+   * CI environments benefit from:
+   * - Prefixes for better log identification
+   * - Timestamps for debugging and correlation
+   * - No icons to avoid Unicode issues in some CI systems
+   * - Dynamic color/emoji support based on CI capabilities
+   *
+   * @returns CI-specific configuration overrides
+   */
+  static getCIConfig(): {
+    showPrefix: boolean;
+    showTimestamp: boolean;
+    showIcons: boolean;
+    useColors: boolean;
+    supportsEmoji: boolean;
+  } {
+    const isCI = this.isCI();
+
+    return {
+      showPrefix: isCI,
+      showTimestamp: isCI,
+      showIcons: !isCI, // Disable icons in CI for better compatibility
+      useColors: this.supportsColor(), // Keep dynamic color detection
+      supportsEmoji: this.supportsEmoji(), // Keep dynamic emoji detection
+    };
+  }
+
+  /**
+   * Detects if the current environment supports emoji characters.
+   *
+   * @returns True if emoji can be displayed, false otherwise
+   */
+  static supportsEmoji(): boolean {
+    // Check for explicit disable flags
+    if (process.env.NO_EMOJI !== undefined || process.env.DEVLOGR_NO_EMOJI === 'true') {
+      return false;
+    }
+
+    // If explicitly enabled
+    if (process.env.DEVLOGR_EMOJI === 'true') {
+      return true;
+    }
+
+    // CI environments: let dynamic detection decide
+    if (this.isCI()) {
+      // Most modern CI systems support emoji, but let Unicode detection decide
+      return this.supportsUnicode();
+    }
+
+    // For non-CI environments, check Unicode support
+    return this.supportsUnicode();
   }
 
   /**

@@ -100,6 +100,12 @@ jobs:
             exit_code=$?
             [ $exit_code -eq 124 ] && echo "✅ Safe string utils example completed" || exit $exit_code
           }
+
+          echo "Testing CI detection example..."
+          timeout 10s npm run example:ci-detection || {
+            exit_code=$?
+            [ $exit_code -eq 124 ] && echo "✅ CI detection example completed" || exit $exit_code
+          }
         env:
           CI: true
           FORCE_COLOR: '1'

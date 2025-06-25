@@ -84,6 +84,9 @@ export interface LogConfig {
   /** Whether the terminal supports Unicode characters and emojis */
   readonly supportsUnicode: boolean;
 
+  /** Whether the terminal supports emoji characters */
+  readonly supportsEmoji: boolean;
+
   /** Whether to include timestamps in log messages */
   readonly showTimestamp: boolean;
 

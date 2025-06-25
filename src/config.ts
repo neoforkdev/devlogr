@@ -19,21 +19,24 @@ export class LogConfiguration {
 
   /**
    * Get complete logger configuration from environment and terminal detection.
+   * Automatically applies CI-optimized settings when running in CI environments.
    *
    * @returns Complete configuration object with all logger settings
    */
   static getConfig(): LogConfig {
     const timestampConfig = this.getTimestampConfig();
+    const ciConfig = TerminalUtils.getCIConfig();
 
     return {
       level: this.getLogLevel(),
       useJson: this.shouldUseJson(),
       useColors: this.shouldUseColors(),
       supportsUnicode: this.supportsUnicode(),
-      showTimestamp: timestampConfig.show,
+      supportsEmoji: this.supportsEmoji(),
+      showTimestamp: this.shouldShowTimestamp(timestampConfig.show, ciConfig.showTimestamp),
       timestampFormat: timestampConfig.format,
-      showPrefix: this.shouldShowPrefix(),
-      showIcons: this.shouldShowIcons(),
+      showPrefix: this.shouldShowPrefix(ciConfig.showPrefix),
+      showIcons: this.shouldShowIcons(ciConfig.showIcons),
     };
   }
 
@@ -74,6 +77,13 @@ export class LogConfiguration {
   }
 
   /**
+   * Checks if emoji characters should be used
+   */
+  private static supportsEmoji(): boolean {
+    return TerminalUtils.supportsEmoji();
+  }
+
+  /**
    * Gets timestamp configuration from environment variable
    */
   private static getTimestampConfig(): { show: boolean; format: TimestampFormat } {
@@ -96,18 +106,45 @@ export class LogConfiguration {
   }
 
   /**
-   * Checks if prefix should be shown in output
+   * Determines if timestamps should be shown, considering both environment variables and CI detection
    */
-  private static shouldShowPrefix(): boolean {
-    const showPrefixValue = process.env[this.ENV_SHOW_PREFIX];
-    return showPrefixValue === 'true' || showPrefixValue === '1';
+  private static shouldShowTimestamp(envTimestamp: boolean, ciTimestamp: boolean): boolean {
+    // Environment variable takes precedence
+    if (process.env[this.ENV_SHOW_TIMESTAMP] !== undefined) {
+      return envTimestamp;
+    }
+
+    // Fall back to CI detection
+    return ciTimestamp;
   }
 
   /**
-   * Checks if icons should be shown in output
+   * Checks if prefix should be shown in output, considering both environment variables and CI detection
    */
-  private static shouldShowIcons(): boolean {
+  private static shouldShowPrefix(ciPrefix: boolean): boolean {
+    const showPrefixValue = process.env[this.ENV_SHOW_PREFIX];
+
+    // Environment variable takes precedence
+    if (showPrefixValue !== undefined) {
+      return showPrefixValue === 'true' || showPrefixValue === '1';
+    }
+
+    // Fall back to CI detection
+    return ciPrefix;
+  }
+
+  /**
+   * Checks if icons should be shown in output, considering both environment variables and CI detection
+   */
+  private static shouldShowIcons(ciIcons: boolean): boolean {
     const noIconsValue = process.env[this.ENV_NO_ICONS];
-    return !(noIconsValue === 'true' || noIconsValue === '1');
+
+    // Environment variable takes precedence
+    if (noIconsValue !== undefined) {
+      return !(noIconsValue === 'true' || noIconsValue === '1');
+    }
+
+    // Fall back to CI detection
+    return ciIcons;
   }
 }
