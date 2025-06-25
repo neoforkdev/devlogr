@@ -1,0 +1,28 @@
+# Ensure consistent line endings
+* text=auto eol=lf
+
+# Explicitly declare text files
+*.ts text
+*.tsx text
+*.js text
+*.mjs text
+*.json text
+*.md text
+*.yml text
+*.yaml text
+*.sh text
+
+# Explicitly declare binary files
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.ico binary
+*.pdf binary
+
+# Linguist overrides for accurate language detection
+*.ts linguist-language=TypeScript
+*.mjs linguist-language=JavaScript
+examples/* linguist-documentation=false
+tests/* linguist-documentation=false
+scripts/* linguist-documentation=false 

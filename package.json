@@ -22,6 +22,8 @@
     "format:check": "prettier --check .",
     "check": "npm run format && npm run lint && npm run build && npm test",
     "fix": "npm run format:fix && npm run lint:fix",
+    "pre-commit": "lint-staged",
+    "prepare": "husky",
     "example:levels": "tsx examples/levels.ts",
     "example:single-spinner": "tsx examples/single-spinner.ts",
     "example:multiple-spinners": "tsx examples/multiple-spinners.ts",
@@ -41,8 +43,23 @@
     "docs": "typedoc",
     "docs:serve": "npm run docs && npx http-server docs -p 8080 -o",
     "clean": "rm -rf dist",
-    "prepare": "npm run build",
     "prepublishOnly": "npm run clean && npm run build && npm test"
+  },
+  "lint-staged": {
+    "*.{ts,tsx}": [
+      "prettier --write",
+      "eslint --fix"
+    ],
+    "*.{js,mjs}": [
+      "prettier --write",
+      "eslint --fix"
+    ],
+    "*.{json,md,yml,yaml}": [
+      "prettier --write"
+    ],
+    "package.json": [
+      "prettier --write"
+    ]
   },
   "keywords": [
     "logger",
@@ -75,6 +92,8 @@
     "@vitest/coverage-v8": "^1.0.0",
     "eslint": "^8.57.1",
     "globals": "^16.2.0",
+    "husky": "^9.1.7",
+    "lint-staged": "^15.3.0",
     "prettier": "^3.5.3",
     "tsx": "^4.0.0",
     "typedoc": "^0.28.5",
