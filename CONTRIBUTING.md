@@ -182,6 +182,49 @@ npm run test:coverage
 - **Utils**: Utility functions
 - **Config**: Configuration and environment variables
 
+### Demo Testing
+
+DevLogr includes comprehensive demo testing in CI to ensure examples work correctly across different environments:
+
+#### **Automated Demo Testing**
+
+- **GitHub Action**: `.github/workflows/demo-test.yml` runs all example scripts
+- **CI Integration**: Main CI workflow includes a quick demo smoke test
+- **Environment Testing**: Validates demos work with various configurations:
+  - `NO_COLOR=1` - Accessibility mode
+  - `DEVLOGR_NO_ICONS=true` - Icon-free environments
+  - `DEVLOGR_JSON=true` - Structured logging mode
+  - `DEVLOGR_LOG_LEVEL=debug` - Verbose output
+
+#### **Manual Demo Testing**
+
+```bash
+# Test individual examples
+npm run example:demo             # Main demo
+npm run example:levels           # Logging levels
+npm run example:single-spinner   # Basic spinner
+npm run example:multiple-spinners # Advanced spinners
+npm run example:colored-spinners # Spinner colors
+npm run example:env-variables    # Environment config
+npm run example:json-output      # JSON mode
+npm run example:safe-string-utils # String utilities
+
+# Test with different environments
+NO_COLOR=1 npm run example:demo
+DEVLOGR_NO_ICONS=true npm run example:demo
+DEVLOGR_JSON=true npm run example:demo
+```
+
+#### **Adding New Examples**
+
+When adding new examples:
+
+1. Add the example script to `examples/` directory
+2. Add npm script to `package.json`
+3. Update the demo test workflow if needed
+4. Test manually with different environment configurations
+5. Ensure examples work in CI environments (non-TTY)
+
 ## Environment Variables
 
 Test your changes with different environment configurations:
