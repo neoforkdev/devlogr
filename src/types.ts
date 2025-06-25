@@ -89,4 +89,10 @@ export interface LogConfig {
 
   /** Format to use for timestamp display when enabled */
   readonly timestampFormat: TimestampFormat;
+
+  /** Whether to show log level prefixes and labels */
+  readonly showPrefix: boolean;
+
+  /** Whether to show icons/symbols in log messages */
+  readonly showIcons: boolean;
 }

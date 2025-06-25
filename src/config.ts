@@ -14,6 +14,8 @@ export class LogConfiguration {
   private static readonly ENV_NO_COLOR = 'NO_COLOR';
   private static readonly ENV_DEVLOGR_NO_COLOR = 'DEVLOGR_NO_COLOR';
   private static readonly ENV_SHOW_TIMESTAMP = 'DEVLOGR_SHOW_TIMESTAMP';
+  private static readonly ENV_SHOW_PREFIX = 'DEVLOGR_SHOW_PREFIX';
+  private static readonly ENV_NO_ICONS = 'DEVLOGR_NO_ICONS';
 
   /**
    * Get complete logger configuration from environment and terminal detection.
@@ -30,6 +32,8 @@ export class LogConfiguration {
       supportsUnicode: this.supportsUnicode(),
       showTimestamp: timestampConfig.show,
       timestampFormat: timestampConfig.format,
+      showPrefix: this.shouldShowPrefix(),
+      showIcons: this.shouldShowIcons(),
     };
   }
 
@@ -75,10 +79,6 @@ export class LogConfiguration {
   private static getTimestampConfig(): { show: boolean; format: TimestampFormat } {
     const timestampValue = process.env[this.ENV_SHOW_TIMESTAMP];
 
-    if (!timestampValue || timestampValue === 'false') {
-      return { show: false, format: TimestampFormat.TIME };
-    }
-
     if (timestampValue === 'true') {
       return { show: true, format: TimestampFormat.TIME };
     }
@@ -87,7 +87,27 @@ export class LogConfiguration {
       return { show: true, format: TimestampFormat.ISO };
     }
 
-    // Default to TIME format for any other truthy value
+    if (timestampValue === '1') {
     return { show: true, format: TimestampFormat.TIME };
+    }
+
+    // Default to disabled (false) for any other value or no value
+    return { show: false, format: TimestampFormat.TIME };
+  }
+
+  /**
+   * Checks if prefix should be shown in output
+   */
+  private static shouldShowPrefix(): boolean {
+    const showPrefixValue = process.env[this.ENV_SHOW_PREFIX];
+    return showPrefixValue === 'true' || showPrefixValue === '1';
+  }
+
+  /**
+   * Checks if icons should be shown in output
+   */
+  private static shouldShowIcons(): boolean {
+    const noIconsValue = process.env[this.ENV_NO_ICONS];
+    return !(noIconsValue === 'true' || noIconsValue === '1');
   }
 }
