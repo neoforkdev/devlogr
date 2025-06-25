@@ -36,18 +36,78 @@ export class ThemeProvider {
       throw new Error(`Unknown log level: ${level}`);
     }
 
-    // Get current configuration to determine icon visibility
+    // Get current configuration to determine icon visibility and color support
     const config = LogConfiguration.getConfig();
     const showIcons = config.showIcons;
+    const useColors = config.useColors;
+
+    // Override chalk's color detection if DevLogR says we should use colors
+    // This handles cases where chalk is too conservative (e.g., in CI environments)
+    const chalkInstance = this.getChalkInstance(useColors);
 
     // Get appropriate symbol based on Unicode support and icon visibility
     const symbol = this.getSymbol(level, customTheme?.symbol, supportsUnicode, showIcons);
 
+    // Get color function from the appropriate chalk instance
+    const colorFn = this.getColorFunction(chalkInstance, level, customTheme?.color);
+
     return {
       symbol,
-      color: customTheme?.color ?? defaultTheme.color,
+      color: colorFn,
       label: customTheme?.label ?? defaultTheme.label,
     };
+  }
+
+  /**
+   * Gets the appropriate chalk instance based on color configuration
+   */
+  private static getChalkInstance(useColors: boolean) {
+    if (!useColors) {
+      // Return a chalk instance with colors disabled
+      return new chalk.Instance({ level: 0 });
+    }
+
+    // If colors should be used but chalk doesn't detect support, force it
+    if (chalk.level === 0 && useColors) {
+      // Force basic color support (level 1)
+      return new chalk.Instance({ level: 1 });
+    }
+
+    // Use default chalk instance
+    return chalk;
+  }
+
+  /**
+   * Gets the color function for a specific level
+   */
+  private static getColorFunction(chalkInstance: any, level: string, customColor?: any) {
+    if (customColor) {
+      return customColor;
+    }
+
+    // Map level to color function using the appropriate chalk instance
+    switch (level) {
+      case 'error':
+        return chalkInstance.red;
+      case 'warn':
+        return chalkInstance.yellow;
+      case 'info':
+        return chalkInstance.cyan;
+      case 'debug':
+        return chalkInstance.gray;
+      case 'trace':
+        return chalkInstance.gray;
+      case 'success':
+        return chalkInstance.green;
+      case 'title':
+        return chalkInstance.magenta;
+      case 'task':
+        return chalkInstance.white;
+      case 'plain':
+        return chalkInstance.white;
+      default:
+        return chalkInstance.white;
+    }
   }
 
   /**
