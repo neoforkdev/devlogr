@@ -1,8 +1,12 @@
 import { Logger } from '../src/logger';
+import { ListrTask } from 'listr2';
 
 const logger = new Logger('Deploy');
 
 async function quickDemo() {
+  logger.separator('Quick Demo');
+  logger.spacer();
+
   // Realistic deployment scenario
   logger.title('🚀 Deploying MyApp v2.1.0');
   logger.info('Starting deployment to production...');
@@ -20,6 +24,10 @@ async function quickDemo() {
 
   await sleep(400);
 
+  logger.spacer();
+  logger.separator('Build');
+  logger.spacer();
+
   // Build process
   logger.startSpinner('Building application...');
   await sleep(1000);
@@ -33,51 +41,66 @@ async function quickDemo() {
 
   await sleep(300);
 
-  // Multi-spinner demonstration - concurrent operations
+  logger.spacer();
+  logger.separator('Deployment');
+  logger.spacer();
+
+  // Multi-spinner demonstration - concurrent operations using proper API
   logger.info('Starting concurrent deployment tasks...');
 
-  const dbLogger = new Logger('Database');
-  const apiLogger = new Logger('API');
-  const cdnLogger = new Logger('CDN');
+  const concurrentDeploymentTasks: ListrTask[] = [
+    {
+      title: 'Running database migrations',
+      task: async (ctx, task) => {
+        await sleep(1000);
+        task.output = 'Migrating user schema...';
+        await sleep(800);
+        task.output = 'Updating indexes...';
+        await sleep(1200);
+        task.output = 'Database migrations applied';
+      },
+    },
+    {
+      title: 'Deploying API services',
+      task: async (ctx, task) => {
+        await sleep(800);
+        task.output = 'Rolling out to instances...';
+        await sleep(1200);
+        task.output = 'Running health checks...';
+        await sleep(400);
+        task.output = 'API deployment complete';
+      },
+    },
+    {
+      title: 'Updating CDN cache',
+      task: async (ctx, task) => {
+        await sleep(200);
+        task.output = 'Invalidating old cache...';
+        await sleep(600);
+        task.output = 'CDN updated successfully';
+      },
+    },
+  ];
 
-  // Start multiple spinners concurrently
-  dbLogger.startSpinner('Running database migrations...');
-  await sleep(200);
-  apiLogger.startSpinner('Deploying API services...');
-  await sleep(200);
-  cdnLogger.startSpinner('Updating CDN cache...');
-
-  // Update them independently
-  await sleep(1000);
-  dbLogger.updateSpinnerText('Migrating user schema...');
-
-  await sleep(800);
-  apiLogger.updateSpinnerText('Rolling out to instances...');
-  cdnLogger.updateSpinnerText('Invalidating old cache...');
-
-  await sleep(1200);
-  dbLogger.updateSpinnerText('Updating indexes...');
-  apiLogger.updateSpinnerText('Running health checks...');
-
-  // Complete them at different times
-  await sleep(600);
-  cdnLogger.succeedSpinner('CDN updated successfully');
-
-  await sleep(800);
-  dbLogger.succeedSpinner('Database migrations applied');
-
-  await sleep(400);
-  apiLogger.succeedSpinner('API deployment complete');
+  await logger.runConcurrentTasks('Concurrent Deployment Tasks', concurrentDeploymentTasks);
 
   await sleep(500);
+
+  logger.spacer();
+  logger.separator('Final Status');
+  logger.spacer();
 
   // Final deployment status
   logger.success('Application is now live');
-  logger.info('→ URL: https://myapp.com');
-  logger.info('→ Health: All systems operational');
-  logger.info('→ Instances: 3/3 healthy');
+  logger.info('URL: https://myapp.com');
+  logger.info('Health: All systems operational');
+  logger.info('Instances: 3/3 healthy');
 
   await sleep(500);
+
+  logger.spacer();
+  logger.separator('Cleanup');
+  logger.spacer();
 
   // Cleanup with a minor warning
   logger.startSpinner('Running cleanup tasks...');

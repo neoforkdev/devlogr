@@ -88,7 +88,7 @@ export class LogConfiguration {
     }
 
     if (timestampValue === '1') {
-    return { show: true, format: TimestampFormat.TIME };
+      return { show: true, format: TimestampFormat.TIME };
     }
 
     // Default to disabled (false) for any other value or no value
