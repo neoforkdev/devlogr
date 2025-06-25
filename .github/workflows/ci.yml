@@ -53,3 +53,20 @@ jobs:
         if: matrix.node-version == '20'
         with:
           fail_ci_if_error: false
+
+      - name: Demo Smoke Test
+        run: |
+          echo "🔥 Running quick demo smoke test..."
+          timeout 5s npm run example:levels || {
+            exit_code=$?
+            if [ $exit_code -eq 124 ]; then
+              echo "✅ Demo smoke test passed"
+              exit 0
+            else
+              echo "❌ Demo smoke test failed with exit code: $exit_code"
+              exit $exit_code
+            fi
+          }
+        env:
+          CI: true
+          FORCE_COLOR: '1'
