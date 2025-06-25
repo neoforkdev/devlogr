@@ -42,17 +42,30 @@ log.completeSpinnerWithSuccess('All done!');
 
 ---
 
-## ✨ Features That Make DevOps Swoon
+## ✨ Features & Smart Defaults
 
-- 🎨 **Looks Amazing** – Styled output with color, emoji, and Unicode where supported
-- 🧠 **Made for Humans** – Clear, scannable messages designed for quick readability
-- 🌀 **Animated Spinners** – Interactive, with fallback for CI environments
-- ⚙️ **Zero Config** – Sensible defaults; fully customizable if desired
-- 🧱 **CLI-Native Design** – Terminal-aware and CI-friendly
-- 📄 **JSON Mode** – Structured output when machines are watching
-- 🔐 **Safe Logging** – Handles circular references and edge cases
-- 🧪 **Fully Tested** – Over 200 real-world scenario tests
-- 🙅 **No Visual Junk** – Automatically disables icons, emojis, and colors on unsupported terminals
+DevLogr is built for terminal life—smart, sharp, and ready to adapt without extra setup.
+
+### 🎨 Designed for Humans
+
+- 🌈 **Stylish by Default** – Clean layout, color-coded levels, emoji icons, and Unicode accents.
+- 📦 **Minimal Noise** – Just signal. No clutter, no fluff.
+- 🌀 **Smooth Spinners** – Animated tasks that degrade gracefully in CI.
+
+### 🧠 Built to Adapt
+
+- 🧬 **Auto-Detects Your Terminal** – Adjusts visuals for TTY, color, Unicode, and emoji support.
+- 🤖 **CI-Aware** – Behaves properly in pipelines. No weird artifacts, no broken animations.
+- 📄 **JSON Mode** – Machine-readable structured logs when you need them.
+
+### ⚙️ Sensible Defaults, Full Control
+
+- 🔍 **Log Level Control** – Set via `DEVLOGR_LOG_LEVEL` (e.g., `debug`, `info`, `warn`, `error`).
+- 🕰 **Timestamps & Prefixes** – Optional, configurable, respectful of your screen space.
+- 🔐 **Safe Logging** – Handles circular refs and weird data without crashing.
+- 🧪 **Fully Tested** – Over 200 real-world tests. It works.
+
+DevLogr just works—beautiful in your terminal, clear in your CI, and quiet when it should be.
 
 ---
 
@@ -196,31 +209,9 @@ Configure behavior via env vars:
 
 ---
 
-## 🛠 Development Scripts
-
-```bash
-npm run format         # Check formatting
-npm run format:fix     # Apply formatting fixes
-npm run lint           # Lint code
-npm run lint:fix       # Auto-lint fixes
-npm run check          # Run all validations
-npm run fix            # Runs both format:fix & lint:fix
-```
-
----
-
-## 🧠 Smart Defaults & Adaptive Behavior
-
-- Auto-detects terminal capabilities (color, Unicode, TTY)
-- CI-aware – adapts output for non-interactive shells
-- JSON mode suppresses visual frills
-- Optional timestamps and prefixes
-
----
-
 ## 📜 License
 
-MIT — Do whatever, just don’t sue. 😉
+MIT — Use, modify, and share as you like.
 
 ---
 
