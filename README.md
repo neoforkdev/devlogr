@@ -1,238 +1,181 @@
-# DevLogr
+# @neofork/devlogr
 
-A UX-first logger for modern CLI tools with personality and power.
+> Logs that look great in your terminal—and make sense in your CI.
 
-## Features
+<p align="center">
+  <img src="https://raw.githubusercontent.com/neoforkdev/devlogr/refs/heads/main/.github/demo.gif" alt="devlogr demo animation" width="100%" style="max-width: 800px; border: 2px solid #e1e4e8; border-radius: 8px; padding: 20px; margin: 20px auto;">
+</p>
 
-- 🎨 **Clean, scannable output** with colors and emojis
-- ⚡ **Animated spinners** with fallback support
-- 📊 **JSON output mode** for machine parsing
-- 🖥️ **Terminal-aware** and CI-friendly
-- ⚙️ **Zero configuration** required
-- 🚀 **Multi-spinner support** for concurrent operations
+<div align="center"><strong>⚡ The UX-first logger for modern CLI & deployment tools ⚡</strong><br/>CLI-native, CI-compliant, beautifully minimal. No setup. All signal.</div>
 
-## Quick Start
+---
 
-```typescript
+## 🎯 Built for real CLI tools
+
+Most loggers are backend-first or just sad `console.log()` clones. `devlogr` isn’t.
+
+This is structured logging with style—built for dev tools, task runners, release scripts, and CLI utilities that actually run in terminals—either locally or in CI pipelines.
+
+No brittle hacks. No bland output. Just focused feedback, clean visuals, useful context, and a pinch of personality.
+
+---
+
+## 🚀 Quickstart
+
+```bash
+npm install @neofork/devlogr
+```
+
+```ts
 import { createLogger } from '@neofork/devlogr';
 
-const log = createLogger('my-tool');
+const log = createLogger('my-cli');
 
-log.info('Starting process...');
-log.success('Process completed!');
+log.title('🔧 Setup');
+log.info('Starting process');
+log.success('Complete!');
 
-// Spinner usage
 log.startSpinner('Working...');
-setTimeout(() => log.succeedSpinner('Done!'), 1000);
+log.updateSpinnerText('Still going...');
+log.completeSpinnerWithSuccess('All done!');
 ```
 
-## Environment Variables
+---
 
-DevLogr can be configured using environment variables to customize its behavior for different environments and use cases.
+## ✨ Features That Make DevOps Swoon
 
-### Quick Reference
+- 🎨 **Looks Amazing** – Styled output with color, emoji, and Unicode where supported
+- 🧠 **Made for Humans** – Clear, scannable messages designed for quick readability
+- 🌀 **Animated Spinners** – Interactive, with fallback for CI environments
+- ⚙️ **Zero Config** – Sensible defaults; fully customizable if desired
+- 🧱 **CLI-Native Design** – Terminal-aware and CI-friendly
+- 📄 **JSON Mode** – Structured output when machines are watching
+- 🔐 **Safe Logging** – Handles circular references and edge cases
+- 🧪 **Fully Tested** – Over 200 real-world scenario tests
+- 🙅 **No Visual Junk** – Automatically disables icons, emojis, and colors on unsupported terminals
+
+---
+
+## 🧩 Logging Methods
+
+```ts
+log.error('Something broke');
+log.warning('This might be an issue');
+log.info('FYI');
+log.debug('Debugging info');
+log.success('It worked!');
+log.task('Running something...');
+log.title('🚀 Deployment Phase');
+log.plain('No formatting here.');
+```
+
+---
+
+## 🕹 Spinner Control
+
+```ts
+log.startSpinner('Loading...');
+log.updateSpinnerText('Still loading...');
+log.succeedSpinner('Loaded');
+log.failSpinner('Failed');
+log.completeSpinnerWithSuccess('Mission accomplished');
+```
+
+Or named spinners:
+
+```ts
+import { SpinnerUtils } from '@neofork/devlogr';
+
+SpinnerUtils.start('build', { text: 'Building...', color: 'yellow' });
+SpinnerUtils.succeed('build', 'Build done!');
+```
+
+---
+
+## 📚 Examples Directory
+
+Want to see DevLogr in action? Check out:
+
+- All logging methods
+- Task sequencing & spinner chaining
+- JSON mode
+- Env var configurations
+- Integration with `listr2`
+
+Run with:
 
 ```bash
-# Most commonly used variables
-DEVLOGR_LOG_LEVEL=debug          # Show debug messages
-DEVLOGR_OUTPUT_JSON=true         # JSON output for CI/CD
-DEVLOGR_SHOW_PREFIX=true         # Show log levels and prefixes
-DEVLOGR_SHOW_TIMESTAMP=true      # Add timestamps
-DEVLOGR_NO_ICONS=true            # Hide icons for accessibility
-NO_COLOR=1                       # Disable colors (global standard)
+npm run example:<name>
 ```
 
-### Core Configuration
+See [examples/README.md](./examples/README.md) for full list.
 
-| Variable              | Values                                    | Default | Description                                    |
-| --------------------- | ----------------------------------------- | ------- | ---------------------------------------------- |
-| `DEVLOGR_LOG_LEVEL`   | `error`, `warn`, `info`, `debug`, `trace` | `info`  | Sets the minimum log level to display          |
-| `DEVLOGR_OUTPUT_JSON` | `true`, `false`                           | `false` | Enables JSON output format for machine parsing |
+---
 
-### Display Options
+## 📖 API Documentation
 
-| Variable                 | Values                      | Default | Description                                                  |
-| ------------------------ | --------------------------- | ------- | ------------------------------------------------------------ |
-| `DEVLOGR_SHOW_PREFIX`    | `true`, `1`, `false`        | `false` | Shows/hides log level prefixes and logger names              |
-| `DEVLOGR_SHOW_TIMESTAMP` | `true`, `1`, `iso`, `false` | `false` | Shows timestamps (`true`/`1` = HH:MM:SS, `iso` = ISO format) |
+Auto-generated docs available at: **https://neoforkdev.github.io/devlogr/**
 
-### Color Control
+- **Latest** → `/latest/`
+- **Versioned** → tags like `/v0.0.1/`
 
-| Variable              | Values          | Default | Description                               |
-| --------------------- | --------------- | ------- | ----------------------------------------- |
-| `NO_COLOR`            | Any value       | -       | Disables all colors (standard convention) |
-| `DEVLOGR_NO_COLOR`    | `true`, `false` | `false` | DevLogr-specific color disable            |
-| `FORCE_COLOR`         | Any value       | -       | Forces color output (standard convention) |
-| `DEVLOGR_FORCE_COLOR` | Any value       | -       | DevLogr-specific color forcing            |
-
-### Unicode and Emoji Control
-
-| Variable             | Values               | Default | Description                                |
-| -------------------- | -------------------- | ------- | ------------------------------------------ |
-| `NO_EMOJI`           | Any value            | -       | Disables emoji output (global standard)    |
-| `DEVLOGR_NO_EMOJI`   | Any value            | -       | DevLogr-specific emoji disable             |
-| `NO_UNICODE`         | Any value            | -       | Disables Unicode symbols (global standard) |
-| `DEVLOGR_NO_UNICODE` | `true`, `false`      | `false` | DevLogr-specific Unicode disable           |
-| `DEVLOGR_UNICODE`    | `true`, `false`      | `auto`  | Forces Unicode support                     |
-| `DEVLOGR_NO_ICONS`   | `true`, `1`, `false` | `false` | Hides all icons/symbols in log output      |
-
-## Configuration Examples
-
-### Minimal Clean Output
+Generate locally:
 
 ```bash
-# Hide all prefixes and timestamps for clean output
-export DEVLOGR_SHOW_PREFIX=false
-export DEVLOGR_SHOW_TIMESTAMP=false
+npm run docs        # generate docs
+npm run docs:serve  # serve locally
 ```
 
-### Full Structured Logging
+---
+
+## ⚙️ Environment Variables
+
+Configure behavior via env vars:
+
+| Variable                             | Description                       | Example       |
+| ------------------------------------ | --------------------------------- | ------------- |
+| `DEVLOGR_LOG_LEVEL`                  | Minimum log level (`debug`, etc.) | `debug`       |
+| `DEVLOGR_OUTPUT_JSON`                | Structured JSON logs              | `true`        |
+| `DEVLOGR_SHOW_TIMESTAMP`             | Enables timestamps                | `true`/`iso`  |
+| `DEVLOGR_SHOW_PREFIX`                | Show level prefixes & logger name | `true`        |
+| `DEVLOGR_NO_COLOR`                   | Disable colors                    | `true`        |
+| `DEVLOGR_FORCE_COLOR`                | Force colors                      | `true`        |
+| `DEVLOGR_NO_EMOJI`                   | Disable emojis                    | `true`        |
+| `DEVLOGR_NO_UNICODE`                 | ASCII-only mode                   | `true`        |
+| `DEVLOGR_UNICODE`                    | Force Unicode support             | `true`/`auto` |
+| `DEVLOGR_NO_ICONS`                   | Hide all icons                    | `true`        |
+| `NO_COLOR`, `NO_EMOJI`, `NO_UNICODE` | Global disable standards          | `1`           |
+
+---
+
+## 🛠 Development Scripts
 
 ```bash
-# Show all information with timestamps
-export DEVLOGR_SHOW_PREFIX=true
-export DEVLOGR_SHOW_TIMESTAMP=iso
-export DEVLOGR_LOG_LEVEL=debug
+npm run format         # Check formatting
+npm run format:fix     # Apply formatting fixes
+npm run lint           # Lint code
+npm run lint:fix       # Auto-lint fixes
+npm run check          # Run all validations
+npm run fix            # Runs both format:fix & lint:fix
 ```
 
-### CI/CD Environment
+---
 
-```bash
-# JSON output for log processing
-export DEVLOGR_OUTPUT_JSON=true
-export DEVLOGR_LOG_LEVEL=info
-export NO_COLOR=1
-```
+## 🧠 Smart Defaults & Adaptive Behavior
 
-### Development Environment
+- Auto-detects terminal capabilities (color, Unicode, TTY)
+- CI-aware – adapts output for non-interactive shells
+- JSON mode suppresses visual frills
+- Optional timestamps and prefixes
 
-```bash
-# Full debug output with colors and emojis
-export DEVLOGR_LOG_LEVEL=debug
-export DEVLOGR_SHOW_PREFIX=true
-export DEVLOGR_SHOW_TIMESTAMP=true
-export DEVLOGR_FORCE_COLOR=1
-```
+---
 
-### Accessibility Mode
+## 📜 License
 
-```bash
-# Disable colors, emojis, and icons for better accessibility
-export NO_COLOR=1
-export DEVLOGR_NO_EMOJI=1
-export DEVLOGR_NO_UNICODE=1
-export DEVLOGR_NO_ICONS=1
-```
+MIT — Do whatever, just don’t sue. 😉
 
-## Live Demo
+---
 
-See all environment variables in action with our interactive demo:
+## 🤝 Contribute
 
-```bash
-# Run the interactive demo
-npm run example:env-variables
-
-# Or test specific configurations
-DEVLOGR_NO_ICONS=true npm run example:env-variables
-DEVLOGR_OUTPUT_JSON=true npm run example:env-variables
-DEVLOGR_LOG_LEVEL=error npm run example:env-variables
-NO_COLOR=1 npm run example:env-variables
-```
-
-The demo shows real-time effects of each environment variable, making it easy to understand how they change the output.
-
-### Output Examples
-
-**Default output:**
-
-```
-i Starting process...
-✓ Process completed!
-```
-
-**With `DEVLOGR_NO_ICONS=true`:**
-
-```
-Starting process...
-Process completed!
-```
-
-**With `DEVLOGR_SHOW_PREFIX=true`:**
-
-```
-i INFO     [my-tool] Starting process...
-✓ SUCCESS  [my-tool] Process completed!
-```
-
-**With `DEVLOGR_SHOW_TIMESTAMP=true DEVLOGR_SHOW_PREFIX=true`:**
-
-```
-[14:32:15] i INFO     [my-tool] Starting process...
-[14:32:16] ✓ SUCCESS  [my-tool] Process completed!
-```
-
-**With `DEVLOGR_OUTPUT_JSON=true`:**
-
-```json
-{"level":"info","message":"Starting process...","prefix":"my-tool","timestamp":"2025-01-01T14:32:15.123Z"}
-{"level":"info","message":"Process completed!","prefix":"my-tool","timestamp":"2025-01-01T14:32:16.456Z"}
-```
-
-## Multi-Spinner Usage
-
-DevLogr supports concurrent operations with proper multi-spinner management:
-
-```typescript
-import { createLogger, ListrTask } from '@neofork/devlogr';
-
-const logger = createLogger('deploy');
-
-const tasks: ListrTask[] = [
-  {
-    title: 'Database migration',
-    task: async (ctx, task) => {
-      task.output = 'Running migrations...';
-      await migrateDatabase();
-    },
-  },
-  {
-    title: 'API deployment',
-    task: async () => {
-      await deployAPI();
-    },
-  },
-  {
-    title: 'Cache warming',
-    task: async () => {
-      await warmCache();
-    },
-  },
-];
-
-await logger.runConcurrentTasks('Deployment', tasks);
-```
-
-## Default Behavior
-
-By default, DevLogr provides **clean, minimal output**:
-
-- ✅ **No prefixes** or log level labels
-- ✅ **No timestamps**
-- ✅ **Colors and emojis** enabled (when supported)
-- ✅ **Unicode symbols** for better visual hierarchy
-- ✅ **Info level** logging and above
-
-This ensures excellent readability for end users while allowing full customization for development and CI environments.
-
-## Terminal Detection
-
-DevLogr automatically detects terminal capabilities:
-
-- **Color support** detection across different terminals
-- **Unicode support** based on locale and terminal type
-- **TTY detection** for appropriate output formatting
-- **CI environment** detection for optimal defaults
-
-## License
-
-MIT License - see LICENSE file for details.
+Pull requests welcome! Tests required, style friendly, opinions optional.
