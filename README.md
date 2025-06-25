@@ -73,7 +73,7 @@ log.plain('No formatting here.');
 
 ## 🌀 Advanced Spinner System
 
-DevLogr provides a powerful spinner system that works seamlessly with both single tasks and complex multi-step operations. The advanced task orchestration capabilities are powered by **[Listr2](https://github.com/listr2/listr2)**, enabling sophisticated workflow management with beautiful visual feedback.
+DevLogr features a powerful spinner system for both simple and complex tasks, powered by **[Listr2](https://github.com/listr2/listr2)**.
 
 ### Basic Spinner Control
 
