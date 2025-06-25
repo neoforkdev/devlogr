@@ -13,6 +13,7 @@ import { MessageFormatter } from './formatters';
 import { ThemeProvider } from './themes';
 import { PrefixTracker } from './tracker';
 import { TimestampFormat } from './types';
+import { LogConfiguration } from './config';
 
 export interface DevLogrRendererOptions {
   useColors?: boolean;
@@ -21,6 +22,7 @@ export interface DevLogrRendererOptions {
   supportsUnicode?: boolean;
   prefix?: string;
   lazy?: boolean;
+  taskLevel?: string;
 }
 
 export class DevLogrRenderer implements ListrRenderer {
@@ -50,6 +52,7 @@ export class DevLogrRenderer implements ListrRenderer {
       supportsUnicode: options.supportsUnicode ?? true,
       prefix: options.prefix ?? 'listr2',
       lazy: options.lazy ?? false,
+      taskLevel: options.taskLevel ?? 'plain',
     };
   }
 
@@ -159,11 +162,22 @@ export class DevLogrRenderer implements ListrRenderer {
   }
 
   private formatTaskMessage(message: string, symbol: string, level = 0): string {
-    const theme = ThemeProvider.getTheme('task', undefined, this.options.supportsUnicode);
+    const config = LogConfiguration.getConfig();
+    const theme = ThemeProvider.getTheme(
+      this.options.taskLevel,
+      undefined,
+      this.options.supportsUnicode
+    );
     const maxPrefixLength = PrefixTracker.getMaxLength();
 
+    // Special handling for plain level when prefix is disabled
+    if (this.options.taskLevel === 'plain' && !config.showPrefix) {
+      const indentation = '  '.repeat(level);
+      return `${indentation}${symbol} ${message}`;
+    }
+
     const formattedMessage = MessageFormatter.format({
-      level: 'task',
+      level: this.options.taskLevel,
       theme,
       prefix: this.options.prefix,
       maxPrefixLength,
@@ -173,11 +187,17 @@ export class DevLogrRenderer implements ListrRenderer {
       useColors: this.options.useColors,
       timestampFormat: this.options.timestampFormat,
       stripEmojis: !this.options.supportsUnicode,
-      includeLevel: true,
-      includePrefix: true,
+      includeLevel: config.showPrefix,
+      includePrefix: config.showPrefix,
     });
 
-    const prefix = formattedMessage.replace(/\s+$/, '');
+    let prefix = formattedMessage.replace(/\s+$/, '');
+
+    // Add 2 spaces for proper alignment when prefix is enabled but timestamp is disabled
+    if (config.showPrefix && !this.options.showTimestamp) {
+      prefix = '  ' + prefix; // 2 spaces for alignment
+    }
+
     const indentation = '  '.repeat(level);
     return `${prefix} ${indentation}${symbol} ${message}`;
   }

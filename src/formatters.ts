@@ -99,7 +99,7 @@ export class MessageFormatter {
     } else if (symbol) {
       return symbol;
     } else if (levelLabel) {
-      return `  ${levelLabel}`; // 2 spaces to align with symbol
+      return levelLabel;
     }
     return '';
   }

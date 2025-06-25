@@ -492,10 +492,10 @@ export class Logger {
 
     try {
       const result = await listr.run();
-      this.success(`✅ ${title} completed successfully`);
+      this.success(`${title} completed successfully`);
       return result;
     } catch (error) {
-      this.error(`❌ ${title} failed`, error);
+      this.error(`${title} failed`, error);
       throw error;
     }
   }
@@ -509,6 +509,7 @@ export class Logger {
       concurrent?: boolean;
       exitOnError?: boolean;
       context?: T;
+      taskLevel?: string;
     }
   ): Listr<T, typeof DevLogrRenderer> {
     return new Listr(tasks, {
@@ -522,6 +523,7 @@ export class Logger {
         useColors: this.config.useColors,
         timestampFormat: this.config.timestampFormat,
         supportsUnicode: this.config.supportsUnicode,
+        taskLevel: options?.taskLevel,
       },
     });
   }
@@ -529,22 +531,66 @@ export class Logger {
   /**
    * Execute concurrent tasks with proper logging
    */
-  async runConcurrentTasks<T = any>(title: string, tasks: ListrTask<T>[], context?: T): Promise<T> {
+  async runConcurrentTasks<T = any>(
+    title: string,
+    tasks: ListrTask<T>[],
+    contextOrOptions?: T | { context?: T; taskLevel?: string }
+  ): Promise<T> {
+    // Handle both signatures for backward compatibility
+    let context: T | undefined;
+    let taskLevel: string | undefined;
+
+    // Check if it's an options object by looking for known option properties
+    if (
+      contextOrOptions &&
+      typeof contextOrOptions === 'object' &&
+      ('context' in contextOrOptions || 'taskLevel' in contextOrOptions)
+    ) {
+      const options = contextOrOptions as { context?: T; taskLevel?: string };
+      context = options.context;
+      taskLevel = options.taskLevel;
+    } else {
+      context = contextOrOptions as T;
+    }
+
     return this.runTasks(title, tasks, {
       concurrent: true,
       exitOnError: false,
       context,
+      rendererOptions: taskLevel ? { taskLevel } : undefined,
     });
   }
 
   /**
    * Execute sequential tasks with proper logging
    */
-  async runSequentialTasks<T = any>(title: string, tasks: ListrTask<T>[], context?: T): Promise<T> {
+  async runSequentialTasks<T = any>(
+    title: string,
+    tasks: ListrTask<T>[],
+    contextOrOptions?: T | { context?: T; taskLevel?: string }
+  ): Promise<T> {
+    // Handle both signatures for backward compatibility
+    let context: T | undefined;
+    let taskLevel: string | undefined;
+
+    // Check if it's an options object by looking for known option properties
+    if (
+      contextOrOptions &&
+      typeof contextOrOptions === 'object' &&
+      ('context' in contextOrOptions || 'taskLevel' in contextOrOptions)
+    ) {
+      const options = contextOrOptions as { context?: T; taskLevel?: string };
+      context = options.context;
+      taskLevel = options.taskLevel;
+    } else {
+      context = contextOrOptions as T;
+    }
+
     return this.runTasks(title, tasks, {
       concurrent: false,
       exitOnError: true,
       context,
+      rendererOptions: taskLevel ? { taskLevel } : undefined,
     });
   }
 
@@ -607,7 +653,7 @@ export class Logger {
 
   private logJson(level: LogLevel, message: string, args: unknown[]): void {
     const logData = this.buildJsonLogData(level, message, args);
-    this.outputToConsole(level, StringUtils.safeJsonStringify(logData));
+    this.outputToConsole(level, StringUtils.safeJsonStringify(logData, 0));
   }
 
   private buildJsonLogData(
@@ -681,7 +727,7 @@ export class Logger {
   }
 
   private formatMessage(level: string, message: string, args: unknown[]): string {
-    const theme = ThemeProvider.getTheme(level);
+    const theme = ThemeProvider.getTheme(level, undefined, this.config.supportsUnicode);
     const maxPrefixLength = PrefixTracker.getMaxLength();
 
     const shouldStripEmojis = !EmojiUtils.supportsEmoji();
@@ -701,6 +747,8 @@ export class Logger {
       useColors: this.config.useColors,
       timestampFormat: this.config.timestampFormat,
       stripEmojis: shouldStripEmojis,
+      includeLevel: this.config.showPrefix,
+      includePrefix: this.config.showPrefix,
     });
   }
 
@@ -727,7 +775,7 @@ export class Logger {
     level: string,
     options?: Omit<SpinnerOptions, 'text'>
   ): SpinnerOptions {
-    const theme = ThemeProvider.getTheme(level);
+    const theme = ThemeProvider.getTheme(level, undefined, this.config.supportsUnicode);
     return {
       text,
       color: 'cyan',
@@ -766,8 +814,8 @@ export class Logger {
       useColors: this.config.useColors,
       timestampFormat: this.config.timestampFormat,
       stripEmojis: !this.config.supportsUnicode,
-      includeLevel: true,
-      includePrefix: true,
+      includeLevel: this.config.showPrefix,
+      includePrefix: this.config.showPrefix,
     });
   }
 
