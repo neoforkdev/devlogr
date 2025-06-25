@@ -6,7 +6,7 @@ import globals from 'globals';
 export default [
   // Ignore patterns
   {
-    ignores: ['dist/', 'node_modules/', '*.d.ts'],
+    ignores: ['dist/', 'node_modules/', '*.d.ts', 'examples/src/', 'examples/examples/'],
   },
 
   // Base JavaScript config
