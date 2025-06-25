@@ -4,8 +4,10 @@ import { ListrTask } from 'listr2';
 const logger = new Logger('Deploy');
 
 async function quickDemo() {
-  logger.separator('Quick Demo');
+  console.clear();
+  logger.separator('Demo');
   logger.spacer();
+  await sleep(2000);
 
   // Realistic deployment scenario
   logger.title('🚀 Deploying MyApp v2.1.0');
