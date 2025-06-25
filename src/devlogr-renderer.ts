@@ -6,13 +6,13 @@ import {
   ListrEventManager,
   Spinner,
 } from 'listr2';
-import chalk from 'chalk';
 import { createLogUpdate } from 'log-update';
 import { MessageFormatter } from './formatters';
 import { ThemeProvider } from './themes';
 import { PrefixTracker } from './tracker';
 import { TimestampFormat } from './types';
 import { LogConfiguration } from './config';
+import { ChalkUtils } from './utils/chalk';
 
 export interface DevLogrRendererOptions {
   useColors?: boolean;
@@ -38,7 +38,6 @@ export class DevLogrRenderer implements ListrRenderer {
     string,
     { task: ListrTaskObject<any, typeof DevLogrRenderer>; startTime: number }
   >();
-  private chalkInstance: any; // Cached chalk instance with proper color detection
 
   constructor(
     private readonly tasks: ListrTaskObject<any, typeof DevLogrRenderer>[],
@@ -54,29 +53,6 @@ export class DevLogrRenderer implements ListrRenderer {
       lazy: options.lazy ?? false,
       taskLevel: options.taskLevel ?? 'plain',
     };
-
-    // Initialize chalk instance with proper color detection override
-    this.chalkInstance = this.getChalkInstance();
-  }
-
-  /**
-   * Gets the appropriate chalk instance based on color configuration
-   * This ensures DevLogR's smart color detection overrides chalk's conservative CI detection
-   */
-  private getChalkInstance() {
-    if (!this.options.useColors) {
-      // Return a chalk instance with colors disabled
-      return new chalk.Instance({ level: 0 });
-    }
-
-    // If colors should be used but chalk doesn't detect support, force it
-    if (chalk.level === 0 && this.options.useColors) {
-      // Force basic color support (level 1)
-      return new chalk.Instance({ level: 1 });
-    }
-
-    // Use default chalk instance
-    return chalk;
   }
 
   public async render(): Promise<void> {
@@ -142,20 +118,20 @@ export class DevLogrRenderer implements ListrRenderer {
       if (task.isStarted() && !task.isCompleted() && !task.hasFailed() && !done) {
         // Loading animation - blue color
         const spinnerSymbol = this.spinner ? this.spinner.fetch() : '⠋';
-        symbol = this.chalkInstance.blue(spinnerSymbol);
+        symbol = ChalkUtils.getChalkInstance(this.options.useColors).blue(spinnerSymbol);
       } else if (task.isCompleted()) {
         // Success - green color
-        symbol = this.chalkInstance.green('✔');
+        symbol = ChalkUtils.getChalkInstance(this.options.useColors).green('✔');
       } else if (task.hasFailed()) {
         // Error - red color
-        symbol = this.chalkInstance.red('✖');
+        symbol = ChalkUtils.getChalkInstance(this.options.useColors).red('✖');
       } else if (task.isSkipped() && task.message.skip) {
         // Skipped - yellow/orange color
-        symbol = this.chalkInstance.yellow('◯');
+        symbol = ChalkUtils.getChalkInstance(this.options.useColors).yellow('◯');
         title = typeof task.message.skip === 'string' ? `${title} -> ${task.message.skip}` : title;
       } else if (task.isStarted() && done) {
         // Task was interrupted - gray color
-        symbol = this.chalkInstance.gray('❯');
+        symbol = ChalkUtils.getChalkInstance(this.options.useColors).gray('❯');
       } else {
         symbol = ' ';
       }
@@ -169,7 +145,7 @@ export class DevLogrRenderer implements ListrRenderer {
           .trim()
           .split('\n')
           .forEach(line => {
-            const outputSymbol = this.chalkInstance.cyan('›');
+            const outputSymbol = ChalkUtils.getChalkInstance(this.options.useColors).cyan('›');
             output.push(this.formatTaskMessage(line, outputSymbol, level + 1));
           });
       }

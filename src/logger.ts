@@ -1,14 +1,12 @@
-import chalk from 'chalk';
 import { Listr, ListrTask, ListrTaskWrapper } from 'listr2';
-import { LogLevel, LogTheme, LogConfig } from './types';
-import { DevLogrRenderer } from './devlogr-renderer.js';
+import { LogLevel, LogConfig } from './types';
 import { LogConfiguration } from './config';
 import { ThemeProvider } from './themes';
 import { MessageFormatter } from './formatters';
 import { PrefixTracker } from './tracker';
-import { EmojiUtils } from './utils';
-import { StringUtils } from './utils';
-import { SpinnerUtils, SpinnerOptions } from './utils';
+import { EmojiUtils, StringUtils, SpinnerUtils, SpinnerOptions } from './utils';
+import { DevLogrRenderer } from './devlogr-renderer';
+import { ChalkUtils } from './utils/chalk';
 
 // ============================================================================
 // LOGGER IMPLEMENTATION - CORE FUNCTIONALITY
@@ -225,7 +223,7 @@ export class Logger {
    * log.startSpinner('Deploying...', { color: 'yellow' });
    * ```
    */
-  startSpinner(text?: string, options?: Omit<SpinnerOptions, 'text'>): void {
+  startSpinner(text?: string, _options?: Omit<SpinnerOptions, 'text'>): void {
     if (this.config.useJson || !SpinnerUtils.supportsSpinners()) {
       this.task(text || 'Processing...');
       return;
@@ -299,7 +297,7 @@ export class Logger {
         if ((this.singleSpinnerListr as any).renderer?.end) {
           (this.singleSpinnerListr as any).renderer.end();
         }
-      } catch (error) {
+      } catch (_error) {
         // Ignore errors during cleanup
       }
     }
@@ -614,7 +612,8 @@ export class Logger {
       ? `--- ${title} ${'-'.repeat(Math.max(0, width - title.length - 8))}`
       : '-'.repeat(width);
 
-    console.log(this.config.useColors ? chalk.dim(line) : line);
+    const coloredLine = ChalkUtils.colorize(line, 'dim', this.config.useColors);
+    console.log(coloredLine);
   }
 
   // ============================================================================

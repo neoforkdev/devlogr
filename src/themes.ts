@@ -2,6 +2,7 @@ import chalk from 'chalk';
 import { LogTheme } from './types';
 import { TerminalUtils } from './utils';
 import { LogConfiguration } from './config';
+import { ChalkUtils } from './utils/chalk';
 
 // ============================================================================
 // THEME MANAGEMENT
@@ -41,15 +42,11 @@ export class ThemeProvider {
     const showIcons = config.showIcons;
     const useColors = config.useColors;
 
-    // Override chalk's color detection if DevLogR says we should use colors
-    // This handles cases where chalk is too conservative (e.g., in CI environments)
-    const chalkInstance = this.getChalkInstance(useColors);
-
     // Get appropriate symbol based on Unicode support and icon visibility
     const symbol = this.getSymbol(level, customTheme?.symbol, supportsUnicode, showIcons);
 
-    // Get color function from the appropriate chalk instance
-    const colorFn = this.getColorFunction(chalkInstance, level, customTheme?.color);
+    // Get color function using centralized chalk utility
+    const colorFn = this.getColorFunction(level, customTheme?.color, useColors);
 
     return {
       symbol,
@@ -59,33 +56,16 @@ export class ThemeProvider {
   }
 
   /**
-   * Gets the appropriate chalk instance based on color configuration
+   * Gets the color function for a specific level using centralized chalk utility
    */
-  private static getChalkInstance(useColors: boolean) {
-    if (!useColors) {
-      // Return a chalk instance with colors disabled
-      return new chalk.Instance({ level: 0 });
-    }
-
-    // If colors should be used but chalk doesn't detect support, force it
-    if (chalk.level === 0 && useColors) {
-      // Force basic color support (level 1)
-      return new chalk.Instance({ level: 1 });
-    }
-
-    // Use default chalk instance
-    return chalk;
-  }
-
-  /**
-   * Gets the color function for a specific level
-   */
-  private static getColorFunction(chalkInstance: any, level: string, customColor?: any) {
+  private static getColorFunction(level: string, customColor?: any, useColors?: boolean) {
     if (customColor) {
       return customColor;
     }
 
-    // Map level to color function using the appropriate chalk instance
+    const chalkInstance = ChalkUtils.getChalkInstance(useColors);
+
+    // Map level to color function using the centralized chalk instance
     switch (level) {
       case 'error':
         return chalkInstance.red;
