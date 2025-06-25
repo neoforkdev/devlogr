@@ -3,7 +3,6 @@ import {
   ListrTaskObject,
   ListrEventType,
   ListrTaskEventType,
-  ListrTaskState,
   ListrEventManager,
   Spinner,
 } from 'listr2';
@@ -170,8 +169,12 @@ export class DevLogrRenderer implements ListrRenderer {
     );
     const maxPrefixLength = PrefixTracker.getMaxLength();
 
+    // Use renderer options for prefix/timestamp settings, falling back to config
+    const showPrefix = this.options.prefix !== undefined && config.showPrefix;
+    const showTimestamp = this.options.showTimestamp;
+
     // Special handling for plain level when prefix is disabled
-    if (this.options.taskLevel === 'plain' && !config.showPrefix) {
+    if (this.options.taskLevel === 'plain' && !showPrefix) {
       const indentation = '  '.repeat(level);
       return `${indentation}${symbol} ${message}`;
     }
@@ -183,18 +186,18 @@ export class DevLogrRenderer implements ListrRenderer {
       maxPrefixLength,
       message: '',
       args: [],
-      showTimestamp: this.options.showTimestamp,
+      showTimestamp: showTimestamp,
       useColors: this.options.useColors,
       timestampFormat: this.options.timestampFormat,
       stripEmojis: !this.options.supportsUnicode,
-      includeLevel: config.showPrefix,
-      includePrefix: config.showPrefix,
+      includeLevel: showPrefix,
+      includePrefix: showPrefix,
     });
 
     let prefix = formattedMessage.replace(/\s+$/, '');
 
     // Add 2 spaces for proper alignment when prefix is enabled but timestamp is disabled
-    if (config.showPrefix && !this.options.showTimestamp) {
+    if (showPrefix && !showTimestamp) {
       prefix = '  ' + prefix; // 2 spaces for alignment
     }
 
