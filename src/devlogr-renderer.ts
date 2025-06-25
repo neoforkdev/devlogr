@@ -12,6 +12,7 @@ import { ThemeProvider } from './themes';
 import { PrefixTracker } from './tracker';
 import { TimestampFormat } from './types';
 import { ChalkUtils } from './utils/chalk';
+import { TerminalUtils } from './utils';
 
 export interface DevLogrRendererOptions {
   useColors?: boolean;
@@ -24,7 +25,7 @@ export interface DevLogrRendererOptions {
 }
 
 export class DevLogrRenderer implements ListrRenderer {
-  public static nonTTY = false; // Enable TTY mode for animations
+  public static nonTTY = true; // Enable non-TTY mode for CI environments
   public static rendererOptions: DevLogrRendererOptions = {
     lazy: false,
   };
@@ -37,6 +38,10 @@ export class DevLogrRenderer implements ListrRenderer {
     string,
     { task: ListrTaskObject<any, typeof DevLogrRenderer>; startTime: number }
   >();
+  private isCI: boolean;
+  private lastOutput: string[] = [];
+  private lastUpdateTime: number = 0;
+  private updateThrottleMs: number = 500; // Update every 500ms in CI
 
   constructor(
     private readonly tasks: ListrTaskObject<any, typeof DevLogrRenderer>[],
@@ -52,24 +57,72 @@ export class DevLogrRenderer implements ListrRenderer {
       lazy: options.lazy ?? false,
       taskLevel: options.taskLevel ?? 'task',
     };
+
+    // Detect CI environment for different rendering strategy
+    this.isCI = TerminalUtils.isCI();
   }
 
   public async render(): Promise<void> {
     this.spinner = new Spinner();
-    this.updater = createLogUpdate(process.stdout);
+
+    // In CI environments, don't use log-update as it doesn't work properly
+    if (!this.isCI) {
+      this.updater = createLogUpdate(process.stdout);
+    }
 
     this.setupTaskListeners(this.tasks);
 
     if (!this.options.lazy) {
-      this.spinner.start(() => this.update());
+      if (this.isCI) {
+        // In CI, start with initial output
+        this.update();
+        this.spinner.start(() => this.update());
+      } else {
+        this.spinner.start(() => this.update());
+      }
     }
 
     this.events?.on(ListrEventType.SHOULD_REFRESH_RENDER, () => this.update());
   }
 
   public update(): void {
-    if (this.updater) {
-      this.updater(this.createOutput());
+    const output = this.createOutput();
+
+    if (this.isCI) {
+      // In CI environments, throttle updates and only show significant changes
+      const now = Date.now();
+      const outputLines = output.split('\n').filter(line => line.trim());
+
+      // Check if there are significant changes (completion, new tasks, or throttle time passed)
+      const hasCompletionChanges = outputLines.some(
+        line => line.includes('✔') || line.includes('✖')
+      );
+      const hasNewTasks = outputLines.length !== this.lastOutput.length;
+      const shouldThrottleUpdate = now - this.lastUpdateTime > this.updateThrottleMs;
+
+      if (hasCompletionChanges || hasNewTasks || shouldThrottleUpdate) {
+        // Only output new or changed lines to reduce spam
+        for (let i = 0; i < outputLines.length; i++) {
+          if (!this.lastOutput[i] || this.lastOutput[i] !== outputLines[i]) {
+            // Skip repeated spinner animations unless it's a completion or new task
+            const line = outputLines[i];
+            const isSpinnerLine = /[⠋⠙⠹⠸⠼⠴⠦⠧⠇⠏]/.test(line);
+            const isCompletionLine = line.includes('✔') || line.includes('✖');
+            const isNewTask = !this.lastOutput[i];
+
+            if (!isSpinnerLine || isCompletionLine || isNewTask || shouldThrottleUpdate) {
+              console.log(line);
+            }
+          }
+        }
+        this.lastOutput = outputLines;
+        this.lastUpdateTime = now;
+      }
+    } else {
+      // In local environments, use log-update for smooth animations
+      if (this.updater) {
+        this.updater(output);
+      }
     }
   }
 
@@ -78,9 +131,17 @@ export class DevLogrRenderer implements ListrRenderer {
       this.spinner.stop();
     }
 
-    if (this.updater) {
-      this.updater(this.createOutput({ done: true }));
-      this.updater.done();
+    if (this.isCI) {
+      // In CI, output final state
+      const finalOutput = this.createOutput({ done: true });
+      const outputLines = finalOutput.split('\n').filter(line => line.trim());
+      outputLines.forEach(line => console.log(line));
+    } else {
+      // In local environments, use log-update
+      if (this.updater) {
+        this.updater(this.createOutput({ done: true }));
+        this.updater.done();
+      }
     }
   }
 

@@ -486,6 +486,10 @@ export class Logger {
         supportsUnicode: this.config.supportsUnicode,
         ...options?.rendererOptions,
       },
+      // Force our renderer to be used even in non-TTY environments (CI)
+      fallbackRenderer: DevLogrRenderer,
+      fallbackRendererCondition: false, // Never fallback to a different renderer
+      silentRendererCondition: false, // Never use silent renderer
     });
 
     try {
@@ -523,6 +527,10 @@ export class Logger {
         supportsUnicode: this.config.supportsUnicode,
         taskLevel: options?.taskLevel,
       },
+      // Force our renderer to be used even in non-TTY environments (CI)
+      fallbackRenderer: DevLogrRenderer,
+      fallbackRendererCondition: false, // Never fallback to a different renderer
+      silentRendererCondition: false, // Never use silent renderer
     });
   }
 
