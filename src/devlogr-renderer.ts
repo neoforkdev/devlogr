@@ -11,7 +11,6 @@ import { MessageFormatter } from './formatters';
 import { ThemeProvider } from './themes';
 import { PrefixTracker } from './tracker';
 import { TimestampFormat } from './types';
-import { LogConfiguration } from './config';
 import { ChalkUtils } from './utils/chalk';
 
 export interface DevLogrRendererOptions {
@@ -51,7 +50,7 @@ export class DevLogrRenderer implements ListrRenderer {
       supportsUnicode: options.supportsUnicode ?? true,
       prefix: options.prefix ?? 'listr2',
       lazy: options.lazy ?? false,
-      taskLevel: options.taskLevel ?? 'plain',
+      taskLevel: options.taskLevel ?? 'task',
     };
   }
 
@@ -161,7 +160,6 @@ export class DevLogrRenderer implements ListrRenderer {
   }
 
   private formatTaskMessage(message: string, symbol: string, level = 0): string {
-    const config = LogConfiguration.getConfig();
     const theme = ThemeProvider.getTheme(
       this.options.taskLevel,
       undefined,
@@ -169,12 +167,13 @@ export class DevLogrRenderer implements ListrRenderer {
     );
     const maxPrefixLength = PrefixTracker.getMaxLength();
 
-    // Use renderer options for prefix/timestamp settings, falling back to config
-    const showPrefix = this.options.prefix !== undefined && config.showPrefix;
+    // Use renderer options for prefix/timestamp settings
+    // If prefix is provided in options, we should show it (respecting the Logger's intent)
+    const showPrefix = this.options.prefix !== undefined;
     const showTimestamp = this.options.showTimestamp;
 
-    // Special handling for plain level when prefix is disabled
-    if (this.options.taskLevel === 'plain' && !showPrefix) {
+    // Special handling for task level when prefix is disabled
+    if (this.options.taskLevel === 'task' && !showPrefix) {
       const indentation = '  '.repeat(level);
       return `${indentation}${symbol} ${message}`;
     }
@@ -190,7 +189,7 @@ export class DevLogrRenderer implements ListrRenderer {
       useColors: this.options.useColors,
       timestampFormat: this.options.timestampFormat,
       stripEmojis: !this.options.supportsUnicode,
-      includeLevel: showPrefix,
+      includeLevel: showPrefix, // Show level label when prefix is shown
       includePrefix: showPrefix,
     });
 
