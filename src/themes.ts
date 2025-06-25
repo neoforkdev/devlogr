@@ -1,6 +1,7 @@
 import chalk from 'chalk';
 import { LogTheme } from './types';
 import { TerminalUtils } from './utils';
+import { LogConfiguration } from './config';
 
 // ============================================================================
 // THEME MANAGEMENT
@@ -20,7 +21,8 @@ export class ThemeProvider {
   };
 
   /**
-   * Gets theme for specified log level with optional customization
+   * Gets theme for specified log level with optional customization.
+   * Automatically handles icon visibility based on global configuration.
    */
   static getTheme(
     level: string,
@@ -34,8 +36,12 @@ export class ThemeProvider {
       throw new Error(`Unknown log level: ${level}`);
     }
 
-    // Get appropriate symbol based on Unicode support
-    const symbol = this.getSymbol(level, customTheme?.symbol, supportsUnicode);
+    // Get current configuration to determine icon visibility
+    const config = LogConfiguration.getConfig();
+    const showIcons = config.showIcons;
+
+    // Get appropriate symbol based on Unicode support and icon visibility
+    const symbol = this.getSymbol(level, customTheme?.symbol, supportsUnicode, showIcons);
 
     return {
       symbol,
@@ -45,9 +51,19 @@ export class ThemeProvider {
   }
 
   /**
-   * Gets appropriate symbol based on Unicode support
+   * Gets appropriate symbol based on Unicode support and icon visibility
    */
-  private static getSymbol(level: string, customSymbol?: string, supportsUnicode = true): string {
+  private static getSymbol(
+    level: string,
+    customSymbol?: string,
+    supportsUnicode = true,
+    showIcons = true
+  ): string {
+    // If icons are disabled, return empty string
+    if (!showIcons) {
+      return '';
+    }
+
     // If custom symbol is provided, use it as-is
     if (customSymbol !== undefined) {
       return customSymbol;
