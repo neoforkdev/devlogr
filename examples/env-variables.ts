@@ -1,117 +1,121 @@
-import { Logger } from '../src/logger';
-import { LogLevel } from '../src/types';
+import { createLogger } from '../src/logger';
 
-const logger = new Logger('EnvDemo');
+const log = createLogger('DEMO');
 
-function envVariablesDemo() {
-  console.log('=== DevLogr Environment Variables Demo ===\n');
-
-  logger.info('This demo shows how environment variables control DevLogr behavior');
-  logger.separator('Current Configuration');
-
-  // Show current environment variables
-  const envVars = {
-    LOG_LEVEL: process.env.LOG_LEVEL || 'not set',
-    LOG_JSON: process.env.LOG_JSON || 'not set',
-    LOG_COLORS: process.env.LOG_COLORS || 'not set',
-    LOG_TIMESTAMP: process.env.LOG_TIMESTAMP || 'not set',
-    LOG_UNICODE: process.env.LOG_UNICODE || 'not set',
-    LOG_TIMESTAMP_FORMAT: process.env.LOG_TIMESTAMP_FORMAT || 'not set',
-  };
-
-  logger.info('Environment variables:', envVars);
-
-  logger.separator('Testing All Log Levels');
-
-  // Test all log levels to show which ones are visible
-  logger.trace('TRACE: This is the most verbose level');
-  logger.debug('DEBUG: Detailed information for debugging');
-  logger.info('INFO: General information messages');
-  logger.warn('WARN: Warning messages');
-  logger.error('ERROR: Error messages');
-  logger.success('SUCCESS: Success messages');
-
-  logger.separator('Configuration Examples');
-
-  logger.info('To control DevLogr behavior, set these environment variables:');
-  logger.plain('');
-  logger.plain('LOG_LEVEL=debug     # Set minimum log level (trace, debug, info, warn, error)');
-  logger.plain('LOG_JSON=true       # Output structured JSON instead of formatted logs');
-  logger.plain('LOG_COLORS=false    # Disable colored output');
-  logger.plain('LOG_TIMESTAMP=true  # Show timestamps in log messages');
-  logger.plain('LOG_UNICODE=false   # Disable Unicode symbols (for compatibility)');
-  logger.plain('LOG_TIMESTAMP_FORMAT=iso  # Use ISO format for timestamps (time, iso)');
-  logger.plain('');
-
-  logger.separator('Testing Different Scenarios');
-
-  if (process.env.LOG_JSON === 'true') {
-    logger.info('JSON mode is enabled - output will be structured JSON');
-    logger.info('Complex object logging:', {
-      user: { id: 123, name: 'Alice' },
-      action: 'login',
-      timestamp: new Date(),
-      metadata: { ip: '192.168.1.1', userAgent: 'DevLogr/1.0' },
-    });
-  } else {
-    logger.info('Standard formatting mode is active');
-    logger.info('Object logging example:', {
-      environment: 'development',
-      features: ['logging', 'spinners', 'tasks'],
-      config: { debug: true, verbose: false },
-    });
-  }
-
-  if (process.env.LOG_COLORS === 'false') {
-    logger.warn('Colors are disabled - output will be monochrome');
-  } else {
-    logger.success('Colors are enabled - you should see colorful output! 🌈');
-  }
-
-  if (process.env.LOG_TIMESTAMP === 'true') {
-    logger.info('Timestamps are enabled - each message shows when it was logged');
-  } else {
-    logger.info('Timestamps are disabled - no time information in logs');
-  }
-
-  logger.separator('Runtime Level Changes');
-
-  logger.info('You can also change log levels at runtime:');
-
-  const originalLevel = process.env.LOG_LEVEL;
-  logger.info(`Original level: ${originalLevel || 'default (info)'}`);
-
-  // Demonstrate runtime level changes
-  Logger.setLevel(LogLevel.ERROR);
-  logger.info('This INFO message should not appear (level set to ERROR)');
-  logger.error('This ERROR message should appear');
-
-  Logger.setLevel(LogLevel.DEBUG);
-  logger.debug('This DEBUG message should appear (level set to DEBUG)');
-  logger.info('This INFO message should also appear');
-
-  Logger.resetLevel();
-  logger.info('Log level reset to environment/default setting');
-
-  logger.separator('Try These Commands');
-
-  logger.plain('Run this example with different environment variables:');
-  logger.plain('');
-  logger.plain('# JSON output mode');
-  logger.plain('LOG_JSON=true npm run example:env-variables');
-  logger.plain('');
-  logger.plain('# Debug level with timestamps');
-  logger.plain('LOG_LEVEL=debug LOG_TIMESTAMP=true npm run example:env-variables');
-  logger.plain('');
-  logger.plain('# No colors, error level only');
-  logger.plain('LOG_COLORS=false LOG_LEVEL=error npm run example:env-variables');
-  logger.plain('');
-  logger.plain('# ISO timestamps with Unicode disabled');
-  logger.plain(
-    'LOG_TIMESTAMP=true LOG_TIMESTAMP_FORMAT=iso LOG_UNICODE=false npm run example:env-variables'
-  );
-
-  logger.success('Environment variables demo complete!');
+function sleep(ms: number) {
+  return new Promise(resolve => setTimeout(resolve, ms));
 }
 
-envVariablesDemo();
+async function demo() {
+  console.log('🚀 DevLogr Environment Variables Live Demo\n');
+
+  // Default behavior
+  console.log('📋 DEFAULT BEHAVIOR:');
+  log.info('This is an info message');
+  log.success('This is a success message');
+  log.warning('This is a warning message');
+  log.error('This is an error message');
+
+  await sleep(1500);
+  console.log('\n' + '='.repeat(50) + '\n');
+
+  // 1. DEVLOGR_NO_ICONS
+  console.log('🎯 DEVLOGR_NO_ICONS=true (Hide all icons):');
+  process.env.DEVLOGR_NO_ICONS = 'true';
+  const logNoIcons = createLogger('DEMO');
+  logNoIcons.info('Info without icon');
+  logNoIcons.success('Success without icon');
+  logNoIcons.warning('Warning without icon');
+  logNoIcons.error('Error without icon');
+
+  await sleep(1500);
+  console.log('\n' + '='.repeat(50) + '\n');
+
+  // 2. DEVLOGR_SHOW_TIMESTAMP
+  console.log('⏰ DEVLOGR_SHOW_TIMESTAMP=true (Add timestamps):');
+  delete process.env.DEVLOGR_NO_ICONS;
+  process.env.DEVLOGR_SHOW_TIMESTAMP = 'true';
+  const logTimestamp = createLogger('DEMO');
+  logTimestamp.info('Message with timestamp');
+  logTimestamp.success('Another message with timestamp');
+
+  await sleep(1500);
+  console.log('\n' + '='.repeat(50) + '\n');
+
+  // 3. DEVLOGR_SHOW_PREFIX
+  console.log('🏷️  DEVLOGR_SHOW_PREFIX=true (Show prefixes and levels):');
+  process.env.DEVLOGR_SHOW_PREFIX = 'true';
+  const logPrefix = createLogger('DEMO');
+  logPrefix.info('Message with prefix and level');
+  logPrefix.success('Success with prefix and level');
+
+  await sleep(1500);
+  console.log('\n' + '='.repeat(50) + '\n');
+
+  // 4. NO_COLOR
+  console.log('🎨 NO_COLOR=1 (Disable colors):');
+  process.env.NO_COLOR = '1';
+  const logNoColor = createLogger('DEMO');
+  logNoColor.info('Colorless info message');
+  logNoColor.success('Colorless success message');
+  logNoColor.warning('Colorless warning message');
+  logNoColor.error('Colorless error message');
+
+  await sleep(1500);
+  console.log('\n' + '='.repeat(50) + '\n');
+
+  // 5. DEVLOGR_LOG_LEVEL
+  console.log('📊 DEVLOGR_LOG_LEVEL=error (Only show errors):');
+  delete process.env.NO_COLOR;
+  delete process.env.DEVLOGR_SHOW_TIMESTAMP;
+  delete process.env.DEVLOGR_SHOW_PREFIX;
+  process.env.DEVLOGR_LOG_LEVEL = 'error';
+  const logError = createLogger('DEMO');
+  logError.info('This info will be hidden');
+  logError.success('This success will be hidden');
+  logError.warning('This warning will be hidden');
+  logError.error('Only this error will show');
+
+  await sleep(1500);
+  console.log('\n' + '='.repeat(50) + '\n');
+
+  // 6. DEVLOGR_OUTPUT_JSON
+  console.log('📄 DEVLOGR_OUTPUT_JSON=true (JSON format):');
+  delete process.env.DEVLOGR_LOG_LEVEL;
+  process.env.DEVLOGR_OUTPUT_JSON = 'true';
+  const logJson = createLogger('DEMO');
+  logJson.info('JSON formatted message');
+  logJson.success('Another JSON message');
+
+  await sleep(1500);
+  console.log('\n' + '='.repeat(50) + '\n');
+
+  // 7. Combined example
+  console.log('🔧 COMBINED: NO_COLOR + DEVLOGR_NO_ICONS + DEVLOGR_SHOW_PREFIX:');
+  delete process.env.DEVLOGR_OUTPUT_JSON;
+  process.env.NO_COLOR = '1';
+  process.env.DEVLOGR_NO_ICONS = 'true';
+  process.env.DEVLOGR_SHOW_PREFIX = 'true';
+  const logCombined = createLogger('DEMO');
+  logCombined.info('Clean, accessible message');
+  logCombined.success('Perfect for CI/CD logs');
+
+  await sleep(1500);
+  console.log('\n' + '='.repeat(50) + '\n');
+
+  // Reset and summary
+  delete process.env.NO_COLOR;
+  delete process.env.DEVLOGR_NO_ICONS;
+  delete process.env.DEVLOGR_SHOW_PREFIX;
+
+  console.log('✅ Demo complete! Try these commands:');
+  console.log('');
+  console.log('DEVLOGR_NO_ICONS=true npm run example:env-variables');
+  console.log('DEVLOGR_SHOW_TIMESTAMP=true npm run example:env-variables');
+  console.log('DEVLOGR_SHOW_PREFIX=true npm run example:env-variables');
+  console.log('NO_COLOR=1 npm run example:env-variables');
+  console.log('DEVLOGR_LOG_LEVEL=error npm run example:env-variables');
+  console.log('DEVLOGR_OUTPUT_JSON=true npm run example:env-variables');
+}
+
+demo().catch(console.error);
