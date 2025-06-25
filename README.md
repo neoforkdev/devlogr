@@ -208,36 +208,6 @@ Configure behavior via env vars:
 | `DEVLOGR_NO_ICONS`                   | Hide all icons                    | `true`        |
 | `NO_COLOR`, `NO_EMOJI`, `NO_UNICODE` | Global disable standards          | `1`           |
 
-### 🤖 CI Detection & Optimization
-
-DevLogr automatically detects CI environments and applies optimized settings for better log readability:
-
-**Supported CI Systems:**
-
-- GitHub Actions, GitLab CI, CircleCI, Travis CI
-- Jenkins, Azure DevOps, TeamCity, AppVeyor
-- AWS CodeBuild, Netlify, Vercel, Buildkite, Drone
-- Generic CI detection via `CI=true`
-
-**CI Optimizations:**
-
-- ✅ **Prefixes enabled** – Better log identification
-- ✅ **Timestamps enabled** – Debugging and correlation
-- ❌ **Icons disabled** – Maximum compatibility
-- 🎨 **Dynamic colors/emoji** – Based on CI capabilities
-
-**Control CI Detection:**
-
-```bash
-# Disable CI detection entirely (use default behavior)
-DEVLOGR_DISABLE_CI_DETECTION=true
-
-# Override specific CI defaults
-DEVLOGR_SHOW_PREFIX=false          # Disable prefixes even in CI
-DEVLOGR_SHOW_TIMESTAMP=false       # Disable timestamps even in CI
-DEVLOGR_NO_ICONS=false             # Enable icons even in CI
-```
-
 ---
 
 ## 📜 License
