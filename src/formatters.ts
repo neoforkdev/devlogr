@@ -1,6 +1,6 @@
-import chalk from 'chalk';
 import { LogTheme, TimestampFormat } from './types';
 import { StringUtils, EmojiUtils } from './utils';
+import { ChalkUtils } from './utils/chalk';
 
 // ============================================================================
 // MESSAGE FORMATTING - UNIFIED FORMATTER
@@ -77,7 +77,7 @@ export class MessageFormatter {
 
   private static formatTimestamp(timestampFormat: TimestampFormat, useColors: boolean): string {
     const timestamp = StringUtils.formatTime(timestampFormat);
-    return useColors ? chalk.dim(`[${timestamp}]`) : `[${timestamp}]`;
+    return ChalkUtils.colorize(`[${timestamp}]`, 'dim', useColors);
   }
 
   private static formatSymbolAndLevel(
@@ -90,7 +90,7 @@ export class MessageFormatter {
     const symbol = theme.symbol ? colorFn(theme.symbol) : '';
     const levelLabel = includeLevel
       ? useColors
-        ? chalk.bold(colorFn(theme.label.padEnd(7)))
+        ? ChalkUtils.getChalkInstance(useColors).bold(colorFn(theme.label.padEnd(7)))
         : theme.label.padEnd(7)
       : '';
 
@@ -105,7 +105,7 @@ export class MessageFormatter {
   }
 
   private static formatPrefix(prefix: string, maxPrefixLength: number, useColors: boolean): string {
-    const prefixFormatted = useColors ? chalk.dim(`[${prefix}]`) : `[${prefix}]`;
+    const prefixFormatted = ChalkUtils.colorize(`[${prefix}]`, 'dim', useColors);
     const prefixTotalLength = prefix.length + 2; // +2 for brackets
     const spacing = StringUtils.repeat(
       ' ',
@@ -148,9 +148,11 @@ export class MessageFormatter {
   ): string {
     if (!useColors) return message;
 
+    const chalkInstance = ChalkUtils.getChalkInstance(useColors);
+
     // Bold levels for important messages
     if (['error', 'success'].includes(level)) {
-      return chalk.bold(colorFn(message));
+      return chalkInstance.bold(colorFn(message));
     }
 
     // Colored levels for contextual messages
@@ -160,7 +162,7 @@ export class MessageFormatter {
 
     // Dimmed for debug/trace
     if (level === 'trace') {
-      return chalk.dim(message);
+      return chalkInstance.dim(message);
     }
 
     return message;

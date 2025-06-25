@@ -1,85 +1,82 @@
 import chalk from 'chalk';
-import { LogConfiguration } from '../config';
 
 /**
- * Centralized chalk utility that handles DevLogR's smart color detection.
- * This ensures consistent color behavior across all components by overriding
- * chalk's conservative CI detection with DevLogR's intelligent logic.
+ * Centralized chalk utility that handles color override logic
  */
 export class ChalkUtils {
-  private static cachedInstance: any = null;
-  private static lastUseColors: boolean | null = null;
+  private static cachedChalk: any;
+  private static lastColorSetting: boolean | undefined;
 
   /**
-   * Gets the appropriate chalk instance based on DevLogR's color configuration.
-   * This method caches the instance and only recreates it when color settings change.
-   *
-   * @param useColors - Optional override for color usage. If not provided, uses current config.
-   * @returns Chalk instance with proper color detection
+   * Gets a chalk instance with appropriate color override logic
    */
   static getChalkInstance(useColors?: boolean): any {
-    // Get current color setting
-    const currentUseColors = useColors ?? LogConfiguration.getConfig().useColors;
+    // Get current color setting, with fallback if LogConfiguration is not available
+    let currentUseColors: boolean;
+    try {
+      const { LogConfiguration } = require('../config');
+      currentUseColors = useColors ?? LogConfiguration.getConfig().useColors;
+    } catch {
+      // Fallback if LogConfiguration is not available during initialization
+      currentUseColors = useColors ?? true;
+    }
 
     // Return cached instance if settings haven't changed
-    if (this.cachedInstance && this.lastUseColors === currentUseColors) {
-      return this.cachedInstance;
+    if (this.cachedChalk && this.lastColorSetting === currentUseColors) {
+      return this.cachedChalk;
     }
 
-    // Create new instance based on color settings
-    this.cachedInstance = this.createChalkInstance(currentUseColors);
-    this.lastUseColors = currentUseColors;
+    // Store new settings
+    this.lastColorSetting = currentUseColors;
 
-    return this.cachedInstance;
-  }
-
-  /**
-   * Creates a new chalk instance with proper color detection override.
-   *
-   * @param useColors - Whether colors should be enabled
-   * @returns Chalk instance with appropriate color level
-   */
-  private static createChalkInstance(useColors: boolean): any {
-    if (!useColors) {
-      // Return a chalk instance with colors disabled
-      return new chalk.Instance({ level: 0 });
+    // If colors are explicitly disabled, return chalk with no color support
+    if (!currentUseColors) {
+      this.cachedChalk = new chalk.Instance({ level: 0 });
+      return this.cachedChalk;
     }
 
-    // If colors should be used but chalk doesn't detect support, force it
-    if (chalk.level === 0 && useColors) {
-      // Force basic color support (level 1)
-      return new chalk.Instance({ level: 1 });
+    // If chalk is being conservative (level 0) but we want colors, override it
+    if (chalk.level === 0 && currentUseColors) {
+      // Force basic color support (level 1) to override chalk's conservative behavior
+      this.cachedChalk = new chalk.Instance({ level: 1 });
+      return this.cachedChalk;
     }
 
     // Use default chalk instance
-    return chalk;
+    this.cachedChalk = chalk;
+    return this.cachedChalk;
   }
 
   /**
-   * Convenience method to get a colored string using DevLogR's color detection.
-   *
-   * @param text - Text to colorize
-   * @param colorName - Name of the color function (e.g., 'red', 'green', 'blue')
-   * @param useColors - Optional override for color usage
-   * @returns Colored or plain text based on color detection
+   * Convenience method to colorize text with a specific style
    */
-  static colorize(text: string, colorName: string, useColors?: boolean): string {
+  static colorize(text: string, style: string, useColors?: boolean): string {
     const chalkInstance = this.getChalkInstance(useColors);
-    const colorFn = chalkInstance[colorName];
 
-    if (typeof colorFn === 'function') {
-      return colorFn(text);
+    // Handle common styles
+    switch (style) {
+      case 'dim':
+        return chalkInstance.dim(text);
+      case 'bold':
+        return chalkInstance.bold(text);
+      case 'red':
+        return chalkInstance.red(text);
+      case 'green':
+        return chalkInstance.green(text);
+      case 'yellow':
+        return chalkInstance.yellow(text);
+      case 'blue':
+        return chalkInstance.blue(text);
+      case 'magenta':
+        return chalkInstance.magenta(text);
+      case 'cyan':
+        return chalkInstance.cyan(text);
+      case 'white':
+        return chalkInstance.white(text);
+      case 'gray':
+        return chalkInstance.gray(text);
+      default:
+        return text;
     }
-
-    // Fallback to plain text if color function doesn't exist
-    return text;
-  }
-
-  /**
-   * Clear the cached chalk instance. Useful for testing or when configuration changes.
-   */
-  static clearCache(): void {
-    this.cachedInstance = null;
-    this.lastUseColors = null;
   }
 }

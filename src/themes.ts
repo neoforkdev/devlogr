@@ -1,4 +1,3 @@
-import chalk from 'chalk';
 import { LogTheme } from './types';
 import { TerminalUtils } from './utils';
 import { LogConfiguration } from './config';
@@ -9,17 +8,23 @@ import { ChalkUtils } from './utils/chalk';
 // ============================================================================
 
 export class ThemeProvider {
-  private static readonly DEFAULT_THEMES: Record<string, LogTheme> = {
-    error: { symbol: '✗', color: chalk.red, label: 'ERROR' },
-    warn: { symbol: '!', color: chalk.yellow, label: 'WARN' },
-    info: { symbol: 'i', color: chalk.cyan, label: 'INFO' },
-    debug: { symbol: '?', color: chalk.gray, label: 'DEBUG' },
-    trace: { symbol: '•', color: chalk.gray, label: 'TRACE' },
-    success: { symbol: '✓', color: chalk.green, label: 'SUCCESS' },
-    title: { symbol: '●', color: chalk.magenta, label: 'TITLE' },
-    task: { symbol: '→', color: chalk.white, label: 'TASK' },
-    plain: { symbol: ' ', color: chalk.white, label: 'PLAIN' },
-  };
+  /**
+   * Gets the default themes with proper chalk instance
+   */
+  private static getDefaultThemes(): Record<string, LogTheme> {
+    const chalkInstance = ChalkUtils.getChalkInstance();
+    return {
+      error: { symbol: '✗', color: chalkInstance.red, label: 'ERROR' },
+      warn: { symbol: '!', color: chalkInstance.yellow, label: 'WARN' },
+      info: { symbol: 'i', color: chalkInstance.cyan, label: 'INFO' },
+      debug: { symbol: '?', color: chalkInstance.gray, label: 'DEBUG' },
+      trace: { symbol: '•', color: chalkInstance.gray, label: 'TRACE' },
+      success: { symbol: '✓', color: chalkInstance.green, label: 'SUCCESS' },
+      title: { symbol: '●', color: chalkInstance.magenta, label: 'TITLE' },
+      task: { symbol: '→', color: chalkInstance.white, label: 'TASK' },
+      plain: { symbol: ' ', color: chalkInstance.white, label: 'PLAIN' },
+    };
+  }
 
   /**
    * Gets theme for specified log level with optional customization.
@@ -30,7 +35,8 @@ export class ThemeProvider {
     customThemes?: Record<string, Partial<LogTheme>>,
     supportsUnicode = true
   ): LogTheme {
-    const defaultTheme = this.DEFAULT_THEMES[level];
+    const defaultThemes = this.getDefaultThemes();
+    const defaultTheme = defaultThemes[level];
     const customTheme = customThemes?.[level];
 
     if (!defaultTheme) {
@@ -116,7 +122,8 @@ export class ThemeProvider {
     }
 
     // Use Unicode symbols
-    const defaultTheme = this.DEFAULT_THEMES[level];
+    const defaultThemes = this.getDefaultThemes();
+    const defaultTheme = defaultThemes[level];
     return defaultTheme?.symbol || '';
   }
 
@@ -124,7 +131,7 @@ export class ThemeProvider {
    * Gets all available theme names
    */
   static getAvailableThemes(): string[] {
-    return Object.keys(this.DEFAULT_THEMES);
+    return Object.keys(this.getDefaultThemes());
   }
 
   /**

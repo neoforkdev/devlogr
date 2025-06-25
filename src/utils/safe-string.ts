@@ -1,6 +1,6 @@
 import { TerminalUtils } from './terminal';
 import { EmojiUtils } from './emoji';
-import chalk from 'chalk';
+import { ChalkUtils } from './chalk';
 
 // Simple type for color functions
 type ColorFunction = (text: string) => string;
@@ -86,15 +86,16 @@ export class SafeStringUtils {
    * Creates logger-style error formatting
    */
   static formatError(type: string, message: string, suggestion?: string): string {
-    const errorLabel = this.safe('error', chalk.red.bold);
+    const chalkInstance = ChalkUtils.getChalkInstance();
+    const errorLabel = this.safe('error', chalkInstance.red.bold);
     const typeText = this.safe(type);
     const messageText = this.safe(message);
 
     let result = `${errorLabel}: ${typeText}\n${messageText}`;
 
     if (suggestion) {
-      const helpLabel = this.safe('help', chalk.green);
-      const suggestionText = this.safe(suggestion, chalk.green);
+      const helpLabel = this.safe('help', chalkInstance.green);
+      const suggestionText = this.safe(suggestion, chalkInstance.green);
       result += `\n${helpLabel}: ${suggestionText}`;
     }
 
@@ -105,21 +106,46 @@ export class SafeStringUtils {
    * Creates logger-style warning formatting
    */
   static formatWarning(message: string): string {
-    return this.formatMessage('!', '!', chalk.yellow.bold, 'WARNING', chalk.yellow.bold, message);
+    const chalkInstance = ChalkUtils.getChalkInstance();
+    return this.formatMessage(
+      '!',
+      '!',
+      chalkInstance.yellow.bold,
+      'WARNING',
+      chalkInstance.yellow.bold,
+      message
+    );
   }
 
   /**
    * Creates logger-style info formatting
    */
   static formatInfo(message: string): string {
-    return this.formatMessage('ℹ', 'i', chalk.blue.bold, 'INFO', chalk.blue.bold, message);
+    const chalkInstance = ChalkUtils.getChalkInstance();
+    return this.formatMessage(
+      'ℹ',
+      'i',
+      chalkInstance.blue.bold,
+      'INFO',
+      chalkInstance.blue.bold,
+      message
+    );
   }
 
   /**
    * Creates logger-style debug formatting
    */
   static formatDebug(message: string): string {
-    return this.formatMessage('?', '?', chalk.gray, 'DEBUG', chalk.gray, message, chalk.gray);
+    const chalkInstance = ChalkUtils.getChalkInstance();
+    return this.formatMessage(
+      '?',
+      '?',
+      chalkInstance.gray,
+      'DEBUG',
+      chalkInstance.gray,
+      message,
+      chalkInstance.gray
+    );
   }
 
   /**
@@ -129,14 +155,15 @@ export class SafeStringUtils {
     string,
     { unicode: string; fallback: string; color: ColorFunction }
   > {
+    const chalkInstance = ChalkUtils.getChalkInstance();
     return {
-      error: { unicode: '✗', fallback: 'X', color: chalk.red.bold },
-      warn: { unicode: '!', fallback: '!', color: chalk.yellow.bold },
-      info: { unicode: 'ℹ', fallback: 'i', color: chalk.blue.bold },
-      debug: { unicode: '?', fallback: '?', color: chalk.gray },
-      trace: { unicode: '•', fallback: '.', color: chalk.gray },
-      success: { unicode: '✓', fallback: '+', color: chalk.green.bold },
-      help: { unicode: '💡', fallback: 'i', color: chalk.green },
+      error: { unicode: '✗', fallback: 'X', color: chalkInstance.red.bold },
+      warn: { unicode: '!', fallback: '!', color: chalkInstance.yellow.bold },
+      info: { unicode: 'ℹ', fallback: 'i', color: chalkInstance.blue.bold },
+      debug: { unicode: '?', fallback: '?', color: chalkInstance.gray },
+      trace: { unicode: '•', fallback: '.', color: chalkInstance.gray },
+      success: { unicode: '✓', fallback: '+', color: chalkInstance.green.bold },
+      help: { unicode: '💡', fallback: 'i', color: chalkInstance.green },
     };
   }
 }
