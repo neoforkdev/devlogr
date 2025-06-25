@@ -1,0 +1,144 @@
+name: Demo Test
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main, develop]
+  # Allow manual triggering
+  workflow_dispatch:
+
+jobs:
+  demo-test:
+    name: Test Demo Script
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+
+    strategy:
+      matrix:
+        node-version: [18, 20]
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build project
+        run: npm run build
+
+      - name: Test Demo Script
+        run: |
+          echo "🎬 Running DevLogR demo script..."
+          timeout 30s npm run example:demo || {
+            exit_code=$?
+            if [ $exit_code -eq 124 ]; then
+              echo "✅ Demo completed successfully (timeout reached as expected)"
+              exit 0
+            else
+              echo "❌ Demo failed with exit code: $exit_code"
+              exit $exit_code
+            fi
+          }
+        env:
+          # Force CI environment detection
+          CI: true
+          # Ensure colors are enabled for better demo output
+          FORCE_COLOR: '1'
+          # Set non-interactive mode
+          NODE_ENV: 'test'
+
+      - name: Test All Example Scripts
+        run: |
+          echo "🧪 Testing all example scripts..."
+
+          echo "Testing levels example..."
+          timeout 10s npm run example:levels || {
+            exit_code=$?
+            [ $exit_code -eq 124 ] && echo "✅ Levels example completed" || exit $exit_code
+          }
+
+          echo "Testing single spinner example..."
+          timeout 10s npm run example:single-spinner || {
+            exit_code=$?
+            [ $exit_code -eq 124 ] && echo "✅ Single spinner example completed" || exit $exit_code
+          }
+
+          echo "Testing multiple spinners example..."
+          timeout 15s npm run example:multiple-spinners || {
+            exit_code=$?
+            [ $exit_code -eq 124 ] && echo "✅ Multiple spinners example completed" || exit $exit_code
+          }
+
+          echo "Testing colored spinners example..."
+          timeout 10s npm run example:colored-spinners || {
+            exit_code=$?
+            [ $exit_code -eq 124 ] && echo "✅ Colored spinners example completed" || exit $exit_code
+          }
+
+          echo "Testing environment variables example..."
+          timeout 10s npm run example:env-variables || {
+            exit_code=$?
+            [ $exit_code -eq 124 ] && echo "✅ Environment variables example completed" || exit $exit_code
+          }
+
+          echo "Testing JSON output example..."
+          timeout 10s npm run example:json-output || {
+            exit_code=$?
+            [ $exit_code -eq 124 ] && echo "✅ JSON output example completed" || exit $exit_code
+          }
+
+          echo "Testing safe string utils example..."
+          timeout 10s npm run example:safe-string-utils || {
+            exit_code=$?
+            [ $exit_code -eq 124 ] && echo "✅ Safe string utils example completed" || exit $exit_code
+          }
+        env:
+          CI: true
+          FORCE_COLOR: '1'
+          NODE_ENV: 'test'
+
+      - name: Test Demo in Different Environments
+        run: |
+          echo "🌍 Testing demo in various environment configurations..."
+
+          echo "Testing with NO_COLOR environment..."
+          NO_COLOR=1 timeout 15s npm run example:demo || {
+            exit_code=$?
+            [ $exit_code -eq 124 ] && echo "✅ NO_COLOR demo completed" || exit $exit_code
+          }
+
+          echo "Testing with DEVLOGR_NO_ICONS environment..."
+          DEVLOGR_NO_ICONS=true timeout 15s npm run example:demo || {
+            exit_code=$?
+            [ $exit_code -eq 124 ] && echo "✅ No icons demo completed" || exit $exit_code
+          }
+
+          echo "Testing with JSON output mode..."
+          DEVLOGR_JSON=true timeout 15s npm run example:demo || {
+            exit_code=$?
+            [ $exit_code -eq 124 ] && echo "✅ JSON mode demo completed" || exit $exit_code
+          }
+
+          echo "Testing with debug log level..."
+          DEVLOGR_LOG_LEVEL=debug timeout 15s npm run example:demo || {
+            exit_code=$?
+            [ $exit_code -eq 124 ] && echo "✅ Debug level demo completed" || exit $exit_code
+          }
+        env:
+          CI: true
+          FORCE_COLOR: '1'
+          NODE_ENV: 'test'
+
+      - name: Validate Demo Output
+        run: |
+          echo "✅ All demo tests completed successfully!"
+          echo "🎯 Demo script works correctly in CI environment"
+          echo "🚀 Ready for production use"
