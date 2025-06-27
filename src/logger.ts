@@ -592,10 +592,14 @@ export class Logger {
       ...((options.rendererOptions as Record<string, unknown>) || {}),
     };
 
+    const theme = ThemeProvider.getTheme(level, undefined, this.config.supportsUnicode);
+
     return {
       text,
       level,
       prefix: this.prefix,
+      useColors: this.config.useColors,
+      theme,
       rendererOptions: _rendererOptions as Record<string, unknown>,
       ...options,
     };
