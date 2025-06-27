@@ -1,6 +1,5 @@
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 import { Logger, createLogger } from '../../src/logger';
-import { LogLevel } from '../../src/types';
 import { LogConfiguration } from '../../src/config';
 
 describe('Logger Environment Variables', () => {
@@ -380,6 +379,7 @@ describe('Logger Environment Variables', () => {
 
       const loggedMessage = consoleSpy.mock.calls[0][0] as string;
       // Strip ANSI color codes for testing
+      // eslint-disable-next-line no-control-regex
       const cleanMessage = loggedMessage.replace(/\u001b\[[0-9;]*m/g, '');
 
       // When icons are disabled, there should be no extra spacing before the log level

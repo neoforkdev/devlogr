@@ -85,7 +85,7 @@ export class ThemeProvider {
    */
   private static getColorFunction(
     defaultColorName: string,
-    customColor?: any,
+    customColor?: (text: string) => string,
     useColors = true
   ): (text: string) => string {
     if (customColor) {
@@ -108,5 +108,19 @@ export class ThemeProvider {
    */
   static getFallbackTheme(level: string): LogTheme {
     return this.getTheme(level, undefined, false);
+  }
+
+  private static applyColorToTheme(
+    theme: LogTheme,
+    colorName: string,
+    useColors: boolean
+  ): LogTheme {
+    const colorFunction =
+      (ChalkUtils as Record<string, (text: string) => string>)[colorName] ||
+      ((text: string) => text);
+    return {
+      ...theme,
+      color: useColors ? colorFunction : (text: string) => text,
+    };
   }
 }
