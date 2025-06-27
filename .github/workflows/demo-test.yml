@@ -214,4 +214,3 @@ jobs:
             echo "✅ CI detection disabled - should use default behavior"
           fi
           echo "🎯 CI detection behavior validated for ${{ matrix.ci-detection }} mode"
- 
