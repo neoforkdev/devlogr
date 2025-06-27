@@ -155,7 +155,7 @@ export class MessageFormatter {
     const styleRules = {
       bold: ['error', 'success'],
       colored: ['warn', 'title', 'task', 'plain'],
-      dimmed: ['trace']
+      dimmed: ['trace'],
     };
 
     if (styleRules.bold.includes(level)) {

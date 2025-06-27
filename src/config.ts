@@ -100,7 +100,7 @@ export class LogConfiguration {
     }
 
     if (timestampValue === '1') {
-    return { show: true, format: TimestampFormat.TIME };
+      return { show: true, format: TimestampFormat.TIME };
     }
 
     // Default to disabled (false) for any other value or no value
@@ -128,7 +128,7 @@ export class LogConfiguration {
 
     // Environment variable takes precedence
     if (showPrefixValue !== undefined) {
-    return showPrefixValue === 'true' || showPrefixValue === '1';
+      return showPrefixValue === 'true' || showPrefixValue === '1';
     }
 
     // Fall back to CI detection
