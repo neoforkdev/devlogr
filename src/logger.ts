@@ -1,4 +1,4 @@
-import { Listr, ListrTask, ListrTaskWrapper } from 'listr2';
+import { Listr, ListrTask } from 'listr2';
 import { LogLevel, LogConfig } from './types';
 import { LogConfiguration } from './config';
 import { ThemeProvider } from './themes';
@@ -14,18 +14,23 @@ import { ChalkUtils } from './utils/chalk';
 
 class SpinnerManager {
   private singleSpinnerListr: Listr | null = null;
-  private singleSpinnerTask: { resolver?: () => void; rejecter?: (error: Error) => void } | null = null;
+  private singleSpinnerTask: { resolver?: () => void; rejecter?: (error: Error) => void } | null =
+    null;
 
   constructor(private readonly logger: Logger) {}
 
-  start(text?: string, options?: Omit<SpinnerOptions, 'text'>): void {
+  start(text?: string, _options?: Omit<SpinnerOptions, 'text'>): void {
     const spinnerText = text || 'Loading...';
-    
+
     if (this.singleSpinnerListr) {
       this.stop();
     }
 
-    this.singleSpinnerListr = SpinnerUtils.start('single', this.logger.buildSpinnerOptions(spinnerText, 'task', options));
+    this.singleSpinnerListr = SpinnerUtils.start(
+      'single',
+      this.logger.buildSpinnerOptions(spinnerText, 'task', _options)
+    );
+    this.singleSpinnerTask = this.singleSpinnerListr?.tasks[0] as unknown;
   }
 
   updateText(text: string): void {
@@ -68,7 +73,7 @@ class SpinnerManager {
       success: () => SpinnerUtils.succeed('single', completionText),
       error: () => SpinnerUtils.fail('single', completionText),
       warning: () => SpinnerUtils.fail('single', completionText),
-      info: () => SpinnerUtils.info('single', completionText)
+      info: () => SpinnerUtils.info('single', completionText),
     };
 
     completionMethods[type]();
@@ -186,18 +191,23 @@ class JsonLogger {
 class TaskRunner {
   constructor(private readonly logger: Logger) {}
 
-  async runTasks<T = any>(
+  async runTasks<T = Record<string, unknown>>(
     title: string,
     tasks: ListrTask<T>[],
     options: {
       concurrent?: boolean;
       exitOnError?: boolean;
       context?: T;
-      rendererOptions?: any;
+      rendererOptions?: Record<string, unknown>;
     } = {}
   ): Promise<T> {
-    const { concurrent = false, exitOnError = true, context, rendererOptions } = options;
-    
+    const {
+      concurrent = false,
+      exitOnError = true,
+      context,
+      rendererOptions: _rendererOptions,
+    } = options;
+
     const listr = this.createTaskList(tasks, {
       concurrent,
       exitOnError,
@@ -215,7 +225,7 @@ class TaskRunner {
     }
   }
 
-  createTaskList<T = any>(
+  createTaskList<T = Record<string, unknown>>(
     tasks: ListrTask<T>[],
     options: {
       concurrent?: boolean;
@@ -224,8 +234,13 @@ class TaskRunner {
       taskLevel?: string;
     } = {}
   ): Listr<T, typeof DevLogrRenderer> {
-    const { concurrent = false, exitOnError = true, context, taskLevel = 'task' } = options;
-    
+    const {
+      concurrent = false,
+      exitOnError = true,
+      context: _context,
+      taskLevel = 'task',
+    } = options;
+
     return new Listr(tasks, {
       concurrent,
       exitOnError,
@@ -375,33 +390,49 @@ export class Logger {
   }
 
   // Convenience methods - simplified
-  completeSpinnerWithSuccess(text?: string): void { this.completeSpinner('success', text); }
-  completeSpinnerWithError(text?: string): void { this.completeSpinner('error', text); }
-  completeSpinnerWithWarning(text?: string): void { this.completeSpinner('warning', text); }
-  completeSpinnerWithInfo(text?: string): void { this.completeSpinner('info', text); }
-  succeedSpinner(text?: string): void { this.completeSpinner('success', text); }
-  failSpinner(text?: string): void { this.completeSpinner('error', text); }
-  warnSpinner(text?: string): void { this.completeSpinner('warning', text); }
-  infoSpinner(text?: string): void { this.completeSpinner('info', text); }
+  completeSpinnerWithSuccess(text?: string): void {
+    this.completeSpinner('success', text);
+  }
+  completeSpinnerWithError(text?: string): void {
+    this.completeSpinner('error', text);
+  }
+  completeSpinnerWithWarning(text?: string): void {
+    this.completeSpinner('warning', text);
+  }
+  completeSpinnerWithInfo(text?: string): void {
+    this.completeSpinner('info', text);
+  }
+  succeedSpinner(text?: string): void {
+    this.completeSpinner('success', text);
+  }
+  failSpinner(text?: string): void {
+    this.completeSpinner('error', text);
+  }
+  warnSpinner(text?: string): void {
+    this.completeSpinner('warning', text);
+  }
+  infoSpinner(text?: string): void {
+    this.completeSpinner('info', text);
+  }
 
   // ============================================================================
   // TASK METHODS - DELEGATED TO TASK RUNNER
   // ============================================================================
 
-  async runTasks<T = any>(
+  async runTasks<T = Record<string, unknown>>(
     title: string,
     tasks: ListrTask<T>[],
     options?: {
       concurrent?: boolean;
       exitOnError?: boolean;
       context?: T;
-      rendererOptions?: any;
+      rendererOptions?: Record<string, unknown>;
     }
   ): Promise<T> {
     return this.taskRunner.runTasks(title, tasks, options);
   }
 
-  createTaskList<T = any>(
+  createTaskList<T = Record<string, unknown>>(
     tasks: ListrTask<T>[],
     options?: {
       concurrent?: boolean;
@@ -414,7 +445,7 @@ export class Logger {
   }
 
   // Simplified task methods using the base runTasks
-  async runConcurrentTasks<T = any>(
+  async runConcurrentTasks<T = Record<string, unknown>>(
     title: string,
     tasks: ListrTask<T>[],
     contextOrOptions?: T | { context?: T; taskLevel?: string }
@@ -423,7 +454,7 @@ export class Logger {
     return this.runTasks(title, tasks, options);
   }
 
-  async runSequentialTasks<T = any>(
+  async runSequentialTasks<T = Record<string, unknown>>(
     title: string,
     tasks: ListrTask<T>[],
     contextOrOptions?: T | { context?: T; taskLevel?: string }
@@ -449,14 +480,14 @@ export class Logger {
 
     const SEPARATOR_LENGTH = 60; // Fixed total length
     const dashChar = this.config.supportsUnicode ? '─' : '-';
-    
+
     if (title) {
       // Format: "-- Title ------------------" (fixed total length)
       const prefix = `${dashChar}${dashChar} ${title} `;
       const remainingLength = Math.max(0, SEPARATOR_LENGTH - prefix.length);
       const suffix = StringUtils.repeat(dashChar, remainingLength);
       const fullSeparator = `${prefix}${suffix}`;
-      
+
       // Apply gray color
       const grayedSeparator = ChalkUtils.colorize(fullSeparator, 'dim', this.config.useColors);
       console.log(grayedSeparator);
@@ -477,7 +508,13 @@ export class Logger {
   }
 
   private shouldLog(level: LogLevel): boolean {
-    const levels = [LogLevel.ERROR, LogLevel.WARNING, LogLevel.INFO, LogLevel.DEBUG, LogLevel.TRACE];
+    const levels = [
+      LogLevel.ERROR,
+      LogLevel.WARNING,
+      LogLevel.INFO,
+      LogLevel.DEBUG,
+      LogLevel.TRACE,
+    ];
     const effectiveLevel = this.getEffectiveLevel();
     const currentIndex = levels.indexOf(level);
     const effectiveIndex = levels.indexOf(effectiveLevel);
@@ -530,23 +567,36 @@ export class Logger {
       [LogLevel.DEBUG]: console.debug,
       [LogLevel.TRACE]: console.debug,
     };
-    
+
     const outputMethod = outputMethods[level] || console.log;
     outputMethod(message);
   }
 
   // Helper methods for extracted classes
-  buildSpinnerOptions(text: string, level: string, options?: Omit<SpinnerOptions, 'text'>): SpinnerOptions {
-    const theme = ThemeProvider.getTheme(level, undefined, this.config.supportsUnicode);
+  buildSpinnerOptions(
+    text: string,
+    level: string,
+    options: Record<string, unknown> = {}
+  ): SpinnerOptions {
+    const _rendererOptions = {
+      collapseSubtasks: false,
+      showSubtasks: true,
+      clearOutput: false,
+      collapse: false,
+      showErrorMessage: true,
+      removeEmptyLines: false,
+      formatOutput: 'wrap',
+      timer: {
+        condition: false,
+      },
+      ...((options.rendererOptions as Record<string, unknown>) || {}),
+    };
+
     return {
       text,
-      color: 'cyan',
-      prefix: this.prefix,
-      showTimestamp: this.config.showTimestamp,
-      useColors: this.config.useColors,
       level,
-      theme,
-      timestampFormat: this.config.timestampFormat,
+      prefix: this.prefix,
+      rendererOptions: _rendererOptions as Record<string, unknown>,
       ...options,
     };
   }
@@ -569,7 +619,9 @@ export class Logger {
     });
 
     const cleanPrefix = prefix.replace(/\s+$/, '');
-    const formattedMessage = symbol ? `${cleanPrefix} ${symbol} ${message}` : `${cleanPrefix} ${message}`;
+    const formattedMessage = symbol
+      ? `${cleanPrefix} ${symbol} ${message}`
+      : `${cleanPrefix} ${message}`;
     console.log(formattedMessage);
   }
 
@@ -580,11 +632,15 @@ export class Logger {
     if (!contextOrOptions) {
       return { concurrent };
     }
-    
-    if (typeof contextOrOptions === 'object' && contextOrOptions !== null && 'context' in contextOrOptions) {
+
+    if (
+      typeof contextOrOptions === 'object' &&
+      contextOrOptions !== null &&
+      'context' in contextOrOptions
+    ) {
       return { concurrent, context: (contextOrOptions as { context?: T }).context };
     }
-    
+
     return { concurrent, context: contextOrOptions as T };
   }
 
@@ -599,7 +655,7 @@ export class Logger {
 
   // Getter for tests to check spinner state
   get singleSpinnerListr(): Listr | null {
-    return (this.spinnerManager as any).singleSpinnerListr;
+    return (this.spinnerManager as { singleSpinnerListr: Listr | null }).singleSpinnerListr;
   }
 
   // ============================================================================
