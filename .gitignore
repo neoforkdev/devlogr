@@ -45,4 +45,7 @@ pids/
 
 # Temporary files
 tmp/
-temp/ 
+temp/
+
+# Claude Code
+CLAUDE.md 
