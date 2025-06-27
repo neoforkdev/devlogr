@@ -3,7 +3,7 @@ import { StringUtils, EmojiUtils } from './utils';
 import { ChalkUtils } from './utils/chalk';
 
 // ============================================================================
-// MESSAGE FORMATTING - UNIFIED FORMATTER
+// MESSAGE FORMATTING - SIMPLIFIED UNIFIED FORMATTER
 // ============================================================================
 
 interface FormatOptions {
@@ -21,10 +21,14 @@ interface FormatOptions {
   includePrefix?: boolean;
 }
 
+/**
+ * Simplified MessageFormatter with consolidated formatting logic.
+ * Follows DRY principle by using a single format method for all scenarios.
+ */
 export class MessageFormatter {
   /**
-   * Universal formatter - handles all formatting scenarios
-   * Single method for consistent message formatting across all log types
+   * Universal formatter - handles all formatting scenarios with a single method.
+   * This eliminates the need for multiple specialized formatting methods.
    */
   static format(options: FormatOptions): string {
     const {
@@ -46,8 +50,7 @@ export class MessageFormatter {
 
     // 1. Timestamp
     if (showTimestamp) {
-      const timestamp = this.formatTimestamp(timestampFormat, useColors);
-      parts.push(timestamp);
+      parts.push(this.formatTimestamp(timestampFormat, useColors));
     }
 
     // 2. Symbol and Level
@@ -58,21 +61,19 @@ export class MessageFormatter {
 
     // 3. Prefix with proper spacing
     if (includePrefix && prefix) {
-      const formatted = this.formatPrefix(prefix, maxPrefixLength, useColors);
-      parts.push(formatted);
+      parts.push(this.formatPrefix(prefix, maxPrefixLength, useColors));
     }
 
     // 4. Message with styling
     if (message) {
-      const formatted = this.formatMessage(level, theme, message, args, useColors, stripEmojis);
-      parts.push(formatted);
+      parts.push(this.formatMessage(level, theme, message, args, useColors, stripEmojis));
     }
 
     return parts.join(' ').trim();
   }
 
   // ============================================================================
-  // PRIVATE HELPERS - EXTRACTED FOR CLARITY
+  // PRIVATE HELPERS - CONSOLIDATED AND SIMPLIFIED
   // ============================================================================
 
   private static formatTimestamp(timestampFormat: TimestampFormat, useColors: boolean): string {
@@ -150,26 +151,35 @@ export class MessageFormatter {
 
     const chalkInstance = ChalkUtils.getChalkInstance(useColors);
 
-    // Bold levels for important messages
-    if (['error', 'success'].includes(level)) {
+    // Use a mapping approach for cleaner code
+    const styleRules = {
+      bold: ['error', 'success'],
+      colored: ['warn', 'title', 'task', 'plain'],
+      dimmed: ['trace']
+    };
+
+    if (styleRules.bold.includes(level)) {
       return chalkInstance.bold(colorFn(message));
     }
 
-    // Colored levels for contextual messages
-    if (['warn', 'title', 'task', 'plain'].includes(level)) {
+    if (styleRules.colored.includes(level)) {
       return colorFn(message);
     }
 
-    // Dimmed for debug/trace
-    if (level === 'trace') {
+    if (styleRules.dimmed.includes(level)) {
       return chalkInstance.dim(message);
     }
 
     return message;
   }
 
+  // ============================================================================
+  // BACKWARD COMPATIBILITY METHODS - SIMPLIFIED WRAPPERS
+  // ============================================================================
+
   /**
    * Format basic prefix with timestamp and spacing
+   * @deprecated Use format() method directly for better flexibility
    */
   static formatBasicPrefix(
     prefix: string,
@@ -188,6 +198,7 @@ export class MessageFormatter {
 
   /**
    * Format message with theme and emoji handling
+   * @deprecated Use format() method directly for better flexibility
    */
   static formatSimpleMessage(
     level: string,
@@ -212,6 +223,7 @@ export class MessageFormatter {
 
   /**
    * Format spinner prefix with level symbol and timestamp
+   * @deprecated Use format() method directly for better flexibility
    */
   static formatSpinnerPrefixWithLevel(
     level: string,
@@ -233,11 +245,13 @@ export class MessageFormatter {
       useColors,
       timestampFormat,
       includeLevel: true,
+      includePrefix: true,
     });
   }
 
   /**
    * Format complete log message with all elements
+   * @deprecated Use format() method directly for better flexibility
    */
   static formatCompleteLogMessage(
     level: string,
@@ -261,6 +275,8 @@ export class MessageFormatter {
       useColors,
       timestampFormat,
       stripEmojis,
+      includeLevel: true,
+      includePrefix: true,
     });
   }
 }

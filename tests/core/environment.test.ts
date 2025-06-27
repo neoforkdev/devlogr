@@ -267,10 +267,10 @@ describe('Logger Environment Variables', () => {
         // Should have made 3 console.log calls
         expect(consoleSpy).toHaveBeenCalledTimes(3);
 
-        // Check calls: spacer (no args), separator (dashes), separator with title
+        // Check calls: spacer (no args), separator (fixed length), separator with title (fixed format)
         expect(consoleSpy.mock.calls[0]).toEqual([]); // spacer() calls console.log() with no args
-        expect(consoleSpy.mock.calls[1][0]).toMatch(/^-+$/);
-        expect(consoleSpy.mock.calls[2][0]).toMatch(/^-+ Title -+$/);
+        expect(consoleSpy.mock.calls[1][0]).toMatch(/^[─-]{60}$/); // Fixed length separator
+        expect(consoleSpy.mock.calls[2][0]).toMatch(/^[─-]{2} Title [─-]+$/); // Fixed format with title
 
         consoleSpy.mockRestore();
       } finally {

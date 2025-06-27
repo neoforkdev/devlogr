@@ -4,100 +4,53 @@ import { LogConfiguration } from './config';
 import { ChalkUtils } from './utils/chalk';
 
 // ============================================================================
-// THEME MANAGEMENT
+// THEME MANAGEMENT - SIMPLIFIED
 // ============================================================================
 
+/**
+ * Simplified ThemeProvider with consolidated theme and color management.
+ * Reduces duplication by using centralized color and symbol mapping.
+ */
 export class ThemeProvider {
-  /**
-   * Gets the default themes with proper chalk instance
-   */
-  private static getDefaultThemes(): Record<string, LogTheme> {
-    const chalkInstance = ChalkUtils.getChalkInstance();
-    return {
-      error: { symbol: '✗', color: chalkInstance.red, label: 'ERROR' },
-      warn: { symbol: '!', color: chalkInstance.yellow, label: 'WARN' },
-      info: { symbol: 'i', color: chalkInstance.cyan, label: 'INFO' },
-      debug: { symbol: '?', color: chalkInstance.gray, label: 'DEBUG' },
-      trace: { symbol: '•', color: chalkInstance.gray, label: 'TRACE' },
-      success: { symbol: '✓', color: chalkInstance.green, label: 'SUCCESS' },
-      title: { symbol: '●', color: chalkInstance.magenta, label: 'TITLE' },
-      task: { symbol: '→', color: chalkInstance.white, label: 'TASK' },
-      plain: { symbol: ' ', color: chalkInstance.white, label: 'PLAIN' },
-    };
-  }
+  // Centralized theme definitions to reduce duplication
+  private static readonly THEME_DEFINITIONS = {
+    error: { symbol: '✗', color: 'red', label: 'ERROR' },
+    warn: { symbol: '!', color: 'yellow', label: 'WARN' },
+    info: { symbol: 'i', color: 'cyan', label: 'INFO' },
+    debug: { symbol: '?', color: 'gray', label: 'DEBUG' },
+    trace: { symbol: '•', color: 'gray', label: 'TRACE' },
+    success: { symbol: '✓', color: 'green', label: 'SUCCESS' },
+    title: { symbol: '●', color: 'magenta', label: 'TITLE' },
+    task: { symbol: '→', color: 'white', label: 'TASK' },
+    plain: { symbol: ' ', color: 'white', label: 'PLAIN' },
+  } as const;
 
   /**
-   * Gets theme for specified log level with optional customization.
-   * Automatically handles icon visibility based on global configuration.
+   * Gets theme for specified log level with automatic configuration handling.
+   * Simplified to use centralized theme definitions and color mapping.
    */
   static getTheme(
     level: string,
     customThemes?: Record<string, Partial<LogTheme>>,
     supportsUnicode = true
   ): LogTheme {
-    const defaultThemes = this.getDefaultThemes();
-    const defaultTheme = defaultThemes[level];
-    const customTheme = customThemes?.[level];
-
-    if (!defaultTheme) {
+    const themeDefinition = this.THEME_DEFINITIONS[level as keyof typeof this.THEME_DEFINITIONS];
+    if (!themeDefinition) {
       throw new Error(`Unknown log level: ${level}`);
     }
 
-    // Get current configuration to determine icon visibility and color support
+    const customTheme = customThemes?.[level];
     const config = LogConfiguration.getConfig();
-    const showIcons = config.showIcons;
-    const useColors = config.useColors;
-
-    // Get appropriate symbol based on Unicode support and icon visibility
-    const symbol = this.getSymbol(level, customTheme?.symbol, supportsUnicode, showIcons);
-
-    // Get color function using centralized chalk utility
-    const colorFn = this.getColorFunction(level, customTheme?.color, useColors);
 
     return {
-      symbol,
-      color: colorFn,
-      label: customTheme?.label ?? defaultTheme.label,
+      symbol: this.getSymbol(level, customTheme?.symbol, supportsUnicode, config.showIcons),
+      color: this.getColorFunction(themeDefinition.color, customTheme?.color, config.useColors),
+      label: customTheme?.label ?? themeDefinition.label,
     };
   }
 
   /**
-   * Gets the color function for a specific level using centralized chalk utility
-   */
-  private static getColorFunction(level: string, customColor?: any, useColors?: boolean) {
-    if (customColor) {
-      return customColor;
-    }
-
-    const chalkInstance = ChalkUtils.getChalkInstance(useColors);
-
-    // Map level to color function using the centralized chalk instance
-    switch (level) {
-      case 'error':
-        return chalkInstance.red;
-      case 'warn':
-        return chalkInstance.yellow;
-      case 'info':
-        return chalkInstance.cyan;
-      case 'debug':
-        return chalkInstance.gray;
-      case 'trace':
-        return chalkInstance.gray;
-      case 'success':
-        return chalkInstance.green;
-      case 'title':
-        return chalkInstance.magenta;
-      case 'task':
-        return chalkInstance.white;
-      case 'plain':
-        return chalkInstance.white;
-      default:
-        return chalkInstance.white;
-    }
-  }
-
-  /**
-   * Gets appropriate symbol based on Unicode support and icon visibility
+   * Gets appropriate symbol based on configuration and Unicode support.
    */
   private static getSymbol(
     level: string,
@@ -115,27 +68,43 @@ export class ThemeProvider {
       return customSymbol;
     }
 
-    // If Unicode is not supported, use fallback symbols
+    // Use fallback symbols if Unicode is not supported
     if (!supportsUnicode) {
       const fallbackSymbols = TerminalUtils.getFallbackSymbols();
       return fallbackSymbols[level] || '';
     }
 
-    // Use Unicode symbols
-    const defaultThemes = this.getDefaultThemes();
-    const defaultTheme = defaultThemes[level];
-    return defaultTheme?.symbol || '';
+    // Use Unicode symbols from theme definitions
+    const themeDefinition = this.THEME_DEFINITIONS[level as keyof typeof this.THEME_DEFINITIONS];
+    return themeDefinition?.symbol || '';
   }
 
   /**
-   * Gets all available theme names
+   * Gets color function using centralized mapping.
+   * Simplified to reduce duplication between ThemeProvider and ChalkUtils.
+   */
+  private static getColorFunction(
+    defaultColorName: string,
+    customColor?: any,
+    useColors = true
+  ): (text: string) => string {
+    if (customColor) {
+      return customColor;
+    }
+
+    // Use ChalkUtils for consistent color handling
+    return (text: string) => ChalkUtils.colorize(text, defaultColorName, useColors);
+  }
+
+  /**
+   * Gets all available theme names.
    */
   static getAvailableThemes(): string[] {
-    return Object.keys(this.getDefaultThemes());
+    return Object.keys(this.THEME_DEFINITIONS);
   }
 
   /**
-   * Gets fallback theme without Unicode symbols
+   * Gets fallback theme without Unicode symbols.
    */
   static getFallbackTheme(level: string): LogTheme {
     return this.getTheme(level, undefined, false);
