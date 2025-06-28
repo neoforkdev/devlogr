@@ -49,22 +49,7 @@ class SpinnerManager {
 
   complete(type: 'success' | 'error' | 'warning' | 'info', text?: string): void {
     if (!this.singleSpinnerListr) {
-      // When no spinner is active, fallback to the appropriate logger method
-      const completionText = text || this.getDefaultCompletionText(type);
-      switch (type) {
-        case 'success':
-          this.logger.success(completionText);
-          break;
-        case 'error':
-          this.logger.error(completionText);
-          break;
-        case 'warning':
-          this.logger.warning(completionText);
-          break;
-        case 'info':
-          this.logger.info(completionText);
-          break;
-      }
+      // No active spinner, nothing to complete
       return;
     }
 
@@ -362,8 +347,8 @@ export class Logger {
 
   // Simplified completion methods using delegation
   completeSpinner(type: 'success' | 'error' | 'warning' | 'info', text?: string): void {
-    if (this.config.useJson || !SpinnerUtils.supportsSpinners()) {
-      // Fallback to regular logging using the correct method names
+    if (this.config.useJson) {
+      // Only handle JSON mode fallback here
       const completionText = text || this.getDefaultCompletionText(type);
       switch (type) {
         case 'success':
@@ -381,7 +366,7 @@ export class Logger {
       }
       return;
     }
-    // Delegate to spinner manager which handles its own fallback logic
+    // Always delegate to spinner manager - it handles CI/TTY differences properly
     this.spinnerManager.complete(type, text);
   }
 

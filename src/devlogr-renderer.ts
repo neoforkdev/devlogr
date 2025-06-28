@@ -72,9 +72,8 @@ export class DevLogrRenderer implements ListrRenderer {
 
     if (!this.options.lazy) {
       if (this.isCI) {
-        // In CI, start with initial output
+        // In CI, don't start timer-based updates - only event-driven updates
         this.update();
-        this.spinner.start(() => this.update());
       } else {
         this.spinner.start(() => this.update());
       }
@@ -84,43 +83,15 @@ export class DevLogrRenderer implements ListrRenderer {
   }
 
   public update(): void {
-    const output = this.createOutput();
-
     if (this.isCI) {
-      // In CI environments, throttle updates and only show significant changes
-      const now = Date.now();
-      const outputLines = output.split('\n').filter(line => line.trim());
+      // In CI, skip rendering - individual task completions are handled separately
+      return;
+    }
 
-      // Check if there are significant changes (completion, new tasks, or throttle time passed)
-      const hasCompletionChanges = outputLines.some(
-        line => line.includes('✔') || line.includes('✖')
-      );
-      const hasNewTasks = outputLines.length !== this.lastOutput.length;
-      const shouldThrottleUpdate = now - this.lastUpdateTime > this.updateThrottleMs;
-
-      if (hasCompletionChanges || hasNewTasks || shouldThrottleUpdate) {
-        // Only output new or changed lines to reduce spam
-        for (let i = 0; i < outputLines.length; i++) {
-          if (!this.lastOutput[i] || this.lastOutput[i] !== outputLines[i]) {
-            // Skip repeated spinner animations unless it's a completion or new task
-            const line = outputLines[i];
-            const isSpinnerLine = /[⠋⠙⠹⠸⠼⠴⠦⠧⠇⠏]/.test(line);
-            const isCompletionLine = line.includes('✔') || line.includes('✖');
-            const isNewTask = !this.lastOutput[i];
-
-            if (!isSpinnerLine || isCompletionLine || isNewTask || shouldThrottleUpdate) {
-              console.log(line);
-            }
-          }
-        }
-        this.lastOutput = outputLines;
-        this.lastUpdateTime = now;
-      }
-    } else {
-      // In local environments, use log-update for smooth animations
-      if (this.updater) {
-        this.updater(output);
-      }
+    // In local environments, use log-update for smooth animations
+    const output = this.createOutput();
+    if (this.updater) {
+      this.updater(output);
     }
   }
 
@@ -147,10 +118,20 @@ export class DevLogrRenderer implements ListrRenderer {
     for (const task of tasks) {
       task.on(ListrTaskEventType.SUBTASK, subtasks => this.setupTaskListeners(subtasks));
 
-      const triggerUpdate = () => this.update();
-      task.on(ListrTaskEventType.STATE, triggerUpdate);
-      task.on(ListrTaskEventType.TITLE, triggerUpdate);
-      task.on(ListrTaskEventType.OUTPUT, triggerUpdate);
+      if (this.isCI) {
+        // In CI, only update on completion/failure state changes
+        task.on(ListrTaskEventType.STATE, () => {
+          if (task.isCompleted() || task.hasFailed()) {
+            this.update();
+          }
+        });
+      } else {
+        // In TTY, update on all changes for smooth animations
+        const triggerUpdate = () => this.update();
+        task.on(ListrTaskEventType.STATE, triggerUpdate);
+        task.on(ListrTaskEventType.TITLE, triggerUpdate);
+        task.on(ListrTaskEventType.OUTPUT, triggerUpdate);
+      }
     }
   }
 
