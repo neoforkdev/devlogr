@@ -340,7 +340,8 @@ export class Logger {
 
   startSpinner(text?: string, options?: Omit<SpinnerOptions, 'text'>): void {
     if (this.config.useJson || !SpinnerUtils.supportsSpinners()) {
-      this.task(text || 'Loading...');
+      // In non-TTY environments, don't output the working state to avoid double output
+      // Only the completion state will be shown when succeedSpinner/failSpinner is called
       return;
     }
     this.spinnerManager.start(text, options);
