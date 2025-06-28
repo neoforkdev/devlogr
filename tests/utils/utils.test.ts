@@ -1,5 +1,5 @@
-import { describe, it, expect, vi } from 'vitest';
-import { StringUtils, EmojiUtils, TerminalUtils, SafeStringUtils } from '../../src/utils';
+import { describe, it, expect } from 'vitest';
+import { StringUtils, EmojiUtils, TerminalUtils } from '../../src/utils';
 
 describe('StringUtils', () => {
   describe('formatTime', () => {
@@ -65,7 +65,7 @@ describe('StringUtils', () => {
 
     it('should handle edge cases', () => {
       expect(StringUtils.truncate('', 10)).toBe('');
-      expect(StringUtils.truncate('test', 0)).toMatch(/^(\.\.\.|\…)$/);
+      expect(StringUtils.truncate('test', 0)).toMatch(/^(\.\.\.|…)$/);
     });
   });
 
@@ -81,7 +81,7 @@ describe('StringUtils', () => {
     });
 
     it('should handle circular references', () => {
-      const obj: any = { name: 'test' };
+      const obj: Record<string, unknown> = { name: 'test' };
       obj.self = obj;
 
       const result = StringUtils.safeJsonStringify(obj);

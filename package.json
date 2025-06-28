@@ -48,17 +48,21 @@
   },
   "lint-staged": {
     "*.{ts,tsx}": [
+      "prettier --check",
       "prettier --write",
       "eslint --fix"
     ],
     "*.{js,mjs}": [
+      "prettier --check",
       "prettier --write",
       "eslint --fix"
     ],
     "*.{json,md,yml,yaml}": [
+      "prettier --check",
       "prettier --write"
     ],
     "package.json": [
+      "prettier --check",
       "prettier --write"
     ]
   },

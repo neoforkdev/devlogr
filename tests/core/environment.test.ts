@@ -1,7 +1,8 @@
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 import { Logger, createLogger } from '../../src/logger';
-import { LogLevel } from '../../src/types';
 import { LogConfiguration } from '../../src/config';
+
+import { setupTestEnvironment } from '../helpers/test-environment';
 
 describe('Logger Environment Variables', () => {
   let originalEnv: Record<string, string | undefined>;
@@ -22,10 +23,8 @@ describe('Logger Environment Variables', () => {
       DEVLOGR_NO_ICONS: process.env.DEVLOGR_NO_ICONS,
     };
 
-    // Clear environment variables for clean slate
-    Object.keys(originalEnv).forEach(key => {
-      delete process.env[key];
-    });
+    // Setup secure test environment with default non-CI behavior
+    setupTestEnvironment();
 
     // Reset logger level
     Logger.resetLevel();
@@ -267,10 +266,10 @@ describe('Logger Environment Variables', () => {
         // Should have made 3 console.log calls
         expect(consoleSpy).toHaveBeenCalledTimes(3);
 
-        // Check calls: spacer (no args), separator (dashes), separator with title
+        // Check calls: spacer (no args), separator (fixed length), separator with title (fixed format)
         expect(consoleSpy.mock.calls[0]).toEqual([]); // spacer() calls console.log() with no args
-        expect(consoleSpy.mock.calls[1][0]).toMatch(/^-+$/);
-        expect(consoleSpy.mock.calls[2][0]).toMatch(/^-+ Title -+$/);
+        expect(consoleSpy.mock.calls[1][0]).toMatch(/^[─-]{60}$/); // Fixed length separator
+        expect(consoleSpy.mock.calls[2][0]).toMatch(/^[─-]{2} Title [─-]+$/); // Fixed format with title
 
         consoleSpy.mockRestore();
       } finally {
@@ -380,6 +379,7 @@ describe('Logger Environment Variables', () => {
 
       const loggedMessage = consoleSpy.mock.calls[0][0] as string;
       // Strip ANSI color codes for testing
+      // eslint-disable-next-line no-control-regex
       const cleanMessage = loggedMessage.replace(/\u001b\[[0-9;]*m/g, '');
 
       // When icons are disabled, there should be no extra spacing before the log level

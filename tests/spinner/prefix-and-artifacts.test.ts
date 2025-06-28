@@ -1,6 +1,5 @@
 import { vi, describe, it, expect, beforeEach, afterEach } from 'vitest';
 import { Logger } from '../../src/logger';
-import { LogLevel } from '../../src/types';
 import { SpinnerUtils } from '../../src/utils/spinner';
 
 describe('Prefix and Artifacts Tests', () => {

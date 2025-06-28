@@ -2,19 +2,17 @@ import { vi, describe, it, expect, beforeEach, afterEach } from 'vitest';
 import { Logger } from '../src/logger';
 import { SpinnerUtils } from '../src/utils/spinner';
 import { DevLogrRenderer } from '../src/devlogr-renderer';
-import { MessageFormatter } from '../src/formatters';
 import { ThemeProvider } from '../src/themes';
-import chalk from 'chalk';
+import { setupTestEnvironment } from './helpers/test-environment';
+import { ANSI_COLOR_REGEX, stripAnsiColors } from './helpers/ansi-utils';
 
 describe('Comprehensive Feature Coverage Tests', () => {
   beforeEach(() => {
     vi.clearAllMocks();
     SpinnerUtils.stopAllSpinners();
 
-    // Clean up environment variables
-    ['NO_COLOR', 'DEVLOGR_NO_COLOR', 'DEVLOGR_SHOW_TIMESTAMP', 'DEVLOGR_LOG_LEVEL'].forEach(
-      key => delete process.env[key]
-    );
+    // Setup secure test environment with default non-CI behavior
+    setupTestEnvironment();
   });
 
   afterEach(() => {
@@ -51,8 +49,8 @@ describe('Comprehensive Feature Coverage Tests', () => {
         const hasColors =
           process.stdout.isTTY && !process.env.NO_COLOR && !process.env.DEVLOGR_NO_COLOR;
         if (hasColors) {
-          expect(consoleSpy).toHaveBeenCalledWith(expect.stringMatching(/\u001b\[/));
-          expect(errorSpy).toHaveBeenCalledWith(expect.stringMatching(/\u001b\[/));
+          expect(consoleSpy).toHaveBeenCalledWith(expect.stringMatching(ANSI_COLOR_REGEX));
+          expect(errorSpy).toHaveBeenCalledWith(expect.stringMatching(ANSI_COLOR_REGEX));
         } else {
           // In environments without color support, just verify the calls were made
           expect(consoleSpy).toHaveBeenCalled();
@@ -73,7 +71,7 @@ describe('Comprehensive Feature Coverage Tests', () => {
         const calls = consoleSpy.mock.calls.flat();
         calls.forEach(call => {
           if (typeof call === 'string') {
-            expect(call).not.toMatch(/\u001b\[/);
+            expect(call).not.toMatch(ANSI_COLOR_REGEX);
           }
         });
       });
@@ -91,7 +89,7 @@ describe('Comprehensive Feature Coverage Tests', () => {
         const calls = consoleSpy.mock.calls.flat();
         calls.forEach(call => {
           if (typeof call === 'string') {
-            expect(call).not.toMatch(/\u001b\[/);
+            expect(call).not.toMatch(ANSI_COLOR_REGEX);
           }
         });
       });
@@ -110,7 +108,7 @@ describe('Comprehensive Feature Coverage Tests', () => {
         const calls = consoleSpy.mock.calls.flat();
         calls.forEach(call => {
           if (typeof call === 'string') {
-            expect(call).not.toMatch(/\u001b\[/);
+            expect(call).not.toMatch(ANSI_COLOR_REGEX);
           }
         });
       });
@@ -128,7 +126,7 @@ describe('Comprehensive Feature Coverage Tests', () => {
       it('should apply colors to spinner symbols and text', () => {
         const logger = new Logger('SPINNER_COLOR_TEST');
 
-        const createSpy = vi.spyOn(SpinnerUtils, 'create').mockImplementation(options => {
+        vi.spyOn(SpinnerUtils, 'create').mockImplementation(options => {
           if (options?.useColors) {
             // When colors are enabled, theme colors should be applied
             expect(options.theme?.color).toBeDefined();
@@ -144,7 +142,7 @@ describe('Comprehensive Feature Coverage Tests', () => {
             stop: vi.fn(),
             clear: vi.fn(),
             text: options?.text || '',
-          } as any;
+          } as Record<string, unknown>;
         });
 
         // Should work without throwing - single spinner now uses multi-spinner infrastructure
@@ -157,7 +155,7 @@ describe('Comprehensive Feature Coverage Tests', () => {
 
         const logger = new Logger('SPINNER_NO_COLOR_TEST');
 
-        const createSpy = vi.spyOn(SpinnerUtils, 'create').mockImplementation(options => {
+        vi.spyOn(SpinnerUtils, 'create').mockImplementation(options => {
           expect(options?.useColors).toBe(false);
 
           return {
@@ -165,7 +163,7 @@ describe('Comprehensive Feature Coverage Tests', () => {
             stop: vi.fn(),
             clear: vi.fn(),
             text: options?.text || '',
-          } as any;
+          } as Record<string, unknown>;
         });
 
         // Should work without throwing - single spinner now uses multi-spinner infrastructure
@@ -174,7 +172,7 @@ describe('Comprehensive Feature Coverage Tests', () => {
       });
 
       it('should apply different colors for different log levels in spinners', () => {
-        const logger = new Logger('SPINNER_LEVEL_COLOR_TEST');
+        // Test theme color differences without needing logger instance
 
         const themes = {
           info: ThemeProvider.getTheme('info'),
@@ -264,7 +262,7 @@ describe('Comprehensive Feature Coverage Tests', () => {
       logger.info('Message with timestamp');
 
       const message = String(consoleSpy.mock.calls[0][0]);
-      const cleanMessage = message.replace(/\u001b\[[0-9;]*m/g, '');
+      const cleanMessage = stripAnsiColors(message);
       expect(cleanMessage).toMatch(/^\[[\d:]+\]/); // Should start with timestamp
       expect(message).toContain('[TIMESTAMP_PREFIX_TEST]'); // Should contain prefix
     });
@@ -339,7 +337,7 @@ describe('Comprehensive Feature Coverage Tests', () => {
       const logger = new Logger('COMPLETION_PREFIX_TEST');
       const consoleSpy = vi.spyOn(console, 'log');
       const errorSpy = vi.spyOn(console, 'error');
-      const warnSpy = vi.spyOn(console, 'warn');
+      vi.spyOn(console, 'warn');
 
       // Test different completion methods
       logger.startSpinner('Task 1');
@@ -401,7 +399,7 @@ describe('Comprehensive Feature Coverage Tests', () => {
       const logger1 = new Logger('MULTI_STOP_TEST_1');
       const logger2 = new Logger('MULTI_STOP_TEST_2');
 
-      const mockSpinners: any[] = [];
+      const mockSpinners: Array<{ start: () => void; stop: () => void; clear: () => void }> = [];
 
       vi.spyOn(SpinnerUtils, 'create').mockImplementation(() => {
         const spinner = {
@@ -411,7 +409,7 @@ describe('Comprehensive Feature Coverage Tests', () => {
           text: '',
         };
         mockSpinners.push(spinner);
-        return spinner as any;
+        return spinner;
       });
 
       logger1.startSpinner('Multi task 1');
@@ -430,7 +428,7 @@ describe('Comprehensive Feature Coverage Tests', () => {
     it('should handle spinner restart without artifacts', () => {
       const logger = new Logger('RESTART_ARTIFACT_TEST');
 
-      const mockSpinners: any[] = [];
+      const mockSpinners: Array<{ start: () => void; stop: () => void; clear: () => void }> = [];
 
       vi.spyOn(SpinnerUtils, 'create').mockImplementation(() => {
         const spinner = {
@@ -440,7 +438,7 @@ describe('Comprehensive Feature Coverage Tests', () => {
           text: '',
         };
         mockSpinners.push(spinner);
-        return spinner as any;
+        return spinner;
       });
 
       // Start spinner
@@ -490,7 +488,7 @@ describe('Comprehensive Feature Coverage Tests', () => {
         },
       ];
 
-      const renderer = new DevLogrRenderer(mockTasks as any, {
+      const renderer = new DevLogrRenderer(mockTasks as Parameters<typeof DevLogrRenderer>[0], {
         useColors: true,
         showTimestamp: true,
         supportsUnicode: true,
@@ -498,12 +496,12 @@ describe('Comprehensive Feature Coverage Tests', () => {
       });
 
       // Mock the spinner to return a symbol
-      (renderer as any).spinner = { fetch: () => '⠋' };
+      (renderer as Record<string, unknown>).spinner = { fetch: () => '⠋' };
 
-      const output = (renderer as any).createOutput();
+      const output = (renderer as Record<string, unknown>).createOutput();
 
       // Should contain all elements
-      const cleanOutput = output.replace(/\u001b\[[0-9;]*m/g, '');
+      const cleanOutput = stripAnsiColors(output);
       expect(cleanOutput).toMatch(/^\[[\d:]+\]/); // Timestamp
       expect(output).toContain('[RENDERER_TEST]'); // Prefix
       expect(output).toContain('⠋'); // Spinner symbol
@@ -530,7 +528,7 @@ describe('Comprehensive Feature Coverage Tests', () => {
         },
       ];
 
-      const renderer = new DevLogrRenderer(mockTasks as any, {
+      const renderer = new DevLogrRenderer(mockTasks as Parameters<typeof DevLogrRenderer>[0], {
         useColors: false,
         showTimestamp: true,
         supportsUnicode: true,
@@ -538,12 +536,12 @@ describe('Comprehensive Feature Coverage Tests', () => {
       });
 
       // Mock the spinner
-      (renderer as any).spinner = { fetch: () => '⠋' };
+      (renderer as Record<string, unknown>).spinner = { fetch: () => '⠋' };
 
-      const output = (renderer as any).createOutput();
+      const output = (renderer as Record<string, unknown>).createOutput();
 
       // Should not contain ANSI color codes but should have prefix and timestamp
-      expect(output).not.toContain('\u001b['); // No ANSI color codes
+      expect(output).not.toMatch(ANSI_COLOR_REGEX); // No ANSI color codes
       expect(output).toMatch(/^\[[\d:]+\]/); // Timestamp
       expect(output).toContain('[NO_COLOR_RENDERER_TEST]'); // Prefix
       expect(output).toContain('⠋'); // Spinner symbol
@@ -553,6 +551,9 @@ describe('Comprehensive Feature Coverage Tests', () => {
 
   describe('Edge Cases and Integration', () => {
     it('should handle empty prefix gracefully', () => {
+      // Enable prefix to show level text instead of just symbol
+      setupTestEnvironment(false, true); // showTimestamp=false, showPrefix=true
+
       const logger = new Logger('');
       const consoleSpy = vi.spyOn(console, 'log');
 

@@ -249,22 +249,12 @@ export class SpinnerUtils {
         taskInfo.listr.tasks[0].title = text;
       }
 
-      // First, stop the listr2 renderer to prevent further updates
-      const renderer = getListrRenderer(taskInfo.listr);
-      if (renderer?.end) {
-        renderer.end();
-      }
-
       // Clear the spinner display to prevent artifacts
       if (taskInfo.spinner?.clear) taskInfo.spinner.clear();
       if (taskInfo.spinner?.stop) taskInfo.spinner.stop();
 
+      // Mark the task as completed - Listr2 will handle the final rendering
       if (taskInfo.resolver) taskInfo.resolver();
-
-      // Clear the display to ensure clean state
-      if (process.stdout.isTTY) {
-        process.stdout.write('\u001b[2K\r'); // Clear current line and move cursor to beginning
-      }
 
       return text;
     }
@@ -285,23 +275,13 @@ export class SpinnerUtils {
         taskInfo.listr.tasks[0].title = text;
       }
 
-      // First, stop the listr2 renderer to prevent further updates
-      const renderer = getListrRenderer(taskInfo.listr);
-      if (renderer?.end) {
-        renderer.end();
-      }
-
       // Clear the spinner display to prevent artifacts
       if (taskInfo.spinner?.clear) taskInfo.spinner.clear();
       if (taskInfo.spinner?.stop) taskInfo.spinner.stop();
 
+      // Mark the task as failed - Listr2 will handle the final rendering
       if (taskInfo.rejecter) {
         taskInfo.rejecter(new Error(text || 'Task failed'));
-      }
-
-      // Clear the display to ensure clean state
-      if (process.stdout.isTTY) {
-        process.stdout.write('\u001b[2K\r'); // Clear current line and move cursor to beginning
       }
 
       return text;
