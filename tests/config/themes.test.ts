@@ -1,8 +1,14 @@
-import { describe, it, expect, afterEach } from 'vitest';
+import { describe, it, expect, beforeEach, afterEach } from 'vitest';
 import { LogLevel } from '../../src/types';
 import { Logger } from '../../src/logger';
+import { setupTestEnvironment } from '../helpers/test-environment';
 
 describe('Logger Themes and Configuration', () => {
+  beforeEach(() => {
+    // Setup secure test environment with default non-CI behavior
+    setupTestEnvironment();
+  });
+
   describe('LogLevel enum', () => {
     it('should have all required log levels', () => {
       expect(LogLevel.DEBUG).toBeDefined();

@@ -1,11 +1,12 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { MessageFormatter } from '../../src/formatters';
 import { SafeStringUtils } from '../../src/utils/safe-string';
-import { StringUtils } from '../../src/utils';
+
+import { setupTestEnvironment } from '../helpers/test-environment';
 
 // Mock the time to make tests deterministic
 vi.mock('../src/utils', async () => {
-  const actual = (await vi.importActual('../src/utils')) as any;
+  const actual = (await vi.importActual('../src/utils')) as Record<string, unknown>;
   return {
     ...actual,
     StringUtils: {
@@ -18,9 +19,10 @@ vi.mock('../src/utils', async () => {
 });
 
 describe('MessageFormatter', () => {
-  const originalDate = Date;
-
   beforeEach(() => {
+    // Setup secure test environment with default non-CI behavior
+    setupTestEnvironment();
+
     // Mock Date to have consistent timestamps in tests
     const mockDate = vi.fn(() => ({
       toTimeString: () => '14:30:45 GMT+0000 (UTC)',
@@ -110,7 +112,7 @@ describe('MessageFormatter', () => {
   });
 
   describe('formatSimpleMessage', () => {
-    it('should format simple messages correctly', () => {
+    it('should format simple messages correctly (just message text)', () => {
       const theme = {
         symbol: 'ℹ',
         label: 'INFO',
@@ -118,8 +120,9 @@ describe('MessageFormatter', () => {
       };
 
       const result = MessageFormatter.formatSimpleMessage('info', theme, 'Test message', [], false);
-      expect(result).toContain('ℹ');
-      expect(result).toContain('Test message');
+      // formatSimpleMessage only handles message styling, not symbols (new architecture)
+      expect(result).toBe('Test message');
+      expect(result).not.toContain('ℹ');
     });
   });
 
@@ -370,9 +373,9 @@ describe('MessageFormatter', () => {
         false
       );
 
-      // Verify the result structure: [timestamp] symbol LABEL [prefix]
-      // Should have proper spacing pattern but no trailing space
-      expect(result).toMatch(/^\[[\d:]+\] ⠋ TASK\s+\[app\]$/);
+      // Verify the result structure: [timestamp] LABEL [prefix] symbol
+      // New centralized format: [Timestamp] [Level] [Prefix] [Symbol] [Message]
+      expect(result).toMatch(/^\[[\d:]+\] TASK\s+\[app\] ⠋$/);
 
       // Should not end with trailing space (this was the bug we fixed)
       expect(result).not.toMatch(/ $/);
@@ -413,9 +416,9 @@ describe('MessageFormatter', () => {
         false
       );
 
-      // Both should follow the same spacing pattern
-      expect(shortResult).toMatch(/^\[[\d:]+\] → DEPLOY\s+\[ui\]$/);
-      expect(longResult).toMatch(/^\[[\d:]+\] → DEPLOY\s+\[backend-service\]$/);
+      // Both should follow the same spacing pattern: [timestamp] LEVEL [prefix] symbol
+      expect(shortResult).toMatch(/^\[[\d:]+\] DEPLOY\s+\[ui\] →$/);
+      expect(longResult).toMatch(/^\[[\d:]+\] DEPLOY\s+\[backend-service\] →$/);
 
       // Neither should have trailing spaces (this was the main bug we fixed)
       expect(shortResult).not.toMatch(/ $/);

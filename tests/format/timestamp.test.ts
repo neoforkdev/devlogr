@@ -1,15 +1,11 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { createLogger, Logger } from '../../src/logger';
-import { LogLevel, TimestampFormat } from '../../src/types';
-import { SpinnerUtils } from '../../src/utils';
+import { TimestampFormat } from '../../src/types';
 import { LogConfiguration } from '../../src/config';
 
 describe('Logger Timestamp Behavior', () => {
   let logger: Logger;
-  let consoleSpy: any;
-  let consoleErrorSpy: any;
-  let consoleWarnSpy: any;
-  let consoleDebugSpy: any;
+  let consoleSpy: ReturnType<typeof vi.spyOn>;
   const originalEnv = process.env;
 
   beforeEach(() => {
@@ -17,9 +13,9 @@ describe('Logger Timestamp Behavior', () => {
 
     // Set up console spies
     consoleSpy = vi.spyOn(console, 'log').mockImplementation(() => {});
-    consoleErrorSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
-    consoleWarnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
-    consoleDebugSpy = vi.spyOn(console, 'debug').mockImplementation(() => {});
+    vi.spyOn(console, 'error').mockImplementation(() => {});
+    vi.spyOn(console, 'warn').mockImplementation(() => {});
+    vi.spyOn(console, 'debug').mockImplementation(() => {});
 
     // Reset logger level
     Logger.resetLevel();
@@ -277,7 +273,7 @@ describe('Logger Timestamp Behavior', () => {
       // Check if any call contains the success message with ISO timestamp
       const calls = consoleSpy.mock.calls;
       const successCall = calls.find(
-        (call: any[]) => call[0] && typeof call[0] === 'string' && call[0].includes('Done!')
+        (call: unknown[]) => call[0] && typeof call[0] === 'string' && call[0].includes('Done!')
       );
 
       expect(successCall).toBeDefined();

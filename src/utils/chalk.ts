@@ -1,16 +1,16 @@
-import chalk from 'chalk';
+import chalk, { ChalkInstance } from 'chalk';
 
 /**
  * Centralized chalk utility that handles color override logic
  */
 export class ChalkUtils {
-  private static cachedChalk: any;
+  private static cachedChalk: ChalkInstance;
   private static lastColorSetting: boolean | undefined;
 
   /**
    * Gets a chalk instance with appropriate color override logic
    */
-  static getChalkInstance(useColors?: boolean): any {
+  static getChalkInstance(useColors?: boolean): ChalkInstance {
     // Get current color setting, with fallback if LogConfiguration is not available
     let currentUseColors: boolean;
     try {
