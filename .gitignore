@@ -48,4 +48,5 @@ tmp/
 temp/
 
 # Claude Code
-CLAUDE.md 
+CLAUDE.md
+.claude
