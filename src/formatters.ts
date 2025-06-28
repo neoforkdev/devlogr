@@ -1,6 +1,9 @@
 import { LogTheme, TimestampFormat } from './types';
 import { StringUtils, EmojiUtils } from './utils';
 import { ChalkUtils } from './utils/chalk';
+import { LogConfiguration } from './config';
+import { ThemeProvider } from './themes';
+import { PrefixTracker } from './tracker';
 
 // ============================================================================
 // MESSAGE FORMATTING - SIMPLIFIED UNIFIED FORMATTER
@@ -26,9 +29,83 @@ interface FormatOptions {
  * Follows DRY principle by using a single format method for all scenarios.
  */
 export class MessageFormatter {
+  // ============================================================================
+  // CENTRALIZED PUBLIC API - SINGLE SOURCE OF TRUTH FOR ALL FORMATTING
+  // ============================================================================
+
   /**
-   * Universal formatter - handles all formatting scenarios with a single method.
-   * This eliminates the need for multiple specialized formatting methods.
+   * Centralized formatting method that all APIs should use.
+   * Reads environment configuration internally for consistency.
+   *
+   * @param message - The message to format
+   * @param messagePrefix - The symbol/prefix (e.g., "✓", "✖", "→")
+   * @param level - The log level (e.g., "info", "error", "task")
+   * @param prefix - Optional prefix for the logger instance
+   * @param args - Optional additional arguments
+   */
+  static formatWithPrefix(
+    message: string,
+    messagePrefix: string,
+    level: string,
+    prefix?: string,
+    args: unknown[] = []
+  ): string {
+    const config = LogConfiguration.getConfig();
+    const theme = ThemeProvider.getTheme(level, undefined, config.supportsUnicode);
+    const maxPrefixLength = PrefixTracker.getMaxLength();
+    const shouldStripEmojis = !EmojiUtils.supportsEmoji();
+
+    // Create a custom theme with the provided messagePrefix
+    const customTheme: LogTheme = {
+      symbol: messagePrefix,
+      label: theme.label,
+      color: theme.color,
+    };
+
+    return this.format({
+      level,
+      theme: customTheme,
+      prefix,
+      maxPrefixLength,
+      message,
+      args,
+      showTimestamp: config.showTimestamp,
+      useColors: config.useColors,
+      timestampFormat: config.timestampFormat,
+      stripEmojis: shouldStripEmojis,
+      includeLevel: config.showPrefix,
+      includePrefix: config.showPrefix,
+    });
+  }
+
+  /**
+   * Simplified method for basic message formatting without custom prefix.
+   * Uses the theme's default symbol.
+   */
+  static formatMessage(
+    message: string,
+    level: string,
+    prefix?: string,
+    args: unknown[] = []
+  ): string {
+    const config = LogConfiguration.getConfig();
+    const theme = ThemeProvider.getTheme(level, undefined, config.supportsUnicode);
+
+    return this.formatWithPrefix(message, theme.symbol, level, prefix, args);
+  }
+
+  // ============================================================================
+  // CORE FORMATTING METHOD - USED INTERNALLY BY PUBLIC API
+  // ============================================================================
+
+  /**
+   * Universal formatter - handles all formatting scenarios with proper component ordering.
+   *
+   * Creates the standard DevLogr format: [Timestamp] [Level] [Prefix] [Symbol] [Message]
+   * This ensures consistent structure across all logging APIs (logger, spinner, listr2).
+   *
+   * @param options - Formatting configuration options
+   * @returns Properly formatted log message with correct component positioning
    */
   static format(options: FormatOptions): string {
     const {
@@ -48,25 +125,34 @@ export class MessageFormatter {
 
     const parts: string[] = [];
 
-    // 1. Timestamp
+    // 1. Timestamp: [12:34:56] or [2024-01-01 12:34:56]
     if (showTimestamp) {
       parts.push(this.formatTimestamp(timestampFormat, useColors));
     }
 
-    // 2. Symbol and Level
-    if (theme.symbol || includeLevel) {
-      const formatted = this.formatSymbolAndLevel(theme, level, includeLevel, useColors);
-      if (formatted) parts.push(formatted);
+    // 2. Level: INFO    ERROR   WARNING (padded to 7 chars for alignment)
+    if (includeLevel) {
+      const colorFn = useColors ? theme.color : (text: string) => text;
+      const levelLabel = useColors
+        ? ChalkUtils.getChalkInstance(useColors).bold(colorFn(theme.label.padEnd(7)))
+        : theme.label.padEnd(7);
+      parts.push(levelLabel);
     }
 
-    // 3. Prefix with proper spacing
+    // 3. Prefix: [logger-name] (with consistent spacing based on max prefix length)
     if (includePrefix && prefix) {
       parts.push(this.formatPrefix(prefix, maxPrefixLength, useColors));
     }
 
-    // 4. Message with styling
+    // 4. Symbol: ✓ ✖ ⠋ → (spinner icons, status symbols, etc.)
+    if (theme.symbol) {
+      const colorFn = useColors ? theme.color : (text: string) => text;
+      parts.push(colorFn(theme.symbol));
+    }
+
+    // 5. Message: Actual log content with proper styling and args
     if (message) {
-      parts.push(this.formatMessage(level, theme, message, args, useColors, stripEmojis));
+      parts.push(this.formatMessageWithTheme(level, theme, message, args, useColors, stripEmojis));
     }
 
     return parts.join(' ').trim();
@@ -81,30 +167,6 @@ export class MessageFormatter {
     return ChalkUtils.colorize(`[${timestamp}]`, 'dim', useColors);
   }
 
-  private static formatSymbolAndLevel(
-    theme: LogTheme,
-    level: string,
-    includeLevel: boolean,
-    useColors: boolean
-  ): string {
-    const colorFn = useColors ? theme.color : (text: string) => text;
-    const symbol = theme.symbol ? colorFn(theme.symbol) : '';
-    const levelLabel = includeLevel
-      ? useColors
-        ? ChalkUtils.getChalkInstance(useColors).bold(colorFn(theme.label.padEnd(7)))
-        : theme.label.padEnd(7)
-      : '';
-
-    if (symbol && levelLabel) {
-      return `${symbol} ${levelLabel}`;
-    } else if (symbol) {
-      return symbol;
-    } else if (levelLabel) {
-      return levelLabel;
-    }
-    return '';
-  }
-
   private static formatPrefix(prefix: string, maxPrefixLength: number, useColors: boolean): string {
     const prefixFormatted = ChalkUtils.colorize(`[${prefix}]`, 'dim', useColors);
     const prefixTotalLength = prefix.length + 2; // +2 for brackets
@@ -115,7 +177,7 @@ export class MessageFormatter {
     return `${spacing}${prefixFormatted}`;
   }
 
-  private static formatMessage(
+  private static formatMessageWithTheme(
     level: string,
     theme: LogTheme,
     message: string,
@@ -208,17 +270,7 @@ export class MessageFormatter {
     useColors: boolean,
     stripEmojis = false
   ): string {
-    return this.format({
-      level,
-      theme,
-      message,
-      args,
-      useColors,
-      stripEmojis,
-      includeLevel: false,
-      includePrefix: false,
-      showTimestamp: false,
-    });
+    return this.formatMessageWithTheme(level, theme, message, args, useColors, stripEmojis);
   }
 
   /**

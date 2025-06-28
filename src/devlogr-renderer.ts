@@ -8,8 +8,6 @@ import {
 } from 'listr2';
 import { createLogUpdate } from 'log-update';
 import { MessageFormatter } from './formatters';
-import { ThemeProvider } from './themes';
-import { PrefixTracker } from './tracker';
 import { TimestampFormat } from './types';
 import { ChalkUtils } from './utils/chalk';
 import { TerminalUtils } from './utils';
@@ -21,7 +19,7 @@ export interface DevLogrRendererOptions {
   supportsUnicode?: boolean;
   prefix?: string;
   lazy?: boolean;
-  taskLevel?: string;
+  level?: string;
 }
 
 export class DevLogrRenderer implements ListrRenderer {
@@ -55,7 +53,7 @@ export class DevLogrRenderer implements ListrRenderer {
       supportsUnicode: options.supportsUnicode ?? true,
       prefix: options.prefix ?? 'listr2',
       lazy: options.lazy ?? false,
-      taskLevel: options.taskLevel ?? 'task',
+      level: options.level ?? 'task',
     };
 
     // Detect CI environment for different rendering strategy
@@ -197,7 +195,7 @@ export class DevLogrRenderer implements ListrRenderer {
       }
 
       if (title) {
-        output.push(this.formatTaskMessage(title, symbol, level));
+        output.push(this.formatListrMessage(title, symbol, level));
       }
 
       if (task.output && (task.isStarted() || task.hasFailed())) {
@@ -206,7 +204,7 @@ export class DevLogrRenderer implements ListrRenderer {
           .split('\n')
           .forEach(line => {
             const outputSymbol = ChalkUtils.getChalkInstance(this.options.useColors).cyan('›');
-            output.push(this.formatTaskMessage(line, outputSymbol, level + 1));
+            output.push(this.formatListrMessage(line, outputSymbol, level + 1));
           });
       }
 
@@ -220,48 +218,22 @@ export class DevLogrRenderer implements ListrRenderer {
     return output;
   }
 
-  private formatTaskMessage(message: string, symbol: string, level = 0): string {
-    const theme = ThemeProvider.getTheme(
-      this.options.taskLevel,
-      undefined,
-      this.options.supportsUnicode
+  private formatListrMessage(message: string, symbol: string, level = 0): string {
+    // Use centralized formatting - MessageFormatter handles proper component ordering
+    // Format: [Timestamp] [Level] [Prefix] [Symbol] [Message]
+    const formattedMessage = MessageFormatter.formatWithPrefix(
+      message,
+      symbol,
+      this.options.level,
+      this.options.prefix
     );
-    const maxPrefixLength = PrefixTracker.getMaxLength();
 
-    // Use renderer options for prefix/timestamp settings
-    // If prefix is provided in options, we should show it (respecting the Logger's intent)
-    const showPrefix = this.options.prefix !== undefined;
-    const showTimestamp = this.options.showTimestamp;
-
-    // Special handling for task level when prefix is disabled
-    if (this.options.taskLevel === 'task' && !showPrefix) {
+    // Handle indentation for nested tasks by prepending spaces
+    if (level > 0) {
       const indentation = '  '.repeat(level);
-      return `${indentation}${symbol} ${message}`;
+      return `${indentation}${formattedMessage}`;
     }
 
-    const formattedMessage = MessageFormatter.format({
-      level: this.options.taskLevel,
-      theme,
-      prefix: this.options.prefix,
-      maxPrefixLength,
-      message: '',
-      args: [],
-      showTimestamp: showTimestamp,
-      useColors: this.options.useColors,
-      timestampFormat: this.options.timestampFormat,
-      stripEmojis: !this.options.supportsUnicode,
-      includeLevel: showPrefix, // Show level label when prefix is shown
-      includePrefix: showPrefix,
-    });
-
-    let prefix = formattedMessage.replace(/\s+$/, '');
-
-    // Add 2 spaces for proper alignment when prefix is enabled but timestamp is disabled
-    if (showPrefix && !showTimestamp) {
-      prefix = '  ' + prefix; // 2 spaces for alignment
-    }
-
-    const indentation = '  '.repeat(level);
-    return `${prefix} ${indentation}${symbol} ${message}`;
+    return formattedMessage;
   }
 }

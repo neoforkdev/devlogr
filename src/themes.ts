@@ -115,9 +115,7 @@ export class ThemeProvider {
     colorName: string,
     useColors: boolean
   ): LogTheme {
-    const colorFunction =
-      (ChalkUtils as Record<string, (text: string) => string>)[colorName] ||
-      ((text: string) => text);
+    const colorFunction = (ChalkUtils as any)[colorName] || ((text: string) => text);
     return {
       ...theme,
       color: useColors ? colorFunction : (text: string) => text,

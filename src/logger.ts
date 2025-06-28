@@ -30,7 +30,7 @@ class SpinnerManager {
       'single',
       this.logger.buildSpinnerOptions(spinnerText, 'task', _options)
     );
-    this.singleSpinnerTask = this.singleSpinnerListr?.tasks[0] as unknown;
+    this.singleSpinnerTask = this.singleSpinnerListr?.tasks[0] as any;
   }
 
   updateText(text: string): void {
@@ -212,7 +212,7 @@ class TaskRunner {
       concurrent,
       exitOnError,
       context,
-      taskLevel: 'task',
+      level: 'task',
     });
 
     try {
@@ -231,15 +231,10 @@ class TaskRunner {
       concurrent?: boolean;
       exitOnError?: boolean;
       context?: T;
-      taskLevel?: string;
+      level?: string;
     } = {}
   ): Listr<T, typeof DevLogrRenderer> {
-    const {
-      concurrent = false,
-      exitOnError = true,
-      context: _context,
-      taskLevel = 'task',
-    } = options;
+    const { concurrent = false, exitOnError = true, context: _context, level = 'task' } = options;
 
     return new Listr(tasks, {
       concurrent,
@@ -251,7 +246,7 @@ class TaskRunner {
         useColors: this.logger.getConfig().useColors,
         timestampFormat: this.logger.getConfig().timestampFormat,
         supportsUnicode: this.logger.getConfig().supportsUnicode,
-        taskLevel,
+        level,
       },
     }) as Listr<T, typeof DevLogrRenderer>;
   }
@@ -438,7 +433,7 @@ export class Logger {
       concurrent?: boolean;
       exitOnError?: boolean;
       context?: T;
-      taskLevel?: string;
+      level?: string;
     }
   ): Listr<T, typeof DevLogrRenderer> {
     return this.taskRunner.createTaskList(tasks, options);
@@ -448,7 +443,7 @@ export class Logger {
   async runConcurrentTasks<T = Record<string, unknown>>(
     title: string,
     tasks: ListrTask<T>[],
-    contextOrOptions?: T | { context?: T; taskLevel?: string }
+    contextOrOptions?: T | { context?: T; level?: string }
   ): Promise<T> {
     const options = this.normalizeTaskOptions(contextOrOptions, true);
     return this.runTasks(title, tasks, options);
@@ -457,7 +452,7 @@ export class Logger {
   async runSequentialTasks<T = Record<string, unknown>>(
     title: string,
     tasks: ListrTask<T>[],
-    contextOrOptions?: T | { context?: T; taskLevel?: string }
+    contextOrOptions?: T | { context?: T; level?: string }
   ): Promise<T> {
     const options = this.normalizeTaskOptions(contextOrOptions, false);
     return this.runTasks(title, tasks, options);
@@ -539,25 +534,8 @@ export class Logger {
   }
 
   private formatMessage(level: string, message: string, args: unknown[]): string {
-    const theme = ThemeProvider.getTheme(level, undefined, this.config.supportsUnicode);
-    const maxPrefixLength = PrefixTracker.getMaxLength();
-    const shouldStripEmojis = !EmojiUtils.supportsEmoji();
-    const finalMessage = shouldStripEmojis ? EmojiUtils.forceStripEmojis(message) : message;
-
-    return MessageFormatter.format({
-      level,
-      theme,
-      prefix: this.prefix,
-      maxPrefixLength,
-      message: finalMessage,
-      args,
-      showTimestamp: this.config.showTimestamp,
-      useColors: this.config.useColors,
-      timestampFormat: this.config.timestampFormat,
-      stripEmojis: shouldStripEmojis,
-      includeLevel: this.config.showPrefix,
-      includePrefix: this.config.showPrefix,
-    });
+    // Use centralized formatting - MessageFormatter handles all configuration internally
+    return MessageFormatter.formatMessage(message, level, this.prefix, args);
   }
 
   private outputToConsole(level: LogLevel, message: string): void {
@@ -600,37 +578,27 @@ export class Logger {
       prefix: this.prefix,
       useColors: this.config.useColors,
       theme,
-      rendererOptions: _rendererOptions as Record<string, unknown>,
       ...options,
     };
   }
 
   outputDevLogrFormattedTask(message: string, symbol?: string): void {
+    // Use centralized formatting with the provided symbol or default task symbol
     const theme = ThemeProvider.getTheme('task', undefined, this.config.supportsUnicode);
-    const maxPrefixLength = PrefixTracker.getMaxLength();
+    const taskSymbol = symbol || theme.symbol;
 
-    const prefix = MessageFormatter.format({
-      level: 'task',
-      theme,
-      prefix: this.prefix,
-      maxPrefixLength,
-      showTimestamp: this.config.showTimestamp,
-      useColors: this.config.useColors,
-      timestampFormat: this.config.timestampFormat,
-      stripEmojis: !this.config.supportsUnicode,
-      includeLevel: this.config.showPrefix,
-      includePrefix: this.config.showPrefix,
-    });
+    const formattedMessage = MessageFormatter.formatWithPrefix(
+      message,
+      taskSymbol,
+      'task',
+      this.prefix
+    );
 
-    const cleanPrefix = prefix.replace(/\s+$/, '');
-    const formattedMessage = symbol
-      ? `${cleanPrefix} ${symbol} ${message}`
-      : `${cleanPrefix} ${message}`;
     console.log(formattedMessage);
   }
 
   private normalizeTaskOptions<T>(
-    contextOrOptions?: T | { context?: T; taskLevel?: string },
+    contextOrOptions?: T | { context?: T; level?: string },
     concurrent = false
   ): { concurrent: boolean; context?: T } {
     if (!contextOrOptions) {
@@ -659,7 +627,7 @@ export class Logger {
 
   // Getter for tests to check spinner state
   get singleSpinnerListr(): Listr | null {
-    return (this.spinnerManager as { singleSpinnerListr: Listr | null }).singleSpinnerListr;
+    return (this.spinnerManager as any).singleSpinnerListr;
   }
 
   // ============================================================================
