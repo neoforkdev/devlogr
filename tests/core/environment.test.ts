@@ -2,6 +2,8 @@ import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 import { Logger, createLogger } from '../../src/logger';
 import { LogConfiguration } from '../../src/config';
 
+import { setupTestEnvironment } from '../helpers/test-environment';
+
 describe('Logger Environment Variables', () => {
   let originalEnv: Record<string, string | undefined>;
 
@@ -21,10 +23,8 @@ describe('Logger Environment Variables', () => {
       DEVLOGR_NO_ICONS: process.env.DEVLOGR_NO_ICONS,
     };
 
-    // Clear environment variables for clean slate
-    Object.keys(originalEnv).forEach(key => {
-      delete process.env[key];
-    });
+    // Setup secure test environment with default non-CI behavior
+    setupTestEnvironment();
 
     // Reset logger level
     Logger.resetLevel();

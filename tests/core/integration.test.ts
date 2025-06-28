@@ -1,9 +1,12 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { Logger } from '../../src/logger';
 import { LogLevel } from '../../src/types';
+import { setupTestEnvironment } from '../helpers/test-environment';
 
 describe('Logger Integration', () => {
   beforeEach(() => {
+    // Setup secure test environment with default non-CI behavior
+    setupTestEnvironment();
     Logger.resetLevel();
   });
 

@@ -1,5 +1,6 @@
 import { describe, it, expect, beforeEach, afterEach } from 'vitest';
 import { createLogger } from '../../src/logger';
+import { setupTestEnvironment } from '../helpers/test-environment';
 
 // Helper function to strip ANSI codes
 const stripAnsi = (text: string): string => {
@@ -17,6 +18,9 @@ describe('PLAIN Level Alignment', () => {
     output = [];
     errorOutput = [];
 
+    // Setup secure test environment with default non-CI behavior
+    setupTestEnvironment();
+
     // Mock console methods to capture output
     console.log = (message: string) => output.push(message);
     console.error = (message: string) => errorOutput.push(message);
@@ -27,7 +31,7 @@ describe('PLAIN Level Alignment', () => {
   });
 
   it('should align PLAIN level with other levels when icons are enabled', () => {
-    process.env.DEVLOGR_SHOW_PREFIX = 'true';
+    setupTestEnvironment(false, true); // showTimestamp=false, showPrefix=true
     const logger = createLogger('TEST');
 
     logger.task('This is a TASK message');
@@ -37,16 +41,15 @@ describe('PLAIN Level Alignment', () => {
     const taskLine = stripAnsi(output[0]);
     const plainLine = stripAnsi(output[1]);
 
-    // Both should have the same structure: symbol/space + space + LEVEL + space + [prefix] + message
-    // TASK: "→ TASK     [TEST] This is a TASK message"
-    // PLAIN: "  PLAIN    [TEST] This is a PLAIN message"
-    expect(taskLine).toMatch(/^→ TASK\s+\[TEST\]/);
-    expect(plainLine).toMatch(/^ {2}PLAIN\s+\[TEST\]/); // Two spaces for alignment
+    // New centralized format: LEVEL [prefix] symbol message
+    // TASK: "TASK     [TEST] → This is a TASK message"
+    // PLAIN: "PLAIN    [TEST]   This is a PLAIN message" (no symbol for plain)
+    expect(taskLine).toMatch(/^TASK\s+\[TEST\] →/);
+    expect(plainLine).toMatch(/^PLAIN\s+\[TEST\]\s+This is a PLAIN message/); // No symbol for plain level
   });
 
   it('should align PLAIN level with other levels when icons are disabled', () => {
-    process.env.DEVLOGR_NO_ICONS = 'true';
-    process.env.DEVLOGR_SHOW_PREFIX = 'true';
+    setupTestEnvironment(false, true, true); // showTimestamp=false, showPrefix=true, noIcons=true
     const logger = createLogger('TEST');
 
     logger.task('This is a TASK message');
@@ -56,11 +59,11 @@ describe('PLAIN Level Alignment', () => {
     const taskLine = stripAnsi(output[0]);
     const plainLine = stripAnsi(output[1]);
 
-    // Both should have no icon space when icons are disabled
-    // TASK: "TASK     [TEST] This is a TASK message"
+    // When icons disabled, no symbols should appear
+    // TASK: "TASK     [TEST] This is a TASK message" (no → symbol)
     // PLAIN: "PLAIN    [TEST] This is a PLAIN message"
-    expect(taskLine).toMatch(/^TASK\s+\[TEST\]/);
-    expect(plainLine).toMatch(/^PLAIN\s+\[TEST\]/);
+    expect(taskLine).toMatch(/^TASK\s+\[TEST\]\s+This is a TASK message/);
+    expect(plainLine).toMatch(/^PLAIN\s+\[TEST\]\s+This is a PLAIN message/);
 
     // Neither should start with spaces when icons are disabled
     expect(taskLine).not.toMatch(/^\s/);
@@ -68,8 +71,8 @@ describe('PLAIN Level Alignment', () => {
   });
 
   it('should maintain alignment in fallback mode (no Unicode)', () => {
+    setupTestEnvironment(false, true); // showTimestamp=false, showPrefix=true
     process.env.DEVLOGR_NO_UNICODE = 'true';
-    process.env.DEVLOGR_SHOW_PREFIX = 'true';
     const logger = createLogger('TEST');
 
     logger.task('This is a TASK message');
@@ -79,16 +82,15 @@ describe('PLAIN Level Alignment', () => {
     const taskLine = stripAnsi(output[0]);
     const plainLine = stripAnsi(output[1]);
 
-    // With fallback symbols:
-    // TASK: "> TASK     [TEST] This is a TASK message"
-    // PLAIN: "  PLAIN    [TEST] This is a PLAIN message"
-    expect(taskLine).toMatch(/^> TASK\s+\[TEST\]/);
-    expect(plainLine).toMatch(/^ {2}PLAIN\s+\[TEST\]/); // Two spaces for alignment
+    // With fallback symbols (new format):
+    // TASK: "TASK     [TEST] > This is a TASK message"
+    // PLAIN: "PLAIN    [TEST]   This is a PLAIN message" (no symbol)
+    expect(taskLine).toMatch(/^TASK\s+\[TEST\] >/);
+    expect(plainLine).toMatch(/^PLAIN\s+\[TEST\]\s+This is a PLAIN message/); // No symbol for plain
   });
 
   it('should maintain alignment with timestamps', () => {
-    process.env.DEVLOGR_SHOW_PREFIX = 'true';
-    process.env.DEVLOGR_SHOW_TIMESTAMP = 'true';
+    setupTestEnvironment(true, true); // showTimestamp=true, showPrefix=true
     const logger = createLogger('TEST');
 
     logger.task('This is a TASK message');
@@ -98,8 +100,8 @@ describe('PLAIN Level Alignment', () => {
     const taskLine = stripAnsi(output[0]).replace(/^\[[^\]]+\] /, '');
     const plainLine = stripAnsi(output[1]).replace(/^\[[^\]]+\] /, '');
 
-    // After removing timestamp, should have same alignment pattern
-    expect(taskLine).toMatch(/^→ TASK\s+\[TEST\]/);
-    expect(plainLine).toMatch(/^ {2}PLAIN\s+\[TEST\]/);
+    // After removing timestamp, should have same alignment pattern (new format)
+    expect(taskLine).toMatch(/^TASK\s+\[TEST\] →/);
+    expect(plainLine).toMatch(/^PLAIN\s+\[TEST\]\s+This is a PLAIN message/); // No symbol for plain
   });
 });

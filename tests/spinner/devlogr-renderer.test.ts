@@ -1,9 +1,10 @@
 import { vi, describe, it, expect, beforeEach, afterEach } from 'vitest';
 import { DevLogrRenderer, DevLogrRendererOptions } from '../../src/devlogr-renderer';
-import { EventEmitter } from 'events';
+import { setupTestEnvironment } from '../helpers/test-environment';
+import { stripAnsiColors } from '../helpers/ansi-utils';
 
 // Create mock task objects that implement the ListrTaskObject interface
-const createMockTask = (title: string, options: any = {}) => {
+const createMockTask = (title: string, options: Record<string, unknown> = {}) => {
   const task = {
     title,
     output: options.output || '',
@@ -26,6 +27,7 @@ describe('DevLogrRenderer', () => {
 
   beforeEach(() => {
     vi.useFakeTimers();
+    setupTestEnvironment(); // Secure test environment setup
     options = {
       useColors: false,
       showTimestamp: false,
@@ -41,8 +43,8 @@ describe('DevLogrRenderer', () => {
   });
 
   it('should render a simple task that completes successfully', () => {
-    // Enable prefix for this test
-    process.env.DEVLOGR_SHOW_PREFIX = 'true';
+    // Enable prefix for this test to show the new centralized format
+    setupTestEnvironment(false, true); // showTimestamp=false, showPrefix=true
 
     const mockTasks = [
       {
@@ -69,18 +71,22 @@ describe('DevLogrRenderer', () => {
     // Mock spinner
     (renderer as any).spinner = { fetch: () => '⠋' };
 
-    // Should render task in running state
-    const runningOutput = (renderer as any).createOutput();
-    expect(runningOutput).toContain('⠋ My Task');
+    // Should render task in running state - new format: TASK [test] ⠋ My Task
+    const runningOutput = stripAnsiColors((renderer as any).createOutput());
+    expect(runningOutput).toContain('TASK');
     expect(runningOutput).toContain('[test]');
+    expect(runningOutput).toContain('⠋');
+    expect(runningOutput).toContain('My Task');
 
     // Change to completed state
     mockTasks[0].isStarted = () => false;
     mockTasks[0].isCompleted = () => true;
 
-    const completedOutput = (renderer as any).createOutput();
-    expect(completedOutput).toContain('✔ My Task');
+    const completedOutput = stripAnsiColors((renderer as any).createOutput());
+    expect(completedOutput).toContain('TASK');
     expect(completedOutput).toContain('[test]');
+    expect(completedOutput).toContain('✔');
+    expect(completedOutput).toContain('My Task');
   });
 
   it('should correctly indent subtasks', () => {
@@ -91,10 +97,11 @@ describe('DevLogrRenderer', () => {
     });
 
     renderer = new DevLogrRenderer([parentTask as any], options);
-    const output = (renderer as any).createOutput();
+    const output = stripAnsiColors((renderer as any).createOutput());
 
+    // In default mode (no prefix), format is: ⠋ Parent Task
     expect(output).toContain('⠋ Parent Task');
-    expect(output).toContain('  ⠋ Subtask 1');
+    expect(output).toContain('  ⠋ Subtask 1'); // Indented subtask
   });
 
   it('should render task output correctly', () => {
@@ -104,8 +111,9 @@ describe('DevLogrRenderer', () => {
     });
 
     renderer = new DevLogrRenderer([task as any], options);
-    const output = (renderer as any).createOutput();
+    const output = stripAnsiColors((renderer as any).createOutput());
 
+    // Output lines are still prefixed with ›
     expect(output).toContain('› Here is some output');
     expect(output).toContain('› And some more output');
   });
@@ -117,8 +125,9 @@ describe('DevLogrRenderer', () => {
     });
 
     renderer = new DevLogrRenderer([task as any], options);
-    const output = (renderer as any).createOutput();
+    const output = stripAnsiColors((renderer as any).createOutput());
 
+    // In default mode, format is: ◯ Skippable Task -> Skipped for a good reason
     expect(output).toContain('◯ Skippable Task -> Skipped for a good reason');
   });
 
@@ -129,8 +138,9 @@ describe('DevLogrRenderer', () => {
     });
 
     renderer = new DevLogrRenderer([task as any], options);
-    const output = (renderer as any).createOutput();
+    const output = stripAnsiColors((renderer as any).createOutput());
 
+    // In default mode, format is: ✖ Failing Task
     expect(output).toContain('✖ Failing Task');
   });
 });

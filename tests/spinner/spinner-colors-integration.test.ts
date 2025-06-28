@@ -1,12 +1,16 @@
-import { describe, it, expect, beforeEach, afterEach } from 'vitest';
+import { describe, it, expect, beforeEach } from 'vitest';
 import { DevLogrRenderer } from '../../src/devlogr-renderer';
+import { setupTestEnvironment } from '../helpers/test-environment';
 import chalk from 'chalk';
 
 describe('Spinner Colors Integration', () => {
   let renderer: DevLogrRenderer;
-  let mockTasks: any[];
+  let mockTasks: Array<Record<string, unknown>>;
 
   beforeEach(() => {
+    // Setup secure test environment with disabled colors
+    setupTestEnvironment(false, false, false, false); // Disable colors by default
+
     // Create mock tasks with different states
     mockTasks = [
       {
@@ -53,11 +57,14 @@ describe('Spinner Colors Integration', () => {
         output: null,
         message: { skip: 'Skipped for testing' },
       },
-    ] as any;
+    ];
   });
 
   it('should apply colors when useColors is enabled', () => {
-    renderer = new DevLogrRenderer(mockTasks, {
+    // Enable colors for this specific test
+    setupTestEnvironment(false, false, false, true); // Enable colors
+
+    renderer = new DevLogrRenderer(mockTasks as Parameters<typeof DevLogrRenderer>[0], {
       useColors: true,
       showTimestamp: false,
       supportsUnicode: true,
@@ -65,10 +72,10 @@ describe('Spinner Colors Integration', () => {
     });
 
     // Mock the spinner to return a symbol
-    (renderer as any).spinner = { fetch: () => '⠋' };
+    (renderer as Record<string, unknown>).spinner = { fetch: () => '⠋' };
 
     // Get the output by calling the private method
-    const output = (renderer as any).createOutput();
+    const output = (renderer as Record<string, unknown>).createOutput();
 
     // In CI environments, colors might be disabled, so check conditionally
     const hasColors =
@@ -83,7 +90,10 @@ describe('Spinner Colors Integration', () => {
   });
 
   it('should not apply colors when useColors is disabled', () => {
-    renderer = new DevLogrRenderer(mockTasks, {
+    // Ensure colors are disabled for this test
+    setupTestEnvironment(false, false, false, false); // Disable colors explicitly
+
+    renderer = new DevLogrRenderer(mockTasks as Parameters<typeof DevLogrRenderer>[0], {
       useColors: false,
       showTimestamp: false,
       supportsUnicode: true,
@@ -91,10 +101,10 @@ describe('Spinner Colors Integration', () => {
     });
 
     // Mock the spinner to return a symbol
-    (renderer as any).spinner = { fetch: () => '⠋' };
+    (renderer as Record<string, unknown>).spinner = { fetch: () => '⠋' };
 
     // Get the output by calling the private method
-    const output = (renderer as any).createOutput();
+    const output = (renderer as Record<string, unknown>).createOutput();
 
     // Verify that no ANSI color codes are present
     expect(output).not.toContain('\u001b['); // No ANSI escape sequences
@@ -105,7 +115,10 @@ describe('Spinner Colors Integration', () => {
   });
 
   it('should use correct color codes for each state', () => {
-    renderer = new DevLogrRenderer(mockTasks, {
+    // Enable colors for this specific test
+    setupTestEnvironment(false, false, false, true); // Enable colors
+
+    renderer = new DevLogrRenderer(mockTasks as Parameters<typeof DevLogrRenderer>[0], {
       useColors: true,
       showTimestamp: false,
       supportsUnicode: true,
@@ -113,10 +126,10 @@ describe('Spinner Colors Integration', () => {
     });
 
     // Mock the spinner to return a symbol
-    (renderer as any).spinner = { fetch: () => '⠋' };
+    (renderer as Record<string, unknown>).spinner = { fetch: () => '⠋' };
 
     // Get the output by calling the private method
-    const output = (renderer as any).createOutput();
+    const output = (renderer as Record<string, unknown>).createOutput();
 
     // In CI environments, colors might be disabled, so check conditionally
     const hasColors =
@@ -180,9 +193,9 @@ describe('Spinner Colors Integration', () => {
     });
 
     // Mock the spinner
-    (renderer as any).spinner = { fetch: () => '⠋' };
+    (renderer as Record<string, unknown>).spinner = { fetch: () => '⠋' };
 
-    const output = (renderer as any).createOutput();
+    const output = (renderer as Record<string, unknown>).createOutput();
 
     // In CI environments, colors might be disabled, so check conditionally
     const hasColors =

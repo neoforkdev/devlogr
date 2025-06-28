@@ -1,6 +1,5 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { createLogger, Logger } from '../../src/logger';
-import { LogLevel } from '../../src/types';
 import { SafeStringUtils } from '../../src/utils/safe-string';
 
 describe('Logger Emoji Handling', () => {
