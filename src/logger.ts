@@ -381,7 +381,6 @@ export class Logger {
       }
       return;
     }
-    // Delegate to spinner manager which handles its own fallback logic
     this.spinnerManager.complete(type, text);
   }
 
