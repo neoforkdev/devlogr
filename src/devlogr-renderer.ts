@@ -219,21 +219,16 @@ export class DevLogrRenderer implements ListrRenderer {
   }
 
   private formatListrMessage(message: string, symbol: string, level = 0): string {
+    // Handle indentation for nested tasks - add spaces before the symbol only
+    const indentedSymbol = level > 0 ? `${'  '.repeat(level)}${symbol}` : symbol;
+
     // Use centralized formatting - MessageFormatter handles proper component ordering
-    // Format: [Timestamp] [Level] [Prefix] [Symbol] [Message]
-    const formattedMessage = MessageFormatter.formatWithPrefix(
+    // Format: [Timestamp] [Level] [Prefix] [IndentedSymbol] [Message]
+    return MessageFormatter.formatWithPrefix(
       message,
-      symbol,
+      indentedSymbol,
       this.options.level,
       this.options.prefix
     );
-
-    // Handle indentation for nested tasks by prepending spaces
-    if (level > 0) {
-      const indentation = '  '.repeat(level);
-      return `${indentation}${formattedMessage}`;
-    }
-
-    return formattedMessage;
   }
 }
