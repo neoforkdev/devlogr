@@ -9,6 +9,21 @@ import { DevLogrRenderer } from './devlogr-renderer';
 import { ChalkUtils } from './utils/chalk';
 
 // ============================================================================
+// COMPLETION DEFAULTS - SHARED UTILITY
+// ============================================================================
+
+const COMPLETION_DEFAULTS = {
+  success: 'Done',
+  error: 'Failed',
+  warning: 'Warning',
+  info: 'Info',
+} as const;
+
+function getDefaultCompletionText(type: 'success' | 'error' | 'warning' | 'info'): string {
+  return COMPLETION_DEFAULTS[type];
+}
+
+// ============================================================================
 // SPINNER MANAGER - EXTRACTED FROM LOGGER FOR SINGLE RESPONSIBILITY
 // ============================================================================
 
@@ -49,11 +64,26 @@ class SpinnerManager {
 
   complete(type: 'success' | 'error' | 'warning' | 'info', text?: string): void {
     if (!this.singleSpinnerListr) {
-      // No active spinner, nothing to complete
+      // No active spinner, fallback to regular logging
+      const completionText = text || getDefaultCompletionText(type);
+      switch (type) {
+        case 'success':
+          this.logger.success(completionText);
+          break;
+        case 'error':
+          this.logger.error(completionText);
+          break;
+        case 'warning':
+          this.logger.warning(completionText);
+          break;
+        case 'info':
+          this.logger.info(completionText);
+          break;
+      }
       return;
     }
 
-    const completionText = text || this.getDefaultCompletionText(type);
+    const completionText = text || getDefaultCompletionText(type);
     const completionMethods = {
       success: () => SpinnerUtils.succeed('single', completionText),
       error: () => SpinnerUtils.fail('single', completionText),
@@ -64,16 +94,6 @@ class SpinnerManager {
     completionMethods[type]();
     this.singleSpinnerListr = null;
     this.singleSpinnerTask = null;
-  }
-
-  private getDefaultCompletionText(type: 'success' | 'error' | 'warning' | 'info'): string {
-    const defaults = {
-      success: 'Done',
-      error: 'Failed',
-      warning: 'Warning',
-      info: 'Info',
-    };
-    return defaults[type];
   }
 }
 
@@ -347,9 +367,9 @@ export class Logger {
 
   // Simplified completion methods using delegation
   completeSpinner(type: 'success' | 'error' | 'warning' | 'info', text?: string): void {
-    if (this.config.useJson) {
-      // Only handle JSON mode fallback here
-      const completionText = text || this.getDefaultCompletionText(type);
+    // Use fallback logging for environments that don't support spinners properly
+    if (this.config.useJson || !SpinnerUtils.supportsSpinners()) {
+      const completionText = text || getDefaultCompletionText(type);
       switch (type) {
         case 'success':
           this.success(completionText);
@@ -366,7 +386,7 @@ export class Logger {
       }
       return;
     }
-    // Always delegate to spinner manager - it handles CI/TTY differences properly
+    // Delegate to spinner manager for TTY environments that support spinners
     this.spinnerManager.complete(type, text);
   }
 
@@ -619,16 +639,6 @@ export class Logger {
   // ============================================================================
   // PRIVATE HELPER METHODS
   // ============================================================================
-
-  private getDefaultCompletionText(type: 'success' | 'error' | 'warning' | 'info'): string {
-    const defaults = {
-      success: 'Done',
-      error: 'Failed',
-      warning: 'Warning',
-      info: 'Info',
-    };
-    return defaults[type];
-  }
 }
 
 /**

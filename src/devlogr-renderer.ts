@@ -38,8 +38,6 @@ export class DevLogrRenderer implements ListrRenderer {
   >();
   private isCI: boolean;
   private lastOutput: string[] = [];
-  private lastUpdateTime: number = 0;
-  private updateThrottleMs: number = 500; // Update every 500ms in CI
 
   constructor(
     private readonly tasks: ListrTaskObject<any, typeof DevLogrRenderer>[],
@@ -63,19 +61,19 @@ export class DevLogrRenderer implements ListrRenderer {
   public async render(): Promise<void> {
     this.spinner = new Spinner();
 
-    // In CI environments, don't use log-update as it doesn't work properly
+    // Set up log-update for TTY environments only
     if (!this.isCI) {
       this.updater = createLogUpdate(process.stdout);
     }
 
     this.setupTaskListeners(this.tasks);
 
+    // Start rendering unless lazy mode is enabled
     if (!this.options.lazy) {
       if (this.isCI) {
-        // In CI, don't start timer-based updates - only event-driven updates
-        this.update();
+        this.update(); // Initial render for CI
       } else {
-        this.spinner.start(() => this.update());
+        this.spinner.start(() => this.update()); // Timer-based updates for TTY
       }
     }
 
@@ -116,22 +114,28 @@ export class DevLogrRenderer implements ListrRenderer {
 
   private setupTaskListeners(tasks: ListrTaskObject<any, typeof DevLogrRenderer>[]): void {
     for (const task of tasks) {
+      // Set up subtask listeners recursively
       task.on(ListrTaskEventType.SUBTASK, subtasks => this.setupTaskListeners(subtasks));
 
-      if (this.isCI) {
-        // In CI, only update on completion/failure state changes
-        task.on(ListrTaskEventType.STATE, () => {
-          if (task.isCompleted() || task.hasFailed()) {
-            this.update();
-          }
-        });
-      } else {
-        // In TTY, update on all changes for smooth animations
-        const triggerUpdate = () => this.update();
-        task.on(ListrTaskEventType.STATE, triggerUpdate);
-        task.on(ListrTaskEventType.TITLE, triggerUpdate);
-        task.on(ListrTaskEventType.OUTPUT, triggerUpdate);
-      }
+      // Set up event listeners based on environment
+      this.setupTaskEventListeners(task);
+    }
+  }
+
+  private setupTaskEventListeners(task: ListrTaskObject<any, typeof DevLogrRenderer>): void {
+    if (this.isCI) {
+      // CI: Only update on completion/failure to avoid noise
+      task.on(ListrTaskEventType.STATE, () => {
+        if (task.isCompleted() || task.hasFailed()) {
+          this.update();
+        }
+      });
+    } else {
+      // TTY: Update on all changes for smooth animations
+      const triggerUpdate = () => this.update();
+      task.on(ListrTaskEventType.STATE, triggerUpdate);
+      task.on(ListrTaskEventType.TITLE, triggerUpdate);
+      task.on(ListrTaskEventType.OUTPUT, triggerUpdate);
     }
   }
 
