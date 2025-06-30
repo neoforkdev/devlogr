@@ -108,7 +108,8 @@
   },
   "dependencies": {
     "chalk": "^4.1.2",
-    "listr2": "^8.3.3"
+    "listr2": "^8.3.3",
+    "ora": "^5.4.1"
   },
   "engines": {
     "node": ">=16.0.0"
