@@ -147,7 +147,7 @@ describe('Centralized Formatting', () => {
         theme: { symbol: '🚀', label: 'ROCKET', color: (text: string) => text },
         message: 'Message with 🎉 emojis',
         args: ['More 🌟 emojis'],
-        stripEmojis: true,
+        showEmojis: false,
         includeLevel: false,
         includePrefix: false,
       });
@@ -274,7 +274,7 @@ describe('Centralized Formatting', () => {
         showTimestamp: true,
         useColors: true,
         timestampFormat: TimestampFormat.TIME,
-        stripEmojis: false,
+        showEmojis: true,
         includeLevel: true,
         includePrefix: true,
       });

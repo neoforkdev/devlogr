@@ -139,11 +139,11 @@ export class LogConfiguration {
    * Checks if icons should be shown in output, considering both environment variables and CI detection
    */
   private static shouldShowIcons(ciIcons: boolean): boolean {
-    const noIconsValue = process.env[this.ENV_NO_ICONS];
+    const showIconsValue = process.env[this.ENV_NO_ICONS];
 
     // Environment variable takes precedence
-    if (noIconsValue !== undefined) {
-      return !(noIconsValue === 'true' || noIconsValue === '1');
+    if (showIconsValue !== undefined) {
+      return !(showIconsValue === 'true' || showIconsValue === '1');
     }
 
     // Fall back to CI detection

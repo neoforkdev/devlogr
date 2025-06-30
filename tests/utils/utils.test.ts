@@ -166,7 +166,7 @@ describe('EmojiUtils', () => {
     });
   });
 
-  describe('stripEmojisAndFixSpaces', () => {
+  describe('processEmojisAndFixSpaces', () => {
     it('should handle multiple spaces correctly when emojis are present', () => {
       const result = EmojiUtils.format('Hello 🚀   world   test');
       // When emoji support is disabled, spaces should be cleaned up

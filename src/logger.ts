@@ -104,8 +104,8 @@ class JsonLogger {
   }
 
   private buildLogData(level: LogLevel, message: string, args: unknown[]): Record<string, unknown> {
-    const shouldStripEmojis = true; // Always strip emojis in JSON mode
-    const finalMessage = shouldStripEmojis ? EmojiUtils.forceStripEmojis(message) : message;
+    const shouldShowEmojis = false; // Never show emojis in JSON mode for consistency
+    const finalMessage = shouldShowEmojis ? message : EmojiUtils.forceStripEmojis(message);
 
     const logData: Record<string, unknown> = {
       level,
@@ -117,10 +117,10 @@ class JsonLogger {
     // Add arguments to log data
     args.forEach((arg, index) => {
       if (this.isPlainObject(arg) && !this.hasCircularReferences(arg)) {
-        this.mergeObjectArg(logData, arg as Record<string, unknown>, index, shouldStripEmojis);
+        this.mergeObjectArg(logData, arg as Record<string, unknown>, index, shouldShowEmojis);
       } else {
         let processedArg = arg;
-        if (shouldStripEmojis && typeof arg === 'string') {
+        if (!shouldShowEmojis && typeof arg === 'string') {
           processedArg = EmojiUtils.forceStripEmojis(arg);
         }
         this.addSimpleArg(logData, processedArg, index);
@@ -147,12 +147,12 @@ class JsonLogger {
     logData: Record<string, unknown>,
     arg: Record<string, unknown>,
     index: number,
-    shouldStripEmojis: boolean
+    shouldShowEmojis: boolean
   ): void {
     Object.keys(arg).forEach(key => {
       const safeKey = key in logData ? `arg${index}_${key}` : key;
       let value = arg[key];
-      if (shouldStripEmojis && typeof value === 'string') {
+      if (!shouldShowEmojis && typeof value === 'string') {
         value = EmojiUtils.forceStripEmojis(value);
       }
       logData[safeKey] = value;
