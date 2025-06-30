@@ -2,7 +2,7 @@ import { Logger } from '../src/logger';
 import { LogLevel } from '../src/types';
 
 // Force JSON mode for this demo
-process.env.LOG_JSON = 'true';
+process.env.DEVLOGR_OUTPUT_JSON = 'true';
 
 const logger = new Logger('JsonDemo');
 

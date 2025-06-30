@@ -107,7 +107,7 @@ async function quickDemo() {
   // Cleanup with a minor warning
   logger.startSpinner('Running cleanup tasks...');
   await sleep(1000);
-  await logger.warnSpinner('Cleanup completed with minor warnings');
+  logger.warnSpinner('Cleanup completed with minor warnings');
 
   await sleep(300);
 
