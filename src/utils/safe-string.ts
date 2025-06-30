@@ -43,7 +43,7 @@ export class SafeStringUtils {
    * Creates a safe emoji string
    */
   static emoji(text: string): string {
-    return EmojiUtils.supportsEmoji() ? text : EmojiUtils.format(text);
+    return EmojiUtils.shouldShowEmojis() ? text : EmojiUtils.format(text);
   }
 
   /**

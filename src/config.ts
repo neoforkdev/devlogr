@@ -15,6 +15,7 @@ export class LogConfiguration {
   private static readonly ENV_DEVLOGR_NO_COLOR = 'DEVLOGR_NO_COLOR';
   private static readonly ENV_SHOW_TIMESTAMP = 'DEVLOGR_SHOW_TIMESTAMP';
   private static readonly ENV_SHOW_PREFIX = 'DEVLOGR_SHOW_PREFIX';
+  private static readonly ENV_SHOW_EMOJI = 'DEVLOGR_SHOW_EMOJI';
   private static readonly ENV_NO_ICONS = 'DEVLOGR_NO_ICONS';
   private static readonly ENV_DISABLE_CI_DETECTION = 'DEVLOGR_DISABLE_CI_DETECTION';
 
@@ -35,6 +36,7 @@ export class LogConfiguration {
       useColors: this.shouldUseColors(),
       supportsUnicode: this.supportsUnicode(),
       supportsEmoji: this.supportsEmoji(),
+      showEmojis: this.shouldShowEmojis(ciConfig.showEmojis),
       showTimestamp: this.shouldShowTimestamp(timestampConfig.show, ciConfig.showTimestamp),
       timestampFormat: timestampConfig.format,
       showPrefix: this.shouldShowPrefix(ciConfig.showPrefix),
@@ -133,6 +135,21 @@ export class LogConfiguration {
 
     // Fall back to CI detection
     return ciPrefix;
+  }
+
+  /**
+   * Checks if emojis should be shown in output, considering both environment variables and CI detection
+   */
+  private static shouldShowEmojis(ciEmojis: boolean): boolean {
+    const showEmojisValue = process.env[this.ENV_SHOW_EMOJI];
+
+    // Environment variable takes precedence
+    if (showEmojisValue !== undefined) {
+      return showEmojisValue === 'true' || showEmojisValue === '1';
+    }
+
+    // Fall back to CI detection and emoji support
+    return ciEmojis && this.supportsEmoji();
   }
 
   /**

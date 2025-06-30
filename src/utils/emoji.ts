@@ -1,14 +1,33 @@
+import { LogConfiguration } from '../config';
+
 /**
  * Emoji utilities for terminal output with automatic detection.
  */
 export class EmojiUtils {
+  // More precise emoji regex that excludes useful Unicode symbols like ✓, ✗, ℹ, →, etc.
   private static readonly EMOJI_REGEX =
-    /(?:[\u{1F600}-\u{1F64F}]|[\u{1F300}-\u{1F5FF}]|[\u{1F680}-\u{1F6FF}]|[\u{1F1E6}-\u{1F1FF}]|[\u{2600}-\u{26FF}]|[\u{2700}-\u{27BF}]|[\u{1F900}-\u{1F9FF}]|[\u{1F018}-\u{1F270}]|[\u{238C}-\u{2454}]|[\u{20D0}-\u{20FF}]|[\u{FE0F}]|[\u{200D}]|[\u{2190}-\u{21FF}]|[\u{2000}-\u{206F}]|[\u{2070}-\u{209F}]|[\u{20A0}-\u{20CF}]|[\u{2100}-\u{214F}]|[\u{2150}-\u{218F}]|[\u{2460}-\u{24FF}]|[\u{2500}-\u{257F}]|[\u{2580}-\u{259F}]|[\u{25A0}-\u{25FF}]|[\u{2B00}-\u{2BFF}]|[\u{1F000}-\u{1F02F}]|[\u{1F0A0}-\u{1F0FF}]|[\u{1F100}-\u{1F1FF}]|[\u{1F200}-\u{1F2FF}]|[\u{1F300}-\u{1F5FF}]|[\u{1F600}-\u{1F64F}]|[\u{1F680}-\u{1F6FF}]|[\u{1F700}-\u{1F77F}]|[\u{1F780}-\u{1F7FF}]|[\u{1F800}-\u{1F8FF}]|[\u{1F900}-\u{1F9FF}]|[\u{1FA00}-\u{1FA6F}]|[\u{1FA70}-\u{1FAFF}])+/gu;
+    /(?:[\u{1F600}-\u{1F64F}]|[\u{1F300}-\u{1F5FF}]|[\u{1F680}-\u{1F6FF}]|[\u{1F1E6}-\u{1F1FF}]|[\u{1F900}-\u{1F9FF}]|[\u{1FA00}-\u{1FA6F}]|[\u{1FA70}-\u{1FAFF}]|[\u{2640}-\u{2642}]|[\u{2695}]|[\u{26A0}]|[\u{26BD}]|[\u{26BE}]|[\u{26C4}]|[\u{26C5}]|[\u{26CE}]|[\u{26D4}]|[\u{26EA}]|[\u{26F2}]|[\u{26F3}]|[\u{26F5}]|[\u{26FA}]|[\u{26FD}]|[\u{2705}]|[\u{270A}]|[\u{270B}]|[\u{2728}]|[\u{274C}]|[\u{274E}]|[\u{2753}-\u{2755}]|[\u{2757}]|[\u{2795}-\u{2797}]|[\u{27B0}]|[\u{27BF}]|[\u{2B1B}]|[\u{2B1C}]|[\u{2B50}]|[\u{2B55}]|🚀|🎉|🌟|💡|⚡|🔥|❤️|💙|💚|💛|💜|🧡|🖤|🤍|🤎|💯|✨)+/gu;
 
+  // Preserve useful Unicode symbols while removing emojis and fixing spaces
   private static processEmojisAndFixSpaces(input: string): string {
-    return input.replace(this.EMOJI_REGEX, ' ').replace(/\s+/g, ' ').trim();
+    return input
+      .replace(this.EMOJI_REGEX, '') // Remove emojis completely
+      .replace(/\s+/g, ' ') // Normalize multiple spaces to single space
+      .trim(); // Remove leading/trailing spaces
   }
 
+  /**
+   * Check if emojis should be shown based on user configuration
+   */
+  static shouldShowEmojis(): boolean {
+    const config = LogConfiguration.getConfig();
+    return config.showEmojis;
+  }
+
+  /**
+   * Check if the terminal supports emoji characters (capability detection)
+   * Keeps all the existing CI adaptation and terminal detection logic
+   */
   static supportsEmoji(): boolean {
     if (process.env.NO_COLOR !== undefined || process.env.NO_EMOJI !== undefined) {
       return false;
@@ -63,11 +82,11 @@ export class EmojiUtils {
 
   static emoji(strings: TemplateStringsArray, ...values: unknown[]): string {
     const full = strings.reduce((acc, str, i) => acc + str + (values[i] ?? ''), '');
-    return this.supportsEmoji() ? full : this.processEmojisAndFixSpaces(full);
+    return this.shouldShowEmojis() ? full : this.processEmojisAndFixSpaces(full);
   }
 
   static format(text: string): string {
-    return this.supportsEmoji() ? text : this.processEmojisAndFixSpaces(text);
+    return this.shouldShowEmojis() ? text : this.processEmojisAndFixSpaces(text);
   }
 
   static forceStripEmojis(text: string): string {

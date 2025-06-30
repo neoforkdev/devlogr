@@ -210,6 +210,7 @@ export class TerminalUtils {
     showPrefix: boolean;
     showTimestamp: boolean;
     showIcons: boolean;
+    showEmojis: boolean;
     useColors: boolean;
     supportsEmoji: boolean;
   } {
@@ -220,6 +221,7 @@ export class TerminalUtils {
         showPrefix: false,
         showTimestamp: false,
         showIcons: true,
+        showEmojis: true, // Default to showing emojis when not in CI
         useColors: this.supportsColor(), // Keep dynamic color detection
         supportsEmoji: this.supportsEmoji(), // Keep dynamic emoji detection
       };
@@ -231,6 +233,7 @@ export class TerminalUtils {
       showPrefix: isCI,
       showTimestamp: isCI,
       showIcons: !isCI, // Disable icons in CI for better compatibility
+      showEmojis: !isCI, // Disable emojis in CI for better compatibility
       useColors: this.supportsColor(), // Keep dynamic color detection
       supportsEmoji: this.supportsEmoji(), // Keep dynamic emoji detection
     };
