@@ -5,10 +5,6 @@ import { LogConfiguration } from './config';
 import { ThemeProvider } from './themes';
 import { PrefixTracker } from './tracker';
 
-// ============================================================================
-// MESSAGE FORMATTING - SIMPLIFIED UNIFIED FORMATTER
-// ============================================================================
-
 interface FormatOptions {
   level?: string;
   theme?: LogTheme;
@@ -25,23 +21,11 @@ interface FormatOptions {
 }
 
 /**
- * Simplified MessageFormatter with consolidated formatting logic.
- * Follows DRY principle by using a single format method for all scenarios.
+ * Unified message formatter for all DevLogr output scenarios.
  */
 export class MessageFormatter {
-  // ============================================================================
-  // CENTRALIZED PUBLIC API - SINGLE SOURCE OF TRUTH FOR ALL FORMATTING
-  // ============================================================================
-
   /**
-   * Centralized formatting method that all APIs should use.
-   * Reads environment configuration internally for consistency.
-   *
-   * @param message - The message to format
-   * @param messagePrefix - The symbol/prefix (e.g., "✓", "✖", "→")
-   * @param level - The log level (e.g., "info", "error", "task")
-   * @param prefix - Optional prefix for the logger instance
-   * @param args - Optional additional arguments
+   * Format message with custom symbol prefix.
    */
   static formatWithPrefix(
     message: string,
@@ -55,7 +39,6 @@ export class MessageFormatter {
     const maxPrefixLength = PrefixTracker.getMaxLength();
     const shouldStripEmojis = !EmojiUtils.supportsEmoji();
 
-    // Create a custom theme with the provided messagePrefix
     const customTheme: LogTheme = {
       symbol: messagePrefix,
       label: theme.label,
@@ -79,8 +62,7 @@ export class MessageFormatter {
   }
 
   /**
-   * Simplified method for basic message formatting without custom prefix.
-   * Uses the theme's default symbol.
+   * Format message using theme's default symbol.
    */
   static formatMessage(
     message: string,
@@ -95,14 +77,7 @@ export class MessageFormatter {
   }
 
   /**
-   * Format spinner output using DevLogr's unified formatting system.
-   * Returns structured parts for flexible rendering (TTY animation vs CI static).
-   * Follows DRY principle by reusing existing format() method.
-   *
-   * @param message - The spinner text
-   * @param level - The log level (e.g., "task", "success", "error")
-   * @param prefix - Optional logger prefix
-   * @param iconType - Type of icon to show
+   * Format spinner output with structured parts for TTY/CI rendering.
    */
   static formatSpinnerOutput(
     message: string,
@@ -131,11 +106,9 @@ export class MessageFormatter {
     const actualLevel = mapping.level;
     const theme = ThemeProvider.getTheme(actualLevel, undefined, config.supportsUnicode);
 
-    // Use custom symbol for running spinner, theme default for completion
     const iconSymbol = mapping.symbol || theme.symbol;
     const finalIcon = shouldStripEmojis ? EmojiUtils.forceStripEmojis(iconSymbol) : iconSymbol;
 
-    // Generate the complete formatted text using existing format method (DRY)
     const fullText = this.format({
       level: actualLevel,
       theme: { symbol: finalIcon, label: theme.label, color: theme.color },
@@ -151,7 +124,6 @@ export class MessageFormatter {
       includePrefix: config.showPrefix,
     });
 
-    // Break down into parts for flexible rendering
     const parts = this.parseFormattedText(fullText, finalIcon, message);
 
     return {
@@ -163,13 +135,7 @@ export class MessageFormatter {
   }
 
   /**
-   * Format spinner output with a custom icon (for animated frames).
-   * Used by SpinnerRenderer to generate properly colored animated frames.
-   *
-   * @param message - The spinner text
-   * @param level - The log level
-   * @param prefix - Optional logger prefix
-   * @param customIcon - Custom icon to use (e.g., animated frame)
+   * Format spinner output with custom animated icon.
    */
   static formatSpinnerOutputWithCustomIcon(
     message: string,
@@ -197,7 +163,6 @@ export class MessageFormatter {
       color: (text: string) => text, // No color for message
     };
 
-    // Generate the complete formatted text using existing format method (DRY)
     return this.format({
       level,
       theme: customTheme,
@@ -214,23 +179,17 @@ export class MessageFormatter {
     });
   }
 
-  /**
-   * Parse formatted text into prefix and message parts.
-   * Used by formatSpinnerOutput for structured output.
-   */
   private static parseFormattedText(
     fullText: string,
     icon: string,
     originalMessage: string
   ): { prefix: string; message: string } {
-    // Find where the icon appears in the formatted text
     const iconIndex = fullText.indexOf(icon);
     if (iconIndex === -1) {
       // Fallback if icon not found
       return { prefix: fullText, message: originalMessage };
     }
 
-    // Split at icon position
     const prefixPart = fullText.substring(0, iconIndex).trim();
     const messageIndex = iconIndex + icon.length;
     const messagePart = fullText.substring(messageIndex).trim();
@@ -241,9 +200,6 @@ export class MessageFormatter {
     };
   }
 
-  /**
-   * @deprecated Use formatSpinnerOutput() instead for better structure and DRY compliance
-   */
   static formatForOra(
     message: string,
     level: string = 'task',
@@ -266,18 +222,8 @@ export class MessageFormatter {
     };
   }
 
-  // ============================================================================
-  // CORE FORMATTING METHOD - USED INTERNALLY BY PUBLIC API
-  // ============================================================================
-
   /**
-   * Universal formatter - handles all formatting scenarios with proper component ordering.
-   *
-   * Creates the standard DevLogr format: [Timestamp] [Level] [Prefix] [Symbol] [Message]
-   * This ensures consistent structure across all logging APIs (logger, spinner, listr2).
-   *
-   * @param options - Formatting configuration options
-   * @returns Properly formatted log message with correct component positioning
+   * Core formatter: [Timestamp] [Level] [Prefix] [Symbol] [Message]
    */
   static format(options: FormatOptions): string {
     const {
@@ -297,12 +243,10 @@ export class MessageFormatter {
 
     const parts: string[] = [];
 
-    // 1. Timestamp: [12:34:56] or [2024-01-01 12:34:56]
     if (showTimestamp) {
       parts.push(this.formatTimestamp(timestampFormat, useColors));
     }
 
-    // 2. Level: INFO    ERROR   WARNING (padded to 7 chars for alignment)
     if (includeLevel) {
       const colorFn = useColors ? theme.color : (text: string) => text;
       const levelLabel = useColors
@@ -311,28 +255,20 @@ export class MessageFormatter {
       parts.push(levelLabel);
     }
 
-    // 3. Prefix: [logger-name] (with consistent spacing based on max prefix length)
     if (includePrefix && prefix) {
       parts.push(this.formatPrefix(prefix, maxPrefixLength, useColors));
     }
 
-    // 4. Symbol: ✓ ✖ ⠋ → (spinner icons, status symbols, etc.)
     if (theme.symbol) {
       const colorFn = useColors ? theme.color : (text: string) => text;
       parts.push(colorFn(theme.symbol));
     }
-
-    // 5. Message: Actual log content with proper styling and args
     if (message) {
       parts.push(this.formatMessageWithTheme(level, theme, message, args, useColors, stripEmojis));
     }
 
     return parts.join(' ').trim();
   }
-
-  // ============================================================================
-  // PRIVATE HELPERS - CONSOLIDATED AND SIMPLIFIED
-  // ============================================================================
 
   private static formatTimestamp(timestampFormat: TimestampFormat, useColors: boolean): string {
     const timestamp = StringUtils.formatTime(timestampFormat);
@@ -407,14 +343,6 @@ export class MessageFormatter {
     return message;
   }
 
-  // ============================================================================
-  // BACKWARD COMPATIBILITY METHODS - SIMPLIFIED WRAPPERS
-  // ============================================================================
-
-  /**
-   * Format basic prefix with timestamp and spacing
-   * @deprecated Use format() method directly for better flexibility
-   */
   static formatBasicPrefix(
     prefix: string,
     maxPrefixLength: number,
@@ -430,10 +358,6 @@ export class MessageFormatter {
     return `${timestamp}        ${prefixFormatted} `;
   }
 
-  /**
-   * Format message with theme and emoji handling
-   * @deprecated Use format() method directly for better flexibility
-   */
   static formatSimpleMessage(
     level: string,
     theme: LogTheme,
@@ -445,10 +369,6 @@ export class MessageFormatter {
     return this.formatMessageWithTheme(level, theme, message, args, useColors, stripEmojis);
   }
 
-  /**
-   * Format spinner prefix with level symbol and timestamp
-   * @deprecated Use format() method directly for better flexibility
-   */
   static formatSpinnerPrefixWithLevel(
     level: string,
     theme: LogTheme,
@@ -473,10 +393,6 @@ export class MessageFormatter {
     });
   }
 
-  /**
-   * Format complete log message with all elements
-   * @deprecated Use format() method directly for better flexibility
-   */
   static formatCompleteLogMessage(
     level: string,
     theme: LogTheme,
