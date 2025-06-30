@@ -2,7 +2,6 @@ import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { Logger } from '../../src/logger';
 import { SpinnerUtils } from '../../src/utils/spinner';
 
-// Mock TTY for consistent testing
 Object.defineProperty(process.stdout, 'isTTY', {
   value: true,
   configurable: true,
@@ -10,9 +9,7 @@ Object.defineProperty(process.stdout, 'isTTY', {
 
 describe('Multiple Spinners Management', () => {
   beforeEach(() => {
-    // Enable spinners for testing
     vi.spyOn(SpinnerUtils, 'supportsSpinners').mockReturnValue(true);
-    // Clear all spinners before each test
     SpinnerUtils.stopAllSpinners();
     vi.clearAllTimers();
     vi.useFakeTimers();
@@ -31,12 +28,10 @@ describe('Multiple Spinners Management', () => {
       const logger2 = new Logger('app2');
       const logger3 = new Logger('app3');
 
-      // Each logger should be able to start its own spinner without throwing
       expect(() => logger1.startSpinner('Task 1')).not.toThrow();
       expect(() => logger2.startSpinner('Task 2')).not.toThrow();
       expect(() => logger3.startSpinner('Task 3')).not.toThrow();
 
-      // Each logger should be able to complete its spinner independently
       expect(() => logger1.succeedSpinner('Task 1 done')).not.toThrow();
       expect(() => logger2.failSpinner('Task 2 failed')).not.toThrow();
       expect(() => logger3.warnSpinner('Task 3 warning')).not.toThrow();
@@ -46,7 +41,6 @@ describe('Multiple Spinners Management', () => {
       const logger1 = new Logger('app1');
       const logger2 = new Logger('app2');
 
-      // Concurrent operations should work without throwing
       expect(() => {
         logger1.startSpinner('Task 1');
         logger2.startSpinner('Task 2');
@@ -60,7 +54,6 @@ describe('Multiple Spinners Management', () => {
     it('should handle spinner restart within same logger instance', () => {
       const logger = new Logger('app');
 
-      // Should handle restarting spinner on same logger after proper completion
       expect(() => {
         logger.startSpinner('Task 1');
         logger.succeedSpinner('Task 1 complete'); // Complete first
@@ -72,7 +65,6 @@ describe('Multiple Spinners Management', () => {
     it('should handle rapid spinner operations', () => {
       const logger = new Logger('app');
 
-      // Rapid operations should work without throwing when properly completed
       expect(() => {
         for (let i = 0; i < 10; i++) {
           logger.startSpinner(`Task ${i}`);
@@ -106,7 +98,6 @@ describe('Multiple Spinners Management', () => {
       const logger1 = new Logger('app1');
       const logger2 = new Logger('app2');
 
-      // Should work without throwing
       expect(() => {
         logger1.startSpinner('Task 1');
         logger2.startSpinner('Task 2');
@@ -119,7 +110,6 @@ describe('Multiple Spinners Management', () => {
       const logger1 = new Logger('app1');
       const logger2 = new Logger('app2');
 
-      // Should work without throwing
       expect(() => {
         logger1.startSpinner('Task 1');
         logger2.startSpinner('Task 2');
@@ -132,7 +122,6 @@ describe('Multiple Spinners Management', () => {
       const logger1 = new Logger('app1');
       const logger2 = new Logger('app2');
 
-      // Should work without throwing
       expect(() => {
         logger1.startSpinner('Task 1');
         logger2.startSpinner('Task 2');
@@ -154,7 +143,6 @@ describe('Multiple Spinners Management', () => {
       const logger2 = new Logger('app2');
       const logger3 = new Logger('app3');
 
-      // Should work without throwing
       expect(() => {
         logger1.startSpinner('Task 1');
         logger2.startSpinner('Task 2');
@@ -176,7 +164,6 @@ describe('Multiple Spinners Management', () => {
       const logger1 = new Logger('app1');
       const logger2 = new Logger('app2');
 
-      // Should work without throwing
       expect(() => {
         logger1.startSpinner('Task 1');
         logger2.startSpinner('Task 2');
@@ -196,7 +183,6 @@ describe('Multiple Spinners Management', () => {
       logger1.succeedSpinner('Task 1 done');
       logger2.succeedSpinner('Task 2 done');
 
-      // Should be able to start new spinners after completion
       expect(() => {
         logger1.startSpinner('New Task 1');
         logger2.startSpinner('New Task 2');
@@ -210,28 +196,24 @@ describe('Multiple Spinners Management', () => {
     it('should handle stopping non-existent spinner gracefully', () => {
       const logger = new Logger('app');
 
-      // Should not throw when stopping non-existent spinner
       expect(() => logger.stopSpinner()).not.toThrow();
     });
 
     it('should handle updating text of non-existent spinner gracefully', () => {
       const logger = new Logger('app');
 
-      // Should not throw when updating non-existent spinner
       expect(() => logger.updateSpinnerText('Some text')).not.toThrow();
     });
 
     it('should throw error when starting spinner while one is active', () => {
       const logger = new Logger('app');
 
-      // Should throw error when trying to start another spinner while one is active
       logger.startSpinner('Task 1');
 
       expect(() => {
         logger.startSpinner('Task 1 Again'); // Should throw
       }).toThrow('A single spinner is already active. Ora only supports one spinner at a time.');
 
-      // Clean up
       logger.succeedSpinner('Task completed');
     });
 
@@ -244,15 +226,12 @@ describe('Multiple Spinners Management', () => {
       logger2.startSpinner('Task 2');
       logger3.startSpinner('Task 3');
 
-      // Should not throw
       expect(() => SpinnerUtils.stopAllSpinners()).not.toThrow();
 
-      // Clear spinner manager state since SpinnerUtils.stopAllSpinners doesn't do this automatically
       logger1.clearSpinnerState();
       logger2.clearSpinnerState();
       logger3.clearSpinnerState();
 
-      // Should be able to start new spinners after cleanup
       expect(() => {
         logger1.startSpinner('New Task');
         logger1.succeedSpinner('New Task done');
@@ -262,7 +241,6 @@ describe('Multiple Spinners Management', () => {
     it('should handle rapid start/stop operations', () => {
       const logger = new Logger('app1');
 
-      // Should work without throwing
       expect(() => {
         for (let i = 0; i < 5; i++) {
           logger.startSpinner(`Task ${i}`);
@@ -281,7 +259,6 @@ describe('Multiple Spinners Management', () => {
       const logger1 = new Logger('logger1');
       const logger2 = new Logger('logger2');
 
-      // Should work without throwing
       expect(() => {
         logger1.startSpinner('Processing...');
         logger2.startSpinner('Loading...');
@@ -306,7 +283,6 @@ describe('Multiple Spinners Management', () => {
       logger2.updateSpinnerText('Service 2 updated');
       logger2.succeedSpinner('Service 2 complete');
 
-      // Should work without throwing
       expect(() => {
         logger1.startSpinner('Service 1 restart');
         logger2.startSpinner('Service 2 restart');
@@ -320,7 +296,6 @@ describe('Multiple Spinners Management', () => {
       const logger2 = new Logger('artifact2');
       const logger3 = new Logger('artifact3');
 
-      // Should work without throwing and prevent artifacts
       expect(() => {
         logger1.startSpinner('Security audit...');
         logger2.startSpinner('Performance check...');
@@ -336,7 +311,6 @@ describe('Multiple Spinners Management', () => {
       const logger1 = new Logger('rotate1');
       const logger2 = new Logger('rotate2');
 
-      // Should work without throwing
       expect(() => {
         logger1.startSpinner('Task 1');
         logger2.startSpinner('Task 2');
@@ -350,7 +324,6 @@ describe('Multiple Spinners Management', () => {
     it('should handle rapid completion without artifacts', () => {
       const loggers = Array.from({ length: 5 }, (_, i) => new Logger(`rapid${i}`));
 
-      // Should work without throwing
       expect(() => {
         loggers.forEach((logger, i) => {
           logger.startSpinner(`Rapid task ${i}`);

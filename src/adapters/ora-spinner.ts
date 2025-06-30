@@ -3,11 +3,7 @@ import { MessageFormatter } from '../formatters';
 import { SpinnerRenderer } from './spinner-renderer';
 
 /**
- * DevLogr spinner implementation following SOLID principles.
- * Coordinates between MessageFormatter (formatting) and SpinnerRenderer (display).
- * No environment detection logic - delegates to existing utilities.
- *
- * @implements {ISpinner}
+ * Spinner implementation that coordinates formatting and display.
  */
 export class OraSpinner implements ISpinner {
   private renderer: SpinnerRenderer;
@@ -19,22 +15,17 @@ export class OraSpinner implements ISpinner {
     this.renderer = new SpinnerRenderer();
   }
 
-  /**
-   * Set the logger prefix for consistent formatting across all DevLogr APIs
-   */
   setPrefix(prefix: string): void {
     this.prefix = prefix;
   }
 
   start(text: string): void {
-    this.stop(); // Ensure clean state
+    this.stop();
     this.currentMessage = text;
 
     if (SpinnerRenderer.shouldAnimate()) {
-      // TTY environment - start animation with proper formatting
       this.renderer.startAnimation(text, 'task', this.prefix);
     } else {
-      // CI environment - static output using MessageFormatter
       const formatted = MessageFormatter.formatSpinnerOutput(text, 'task', this.prefix, 'running');
       this.renderer.renderStatic(formatted.fullText);
     }
@@ -93,7 +84,6 @@ export class OraSpinner implements ISpinner {
   updateText(text: string): void {
     this.currentMessage = text;
     if (this.renderer.isCurrentlyAnimating()) {
-      // Update the animation with new message
       this.renderer.updateMessage(text);
     }
   }

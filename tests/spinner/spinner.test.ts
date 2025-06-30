@@ -50,7 +50,6 @@ describe('Spinner functionality', () => {
 
       SpinnerUtils.start('test', spinnerOptions);
 
-      // The updateText method should not throw
       expect(() => SpinnerUtils.updateText('test', 'Updated text')).not.toThrow();
     });
 
@@ -114,7 +113,6 @@ describe('Spinner functionality', () => {
 
     beforeEach(() => {
       logger = new Logger('test-spinner');
-      // Mock TTY support to enable spinners
       vi.spyOn(SpinnerUtils, 'supportsSpinners').mockReturnValue(true);
     });
 
@@ -213,7 +211,6 @@ describe('Spinner functionality', () => {
         logger.startSpinner('Second spinner');
       }).toThrow('A single spinner is already active. Ora only supports one spinner at a time.');
 
-      // Clean up
       logger.stopSpinner();
     });
 
@@ -224,7 +221,6 @@ describe('Spinner functionality', () => {
         logger.startSpinner('Second spinner');
       }).toThrow('A single spinner is already active. Ora only supports one spinner at a time.');
 
-      // Clean up
       logger.stopSpinner();
     });
 
@@ -232,7 +228,6 @@ describe('Spinner functionality', () => {
       logger.startSpinner('First spinner');
       logger.succeedSpinner('First completed');
 
-      // This should not throw
       expect(() => {
         logger.startSpinner('Second spinner');
       }).not.toThrow();
@@ -244,7 +239,6 @@ describe('Spinner functionality', () => {
       logger.startSpinner('First spinner');
       logger.stopSpinner();
 
-      // This should not throw
       expect(() => {
         logger.startSpinner('Second spinner');
       }).not.toThrow();
@@ -263,30 +257,24 @@ describe('Spinner functionality', () => {
     });
 
     it('should handle empty spinner text', () => {
-      // Should not throw and should use default text
       expect(() => logger.startSpinner()).not.toThrow();
 
-      // Should track spinner as active
       expect(logger.isSpinnerActive()).toBe(true);
 
-      // Clean up
       logger.stopSpinner();
     });
 
     it('should handle completion without starting spinner', () => {
       const successSpy = vi.spyOn(logger, 'success');
 
-      // Should not throw when completing without starting
       expect(() => {
         logger.succeedSpinner('Done');
       }).not.toThrow();
 
-      // Should fallback to regular logging
       expect(successSpy).toHaveBeenCalledWith('Done');
     });
 
     it('should handle multiple spinner operations', () => {
-      // Should not throw
       expect(() => {
         logger.startSpinner('First');
         logger.stopSpinner();
@@ -306,7 +294,6 @@ describe('Spinner functionality', () => {
     });
 
     it('should not attempt to clear non-existent spinners', () => {
-      // This should not throw
       expect(() => {
         logger.stopSpinner();
       }).not.toThrow();
@@ -314,7 +301,6 @@ describe('Spinner functionality', () => {
 
     it('should use multi-spinner infrastructure to prevent artifacts', () => {
       // The main goal is that single spinners now use multi-spinner infrastructure
-      // This should work without throwing and prevent artifacts
       expect(() => {
         logger.startSpinner('Processing...');
         logger.succeedSpinner('Done!');

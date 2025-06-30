@@ -16,15 +16,12 @@ describe('Logger Emoji Handling', () => {
       DEVLOGR_FORCE_COLOR: process.env.DEVLOGR_FORCE_COLOR,
     };
 
-    // Clear environment variables for clean slate
     Object.keys(originalEnv).forEach(key => {
       delete process.env[key];
     });
 
-    // Reset caches to ensure clean test state
     SafeStringUtils.resetCache();
 
-    // Reset logger level
     Logger.resetLevel();
   });
 
@@ -38,10 +35,8 @@ describe('Logger Emoji Handling', () => {
       }
     });
 
-    // Reset caches to ensure clean test state
     SafeStringUtils.resetCache();
 
-    // Reset logger level
     Logger.resetLevel();
   });
 
@@ -57,7 +52,6 @@ describe('Logger Emoji Handling', () => {
       expect(consoleSpy).toHaveBeenCalled();
       const output = consoleSpy.mock.calls[0][0];
 
-      // Should contain emojis
       expect(output).toContain('🚀');
       expect(output).toContain('🇺🇸');
       expect(output).toContain('Message with emoji 🚀 and flag 🇺🇸');
@@ -76,7 +70,6 @@ describe('Logger Emoji Handling', () => {
       expect(consoleSpy).toHaveBeenCalled();
       const output = consoleSpy.mock.calls[0][0];
 
-      // Should contain complex emojis
       expect(output).toContain('👨‍💻');
       expect(output).toContain('1️⃣');
 
@@ -96,10 +89,8 @@ describe('Logger Emoji Handling', () => {
       expect(consoleSpy).toHaveBeenCalled();
       const output = consoleSpy.mock.calls[0][0];
 
-      // Should NOT contain emojis
       expect(output).not.toContain('🚀');
       expect(output).not.toContain('🇺🇸');
-      // Should contain the text without emojis
       expect(output).toContain('Message with emoji');
       expect(output).toContain('and flag');
 
@@ -117,7 +108,6 @@ describe('Logger Emoji Handling', () => {
       expect(consoleSpy).toHaveBeenCalled();
       const output = consoleSpy.mock.calls[0][0];
 
-      // Should NOT contain complex emojis
       expect(output).not.toContain('👨‍💻');
       expect(output).not.toContain('1️⃣');
       expect(output).toContain('Complex emoji:');
@@ -137,7 +127,6 @@ describe('Logger Emoji Handling', () => {
       expect(consoleSpy).toHaveBeenCalled();
       const output = consoleSpy.mock.calls[0][0];
 
-      // Should NOT contain any emojis
       expect(output).not.toContain('🔥');
       expect(output).not.toContain('🎯');
       expect(output).not.toContain('✅');
@@ -180,7 +169,6 @@ describe('Logger Emoji Handling', () => {
       expect(consoleSpy).toHaveBeenCalled();
       const output = consoleSpy.mock.calls[0][0];
 
-      // Should be valid JSON
       expect(() => JSON.parse(output)).not.toThrow();
 
       const parsed = JSON.parse(output);
@@ -235,7 +223,6 @@ describe('Logger Emoji Handling', () => {
 
       const parsed = JSON.parse(output);
 
-      // Should strip all types of emojis
       expect(parsed.message).not.toContain('👨‍💻');
       expect(parsed.message).not.toContain('1️⃣');
       expect(parsed.message).not.toContain('🇺🇸');
