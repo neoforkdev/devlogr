@@ -213,14 +213,7 @@ class TaskRunner {
       level: 'task',
     });
 
-    try {
-      const result = await listr.run(context);
-      this.logger.outputDevLogrFormattedTask(`${title} completed successfully`, '✔');
-      return result;
-    } catch (error) {
-      this.logger.outputDevLogrFormattedTask(`${title} failed`, '✖');
-      throw error;
-    }
+    return await listr.run(context);
   }
 
   createTaskList<T = Record<string, unknown>>(
