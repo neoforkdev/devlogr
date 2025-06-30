@@ -94,6 +94,178 @@ export class MessageFormatter {
     return this.formatWithPrefix(message, theme.symbol, level, prefix, args);
   }
 
+  /**
+   * Format spinner output using DevLogr's unified formatting system.
+   * Returns structured parts for flexible rendering (TTY animation vs CI static).
+   * Follows DRY principle by reusing existing format() method.
+   *
+   * @param message - The spinner text
+   * @param level - The log level (e.g., "task", "success", "error")
+   * @param prefix - Optional logger prefix
+   * @param iconType - Type of icon to show
+   */
+  static formatSpinnerOutput(
+    message: string,
+    level: string,
+    prefix?: string,
+    iconType: 'running' | 'success' | 'error' | 'warning' | 'info' = 'running'
+  ): {
+    fullText: string; // Complete formatted output
+    prefixPart: string; // "[timestamp] LEVEL [prefix]"
+    iconPart: string; // "⠋" or "✓" or "✗"
+    messagePart: string; // "message text"
+  } {
+    const config = LogConfiguration.getConfig();
+    const shouldStripEmojis = !EmojiUtils.supportsEmoji();
+
+    // Map icon types to appropriate themes and symbols
+    const iconMapping = {
+      running: { level: 'task', symbol: shouldStripEmojis ? '...' : '⠋' },
+      success: { level: 'success', symbol: undefined }, // Use theme default
+      error: { level: 'error', symbol: undefined },
+      warning: { level: 'warn', symbol: undefined },
+      info: { level: 'info', symbol: undefined },
+    };
+
+    const mapping = iconMapping[iconType];
+    const actualLevel = mapping.level;
+    const theme = ThemeProvider.getTheme(actualLevel, undefined, config.supportsUnicode);
+
+    // Use custom symbol for running spinner, theme default for completion
+    const iconSymbol = mapping.symbol || theme.symbol;
+    const finalIcon = shouldStripEmojis ? EmojiUtils.forceStripEmojis(iconSymbol) : iconSymbol;
+
+    // Generate the complete formatted text using existing format method (DRY)
+    const fullText = this.format({
+      level: actualLevel,
+      theme: { symbol: finalIcon, label: theme.label, color: theme.color },
+      prefix,
+      maxPrefixLength: PrefixTracker.getMaxLength(),
+      message,
+      args: [],
+      showTimestamp: config.showTimestamp,
+      useColors: config.useColors,
+      timestampFormat: config.timestampFormat,
+      stripEmojis: shouldStripEmojis,
+      includeLevel: config.showPrefix,
+      includePrefix: config.showPrefix,
+    });
+
+    // Break down into parts for flexible rendering
+    const parts = this.parseFormattedText(fullText, finalIcon, message);
+
+    return {
+      fullText,
+      prefixPart: parts.prefix,
+      iconPart: finalIcon,
+      messagePart: parts.message,
+    };
+  }
+
+  /**
+   * Format spinner output with a custom icon (for animated frames).
+   * Used by SpinnerRenderer to generate properly colored animated frames.
+   *
+   * @param message - The spinner text
+   * @param level - The log level
+   * @param prefix - Optional logger prefix
+   * @param customIcon - Custom icon to use (e.g., animated frame)
+   */
+  static formatSpinnerOutputWithCustomIcon(
+    message: string,
+    level: string,
+    prefix?: string,
+    customIcon?: string
+  ): string {
+    const config = LogConfiguration.getConfig();
+    const theme = ThemeProvider.getTheme(level, undefined, config.supportsUnicode);
+    const shouldStripEmojis = !EmojiUtils.supportsEmoji();
+
+    // Use the custom icon if provided, otherwise fall back to theme default
+    const finalIcon = customIcon || theme.symbol;
+    const displayIcon = shouldStripEmojis ? EmojiUtils.forceStripEmojis(finalIcon) : finalIcon;
+
+    // Apply blue color specifically to animated spinner icons
+    const blueIcon = config.useColors
+      ? ChalkUtils.colorize(displayIcon, 'blue', config.useColors)
+      : displayIcon;
+
+    // Use a custom theme with the blue-colored icon but no color for message
+    const customTheme = {
+      symbol: blueIcon,
+      label: theme.label,
+      color: (text: string) => text, // No color for message
+    };
+
+    // Generate the complete formatted text using existing format method (DRY)
+    return this.format({
+      level,
+      theme: customTheme,
+      prefix,
+      maxPrefixLength: PrefixTracker.getMaxLength(),
+      message,
+      args: [],
+      showTimestamp: config.showTimestamp,
+      useColors: config.useColors,
+      timestampFormat: config.timestampFormat,
+      stripEmojis: shouldStripEmojis,
+      includeLevel: config.showPrefix,
+      includePrefix: config.showPrefix,
+    });
+  }
+
+  /**
+   * Parse formatted text into prefix and message parts.
+   * Used by formatSpinnerOutput for structured output.
+   */
+  private static parseFormattedText(
+    fullText: string,
+    icon: string,
+    originalMessage: string
+  ): { prefix: string; message: string } {
+    // Find where the icon appears in the formatted text
+    const iconIndex = fullText.indexOf(icon);
+    if (iconIndex === -1) {
+      // Fallback if icon not found
+      return { prefix: fullText, message: originalMessage };
+    }
+
+    // Split at icon position
+    const prefixPart = fullText.substring(0, iconIndex).trim();
+    const messageIndex = iconIndex + icon.length;
+    const messagePart = fullText.substring(messageIndex).trim();
+
+    return {
+      prefix: prefixPart,
+      message: messagePart || originalMessage,
+    };
+  }
+
+  /**
+   * @deprecated Use formatSpinnerOutput() instead for better structure and DRY compliance
+   */
+  static formatForOra(
+    message: string,
+    level: string = 'task',
+    prefix?: string,
+    type: 'start' | 'succeed' | 'fail' | 'warn' | 'info' = 'start'
+  ): { text: string; symbol?: string } {
+    // Delegate to new method for consistency
+    const iconTypeMap = {
+      start: 'running' as const,
+      succeed: 'success' as const,
+      fail: 'error' as const,
+      warn: 'warning' as const,
+      info: 'info' as const,
+    };
+
+    const result = this.formatSpinnerOutput(message, level, prefix, iconTypeMap[type]);
+    return {
+      text: result.fullText,
+      symbol: result.iconPart,
+    };
+  }
+
   // ============================================================================
   // CORE FORMATTING METHOD - USED INTERNALLY BY PUBLIC API
   // ============================================================================
