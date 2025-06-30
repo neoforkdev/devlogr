@@ -94,11 +94,7 @@ export class DevLogrRenderer implements ListrRenderer {
     if (allTasksComplete && this.spinner) {
       this.isStopped = true;
       this.spinner.stop();
-
-      if (this.updater && process.stdout.isTTY) {
-        this.updater('');
-        this.updater.done();
-      }
+      // Don't clear updater here - let end() handle final output and cleanup
       return;
     }
 
