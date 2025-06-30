@@ -95,7 +95,7 @@ export class MessageFormatter {
 
     // Map icon types to appropriate themes and symbols
     const iconMapping = {
-      running: { level: 'task', symbol: shouldShowEmojis ? '⠋' : '...' },
+      running: { level: 'task', symbol: config.showIcons ? (shouldShowEmojis ? '⠋' : '...') : '' },
       success: { level: 'success', symbol: undefined }, // Use theme default
       error: { level: 'error', symbol: undefined },
       warning: { level: 'warn', symbol: undefined },
