@@ -7,6 +7,8 @@ import { PrefixTracker } from './tracker';
 import { EmojiUtils, StringUtils, SpinnerUtils, SpinnerOptions } from './utils';
 import { DevLogrRenderer } from './devlogr-renderer';
 import { ChalkUtils } from './utils/chalk';
+import { ISpinner } from './types/spinner';
+import { OraSpinner } from './adapters/ora-spinner';
 
 // ============================================================================
 // COMPLETION DEFAULTS - SHARED UTILITY
@@ -28,72 +30,63 @@ function getDefaultCompletionText(type: 'success' | 'error' | 'warning' | 'info'
 // ============================================================================
 
 class SpinnerManager {
-  private singleSpinnerListr: Listr | null = null;
-  private singleSpinnerTask: { resolver?: () => void; rejecter?: (error: Error) => void } | null =
-    null;
+  private singleSpinner: ISpinner;
 
-  constructor(private readonly logger: Logger) {}
-
-  start(text?: string, _options?: Omit<SpinnerOptions, 'text'>): void {
-    const spinnerText = text || 'Loading...';
-
-    if (this.singleSpinnerListr) {
-      this.stop();
+  constructor(
+    private readonly logger: Logger,
+    singleSpinnerFactory: () => ISpinner = () => new OraSpinner()
+  ) {
+    this.singleSpinner = singleSpinnerFactory();
+    // Configure the spinner with the logger's prefix for consistent formatting
+    if (this.singleSpinner.setPrefix) {
+      this.singleSpinner.setPrefix(this.logger.getPrefix());
     }
+  }
 
-    this.singleSpinnerListr = SpinnerUtils.start(
-      'single',
-      this.logger.buildSpinnerOptions(spinnerText, 'task', _options)
-    );
-    this.singleSpinnerTask = this.singleSpinnerListr?.tasks[0] as any;
+  // Clear all spinner state
+  clearAll(): void {
+    this.singleSpinner.stop();
+  }
+
+  start(text: string): void {
+    if (this.singleSpinner.isActive()) {
+      throw new Error(
+        `A single spinner is already active. Ora only supports one spinner at a time. ` +
+          `Complete it first with succeedSpinner(), failSpinner(), etc.`
+      );
+    }
+    this.singleSpinner.start(text);
   }
 
   updateText(text: string): void {
-    if (this.singleSpinnerListr) {
-      SpinnerUtils.updateText('single', text);
-    }
+    this.singleSpinner.updateText(text);
   }
 
   stop(): void {
-    if (this.singleSpinnerListr) {
-      SpinnerUtils.stop('single');
-      this.singleSpinnerListr = null;
-      this.singleSpinnerTask = null;
-    }
+    this.singleSpinner.stop();
+  }
+
+  isActive(): boolean {
+    return this.singleSpinner.isActive();
   }
 
   complete(type: 'success' | 'error' | 'warning' | 'info', text?: string): void {
-    if (!this.singleSpinnerListr) {
-      // No active spinner, fallback to regular logging
-      const completionText = text || getDefaultCompletionText(type);
-      switch (type) {
-        case 'success':
-          this.logger.success(completionText);
-          break;
-        case 'error':
-          this.logger.error(completionText);
-          break;
-        case 'warning':
-          this.logger.warning(completionText);
-          break;
-        case 'info':
-          this.logger.info(completionText);
-          break;
-      }
+    const completionText = text || getDefaultCompletionText(type);
+
+    if (!this.singleSpinner.isActive()) {
+      // Fallback to regular logging if no spinner is active
+      this.logger[type](completionText);
       return;
     }
 
-    const completionText = text || getDefaultCompletionText(type);
+    // Complete using Ora
     const completionMethods = {
-      success: () => SpinnerUtils.succeed('single', completionText),
-      error: () => SpinnerUtils.fail('single', completionText),
-      warning: () => SpinnerUtils.fail('single', completionText),
-      info: () => SpinnerUtils.info('single', completionText),
+      success: () => this.singleSpinner.succeed(completionText),
+      error: () => this.singleSpinner.fail(completionText),
+      warning: () => this.singleSpinner.warn(completionText),
+      info: () => this.singleSpinner.info(completionText),
     };
-
     completionMethods[type]();
-    this.singleSpinnerListr = null;
-    this.singleSpinnerTask = null;
   }
 }
 
@@ -343,12 +336,13 @@ export class Logger {
   // SPINNER METHODS - DELEGATED TO SPINNER MANAGER
   // ============================================================================
 
-  startSpinner(text?: string, options?: Omit<SpinnerOptions, 'text'>): void {
+  // Single-spinner API (uses Ora)
+  startSpinner(text?: string, _options?: Omit<SpinnerOptions, 'text'>): void {
     if (this.config.useJson || !SpinnerUtils.supportsSpinners()) {
       this.task(text || 'Loading...');
       return;
     }
-    this.spinnerManager.start(text, options);
+    this.spinnerManager.start(text || 'Loading...');
   }
 
   updateSpinnerText(text: string): void {
@@ -414,6 +408,159 @@ export class Logger {
   }
   infoSpinner(text?: string): void {
     this.completeSpinner('info', text);
+  }
+
+  // ============================================================================
+  // NAMED SPINNER METHODS - DELEGATED TO SPINNERUTILS FOR MULTI-SPINNER SUPPORT
+  // ============================================================================
+
+  /**
+   * Start a named spinner that can run concurrently with other named spinners.
+   * Uses SpinnerUtils for multi-spinner management.
+   *
+   * @param key - Unique identifier for this spinner
+   * @param text - Text to display with the spinner
+   */
+  startNamedSpinner(key: string, text: string): void {
+    if (this.config.useJson || !SpinnerUtils.supportsSpinners()) {
+      this.task(text);
+      return;
+    }
+
+    const fullKey = `${this.prefix}:${key}`;
+
+    // Check if spinner already exists to provide proper error message
+    if (SpinnerUtils.getSpinner(fullKey)) {
+      throw new Error(
+        `Spinner with key '${key}' is already active. Complete it first with succeedSpinner/failSpinner/etc.`
+      );
+    }
+
+    const options = this.buildSpinnerOptions(text, 'task');
+    SpinnerUtils.start(fullKey, options);
+  }
+
+  /**
+   * Update the text of a named spinner.
+   *
+   * @param key - Unique identifier of the spinner
+   * @param text - New text to display
+   */
+  updateNamedSpinnerText(key: string, text: string): void {
+    if (this.config.useJson || !SpinnerUtils.supportsSpinners()) {
+      return;
+    }
+
+    const fullKey = `${this.prefix}:${key}`;
+    SpinnerUtils.updateText(fullKey, text);
+  }
+
+  /**
+   * Stop a named spinner without completion message.
+   *
+   * @param key - Unique identifier of the spinner
+   */
+  stopNamedSpinner(key: string): void {
+    if (this.config.useJson || !SpinnerUtils.supportsSpinners()) {
+      return;
+    }
+
+    const fullKey = `${this.prefix}:${key}`;
+    SpinnerUtils.stop(fullKey);
+  }
+
+  /**
+   * Complete a named spinner with success status.
+   *
+   * @param key - Unique identifier of the spinner
+   * @param text - Optional success message
+   */
+  succeedNamedSpinner(key: string, text?: string): void {
+    if (this.config.useJson || !SpinnerUtils.supportsSpinners()) {
+      this.success(text || getDefaultCompletionText('success'));
+      return;
+    }
+
+    const fullKey = `${this.prefix}:${key}`;
+    SpinnerUtils.succeed(fullKey, text);
+
+    // Explicitly stop to ensure cleanup
+    SpinnerUtils.stop(fullKey);
+
+    return;
+  }
+
+  /**
+   * Complete a named spinner with failure status.
+   *
+   * @param key - Unique identifier of the spinner
+   * @param text - Optional failure message
+   */
+  failNamedSpinner(key: string, text?: string): void {
+    if (this.config.useJson || !SpinnerUtils.supportsSpinners()) {
+      this.error(text || getDefaultCompletionText('error'));
+      return;
+    }
+
+    const fullKey = `${this.prefix}:${key}`;
+    SpinnerUtils.fail(fullKey, text);
+
+    // Explicitly stop to ensure cleanup
+    SpinnerUtils.stop(fullKey);
+  }
+
+  /**
+   * Complete a named spinner with warning status.
+   *
+   * @param key - Unique identifier of the spinner
+   * @param text - Optional warning message
+   */
+  warnNamedSpinner(key: string, text?: string): void {
+    if (this.config.useJson || !SpinnerUtils.supportsSpinners()) {
+      this.warning(text || getDefaultCompletionText('warning'));
+      return;
+    }
+
+    const fullKey = `${this.prefix}:${key}`;
+    SpinnerUtils.succeed(fullKey, text); // SpinnerUtils doesn't have warn, use succeed
+
+    // Explicitly stop to ensure cleanup
+    SpinnerUtils.stop(fullKey);
+  }
+
+  /**
+   * Complete a named spinner with info status.
+   *
+   * @param key - Unique identifier of the spinner
+   * @param text - Optional info message
+   */
+  infoNamedSpinner(key: string, text?: string): void {
+    if (this.config.useJson || !SpinnerUtils.supportsSpinners()) {
+      this.info(text || getDefaultCompletionText('info'));
+      return;
+    }
+
+    const fullKey = `${this.prefix}:${key}`;
+    SpinnerUtils.info(fullKey, text);
+
+    // Explicitly stop to ensure cleanup
+    SpinnerUtils.stop(fullKey);
+  }
+
+  /**
+   * Check if a named spinner is currently active.
+   *
+   * @param key - Unique identifier of the spinner
+   * @returns True if the spinner is active, false otherwise
+   */
+  isNamedSpinnerActive(key: string): boolean {
+    if (this.config.useJson || !SpinnerUtils.supportsSpinners()) {
+      return false;
+    }
+
+    const fullKey = `${this.prefix}:${key}`;
+    const spinner = SpinnerUtils.getSpinner(fullKey);
+    return !!spinner;
   }
 
   // ============================================================================
@@ -633,7 +780,18 @@ export class Logger {
 
   // Getter for tests to check spinner state
   get singleSpinnerListr(): Listr | null {
-    return (this.spinnerManager as any).singleSpinnerListr;
+    // For backward compatibility with tests - return null since we don't track Listr directly
+    return null;
+  }
+
+  // Check if a spinner is currently active
+  isSpinnerActive(): boolean {
+    return this.spinnerManager.isActive();
+  }
+
+  // Clear all spinner state (for testing purposes)
+  clearSpinnerState(): void {
+    this.spinnerManager.clearAll();
   }
 
   // ============================================================================
