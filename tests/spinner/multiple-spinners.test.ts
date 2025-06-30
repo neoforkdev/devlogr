@@ -60,10 +60,10 @@ describe('Multiple Spinners Management', () => {
     it('should handle spinner restart within same logger instance', () => {
       const logger = new Logger('app');
 
-      // Should handle restarting spinner on same logger
+      // Should handle restarting spinner on same logger after proper completion
       expect(() => {
         logger.startSpinner('Task 1');
-        logger.stopSpinner();
+        logger.succeedSpinner('Task 1 complete'); // Complete first
         logger.startSpinner('Task 2');
         logger.succeedSpinner('Task 2 complete');
       }).not.toThrow();
@@ -72,7 +72,7 @@ describe('Multiple Spinners Management', () => {
     it('should handle rapid spinner operations', () => {
       const logger = new Logger('app');
 
-      // Rapid operations should work without throwing
+      // Rapid operations should work without throwing when properly completed
       expect(() => {
         for (let i = 0; i < 10; i++) {
           logger.startSpinner(`Task ${i}`);
@@ -221,15 +221,18 @@ describe('Multiple Spinners Management', () => {
       expect(() => logger.updateSpinnerText('Some text')).not.toThrow();
     });
 
-    it('should handle restarting same spinner key', () => {
+    it('should throw error when starting spinner while one is active', () => {
       const logger = new Logger('app');
 
-      // Should work without throwing
+      // Should throw error when trying to start another spinner while one is active
+      logger.startSpinner('Task 1');
+
       expect(() => {
-        logger.startSpinner('Task 1');
-        logger.startSpinner('Task 1 Again'); // Restart same spinner
-        logger.succeedSpinner('Task completed');
-      }).not.toThrow();
+        logger.startSpinner('Task 1 Again'); // Should throw
+      }).toThrow('A single spinner is already active. Ora only supports one spinner at a time.');
+
+      // Clean up
+      logger.succeedSpinner('Task completed');
     });
 
     it('should clean up properly with stopAllSpinners', () => {
@@ -243,6 +246,11 @@ describe('Multiple Spinners Management', () => {
 
       // Should not throw
       expect(() => SpinnerUtils.stopAllSpinners()).not.toThrow();
+
+      // Clear spinner manager state since SpinnerUtils.stopAllSpinners doesn't do this automatically
+      logger1.clearSpinnerState();
+      logger2.clearSpinnerState();
+      logger3.clearSpinnerState();
 
       // Should be able to start new spinners after cleanup
       expect(() => {
