@@ -121,64 +121,8 @@ function sleep(ms: number): Promise<void> {
   return new Promise(resolve => setTimeout(resolve, ms));
 }
 
-async function duplicateTest() {
-  console.log('\n\n' + '='.repeat(60));
-  console.log('SPINNER TEST - Testing the new dual system:');
-  console.log('='.repeat(60));
-
-  const testLogger = new Logger('test');
-
-  // Test scenario that might produce duplicates
-  console.log('\n--- Test 1: Simple spinner success ---');
-  testLogger.startSpinner('Processing...');
-  await sleep(500);
-  await testLogger.succeedSpinner('Operation completed successfully');
-
-  await sleep(200);
-
-  console.log('\n--- Test 2: Rapid fire spinners (should work fine) ---');
-  for (let i = 1; i <= 3; i++) {
-    testLogger.startSpinner(`Step ${i}...`);
-    await sleep(100);
-    testLogger.succeedSpinner(`Step ${i} completed`);
-    await sleep(50); // Small delay to ensure completion
-  }
-
-  console.log('\n--- Test 2b: Error case - starting spinner while active ---');
-  const errorTestLogger = new Logger('error-test');
-  try {
-    errorTestLogger.startSpinner('First spinner...');
-    errorTestLogger.startSpinner('Second spinner...');
-    console.log('❌ ERROR: Second spinner should not have started!');
-  } catch (error) {
-    console.log('✅ Expected error caught:', (error as Error).message);
-  }
-  if (errorTestLogger.isSpinnerActive()) {
-    await errorTestLogger.failSpinner('First spinner failed due to error test');
-  }
-  await sleep(300);
-
-  console.log('\n--- Test 3: Mixed completion types ---');
-  testLogger.startSpinner('Building...');
-  await sleep(200);
-  await testLogger.succeedSpinner('Build completed');
-
-  testLogger.startSpinner('Testing...');
-  await sleep(200);
-  await testLogger.failSpinner('Tests failed');
-
-  testLogger.startSpinner('Deploying...');
-  await sleep(200);
-  await testLogger.warnSpinner('Deployment warning');
-
-  console.log('\n' + '='.repeat(60));
-  console.log('END SPINNER TEST - Single spinners use ora, multi-spinners use Listr2');
-  console.log('='.repeat(60) + '\n');
-}
-
 async function main() {
   await quickDemo();
-  await duplicateTest();
 }
 
 // Run the demo
