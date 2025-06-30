@@ -11,6 +11,8 @@ import { MessageFormatter } from './formatters';
 import { TimestampFormat } from './types';
 import { ChalkUtils } from './utils/chalk';
 import { TerminalUtils } from './utils';
+import { LogConfiguration } from './config';
+import { StringUtils } from './utils';
 
 export interface DevLogrRendererOptions {
   useColors?: boolean;
@@ -20,6 +22,7 @@ export interface DevLogrRendererOptions {
   prefix?: string;
   lazy?: boolean;
   level?: string;
+  useJson?: boolean;
 }
 
 export class DevLogrRenderer implements ListrRenderer {
@@ -37,44 +40,50 @@ export class DevLogrRenderer implements ListrRenderer {
     { task: ListrTaskObject<any, typeof DevLogrRenderer>; startTime: number }
   >();
   private isCI: boolean;
+  private useJson: boolean;
   private lastOutput: string[] = [];
-  private isStopped = false; // Track if we've already stopped the spinner
+  private isStopped = false;
 
   constructor(
     private readonly tasks: ListrTaskObject<any, typeof DevLogrRenderer>[],
     options: DevLogrRendererOptions = {},
     private readonly events?: ListrEventManager
   ) {
+    const config = LogConfiguration.getConfig();
+    this.useJson = options.useJson ?? config.useJson;
+    this.isCI = TerminalUtils.isCI();
+
     this.options = {
-      useColors: options.useColors ?? true,
-      showTimestamp: options.showTimestamp ?? false,
-      timestampFormat: options.timestampFormat ?? TimestampFormat.TIME,
-      supportsUnicode: options.supportsUnicode ?? true,
+      useColors: options.useColors ?? config.useColors,
+      showTimestamp: options.showTimestamp ?? config.showTimestamp,
+      timestampFormat: options.timestampFormat ?? config.timestampFormat,
+      supportsUnicode: options.supportsUnicode ?? config.supportsUnicode,
       prefix: options.prefix ?? 'listr2',
       lazy: options.lazy ?? false,
       level: options.level ?? 'task',
+      useJson: this.useJson,
     };
-
-    // Detect CI environment for different rendering strategy
-    this.isCI = TerminalUtils.isCI();
   }
 
   public async render(): Promise<void> {
+    if (this.useJson) {
+      this.setupTaskListeners(this.tasks);
+      return;
+    }
+
     this.spinner = new Spinner();
 
-    // Set up log-update for TTY environments only
     if (!this.isCI) {
       this.updater = createLogUpdate(process.stdout);
     }
 
     this.setupTaskListeners(this.tasks);
 
-    // Start rendering unless lazy mode is enabled
     if (!this.options.lazy) {
       if (this.isCI) {
-        this.update(); // Initial render for CI
+        this.update();
       } else {
-        this.spinner.start(() => this.update()); // Timer-based updates for TTY
+        this.spinner.start(() => this.update());
       }
     }
 
@@ -82,8 +91,7 @@ export class DevLogrRenderer implements ListrRenderer {
   }
 
   public update(): void {
-    if (this.isCI || this.isStopped) {
-      // Skip if in CI or already stopped
+    if (this.useJson || this.isCI || this.isStopped) {
       return;
     }
 
@@ -106,6 +114,10 @@ export class DevLogrRenderer implements ListrRenderer {
   }
 
   public end(): void {
+    if (this.useJson) {
+      return;
+    }
+
     if (this.spinner) {
       this.spinner.stop();
     }
@@ -131,15 +143,23 @@ export class DevLogrRenderer implements ListrRenderer {
   }
 
   private setupTaskEventListeners(task: ListrTaskObject<any, typeof DevLogrRenderer>): void {
-    if (this.isCI) {
-      // CI: Output immediately on completion/failure, don't defer to end()
+    if (this.useJson) {
+      task.on(ListrTaskEventType.STATE, () => {
+        const taskKey = task.id ?? task.title;
+        if (task.isStarted() && !this.activeTasks.has(taskKey)) {
+          this.activeTasks.set(taskKey, { task, startTime: Date.now() });
+          this.outputTaskAsJson(task);
+        } else if (task.isCompleted() || task.hasFailed() || task.isSkipped()) {
+          this.outputTaskAsJson(task);
+        }
+      });
+    } else if (this.isCI) {
       task.on(ListrTaskEventType.STATE, () => {
         if (task.isCompleted() || task.hasFailed()) {
           this.outputTaskCompletion(task);
         }
       });
     } else {
-      // TTY: Update on all changes for smooth animations
       const triggerUpdate = () => this.update();
       task.on(ListrTaskEventType.STATE, triggerUpdate);
       task.on(ListrTaskEventType.TITLE, triggerUpdate);
@@ -267,5 +287,50 @@ export class DevLogrRenderer implements ListrRenderer {
       this.options.level,
       this.options.prefix
     );
+  }
+
+  private outputTaskAsJson(task: ListrTaskObject<any, typeof DevLogrRenderer>, level = 0): void {
+    const taskData = this.createTaskJson(task, level);
+    const output = StringUtils.safeJsonStringify(taskData, 0);
+    console.log(output);
+  }
+
+  private createTaskJson(
+    task: ListrTaskObject<any, typeof DevLogrRenderer>,
+    level = 0
+  ): Record<string, unknown> {
+    const status = this.getTaskStatus(task);
+    const now = new Date().toISOString();
+
+    return {
+      level: status === 'failed' ? 'error' : 'info',
+      message: `Task ${status}`,
+      task: {
+        title: task.title,
+        status,
+        level,
+        ...(task.output && { output: task.output }),
+        ...(status === 'completed' && { duration: this.getTaskDuration(task) }),
+      },
+      prefix: this.options.prefix,
+      timestamp: now,
+    };
+  }
+
+  private getTaskStatus(task: ListrTaskObject<any, typeof DevLogrRenderer>): string {
+    if (task.isCompleted()) return 'completed';
+    if (task.hasFailed()) return 'failed';
+    if (task.isSkipped()) return 'skipped';
+    if (task.isStarted()) return 'started';
+    return 'pending';
+  }
+
+  private getTaskDuration(task: ListrTaskObject<any, typeof DevLogrRenderer>): number | undefined {
+    const taskKey = task.id ?? task.title;
+    const taskInfo = this.activeTasks.get(taskKey);
+    if (taskInfo && task.isCompleted()) {
+      return Date.now() - taskInfo.startTime;
+    }
+    return undefined;
   }
 }
