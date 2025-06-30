@@ -1,9 +1,13 @@
 #!/usr/bin/env node
 
-const { execSync } = require('child_process');
-const path = require('path');
+import { execSync } from 'child_process';
 
-const categories = {
+interface TestCategory {
+  path: string;
+  description: string;
+}
+
+const categories: Record<string, TestCategory> = {
   core: {
     path: 'tests/core/',
     description: 'Core functionality tests (environment, integration, standards)',
@@ -26,9 +30,9 @@ const categories = {
   },
 };
 
-function showUsage() {
+function showUsage(): void {
   console.log('\n🧪 DevLogr Test Runner\n');
-  console.log('Usage: node scripts/test-by-category.js [category]\n');
+  console.log('Usage: npx tsx scripts/test-by-category.ts [category]\n');
   console.log('Available categories:\n');
 
   Object.entries(categories).forEach(([key, { description }]) => {
@@ -36,12 +40,12 @@ function showUsage() {
   });
 
   console.log('\nExamples:');
-  console.log('  node scripts/test-by-category.js core');
-  console.log('  node scripts/test-by-category.js spinner');
-  console.log('  node scripts/test-by-category.js --all\n');
+  console.log('  npx tsx scripts/test-by-category.ts core');
+  console.log('  npx tsx scripts/test-by-category.ts spinner');
+  console.log('  npx tsx scripts/test-by-category.ts --all\n');
 }
 
-function runTests(category) {
+function runTests(category: string): void {
   const config = categories[category];
   if (!config) {
     console.error(`❌ Unknown category: ${category}`);
@@ -58,16 +62,16 @@ function runTests(category) {
       cwd: process.cwd(),
     });
     console.log(`\n✅ ${category} tests completed successfully!\n`);
-  } catch (error) {
+  } catch (error: any) {
     console.log(`\n❌ ${category} tests failed with exit code ${error.status}\n`);
     process.exit(error.status);
   }
 }
 
-function runAllTests() {
+function runAllTests(): void {
   console.log('\n🚀 Running all test categories...\n');
 
-  const results = {};
+  const results: Record<string, string> = {};
 
   Object.keys(categories).forEach(category => {
     try {
@@ -77,7 +81,7 @@ function runAllTests() {
         cwd: process.cwd(),
       });
       results[category] = '✅ PASSED';
-    } catch (error) {
+    } catch (error: any) {
       results[category] = `❌ FAILED (${error.status})`;
     }
   });

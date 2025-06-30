@@ -9,6 +9,10 @@ dist/
 build/
 *.tsbuildinfo
 
+# Build artifacts in examples
+examples/src/
+examples/examples/*.js
+
 # Documentation
 docs/
 
@@ -46,6 +50,9 @@ pids/
 # Temporary files
 tmp/
 temp/
+
+# Debug scripts
+debug-*.js
 
 # Claude Code
 CLAUDE.md
