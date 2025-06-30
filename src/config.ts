@@ -16,7 +16,7 @@ export class LogConfiguration {
   private static readonly ENV_SHOW_TIMESTAMP = 'DEVLOGR_SHOW_TIMESTAMP';
   private static readonly ENV_SHOW_PREFIX = 'DEVLOGR_SHOW_PREFIX';
   private static readonly ENV_SHOW_EMOJI = 'DEVLOGR_SHOW_EMOJI';
-  private static readonly ENV_NO_ICONS = 'DEVLOGR_NO_ICONS';
+  private static readonly ENV_SHOW_ICONS = 'DEVLOGR_SHOW_ICONS';
   private static readonly ENV_DISABLE_CI_DETECTION = 'DEVLOGR_DISABLE_CI_DETECTION';
 
   /**
@@ -156,11 +156,11 @@ export class LogConfiguration {
    * Checks if icons should be shown in output, considering both environment variables and CI detection
    */
   private static shouldShowIcons(ciIcons: boolean): boolean {
-    const showIconsValue = process.env[this.ENV_NO_ICONS];
+    const showIconsValue = process.env[this.ENV_SHOW_ICONS];
 
     // Environment variable takes precedence
     if (showIconsValue !== undefined) {
-      return !(showIconsValue === 'true' || showIconsValue === '1');
+      return showIconsValue === 'true' || showIconsValue === '1';
     }
 
     // Fall back to CI detection

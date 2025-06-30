@@ -187,7 +187,11 @@ export class DevLogrRenderer implements ListrRenderer {
     let symbol: string;
     let title = task.title;
 
-    if (task.isStarted() && !task.isCompleted() && !task.hasFailed() && !done) {
+    const config = LogConfiguration.getConfig();
+
+    if (!config.showIcons) {
+      symbol = '';
+    } else if (task.isStarted() && !task.isCompleted() && !task.hasFailed() && !done) {
       // Loading animation - blue color
       const spinnerSymbol = this.spinner ? this.spinner.fetch() : '⠋';
       symbol = ChalkUtils.getChalkInstance(this.options.useColors).blue(spinnerSymbol);
@@ -230,7 +234,11 @@ export class DevLogrRenderer implements ListrRenderer {
       let symbol: string;
       let title = task.title;
 
-      if (task.isStarted() && !task.isCompleted() && !task.hasFailed() && !done) {
+      const config = LogConfiguration.getConfig();
+
+      if (!config.showIcons) {
+        symbol = '';
+      } else if (task.isStarted() && !task.isCompleted() && !task.hasFailed() && !done) {
         // Loading animation - blue color
         const spinnerSymbol = this.spinner ? this.spinner.fetch() : '⠋';
         symbol = ChalkUtils.getChalkInstance(this.options.useColors).blue(spinnerSymbol);
@@ -260,7 +268,9 @@ export class DevLogrRenderer implements ListrRenderer {
           .trim()
           .split('\n')
           .forEach(line => {
-            const outputSymbol = ChalkUtils.getChalkInstance(this.options.useColors).cyan('›');
+            const outputSymbol = config.showIcons
+              ? ChalkUtils.getChalkInstance(this.options.useColors).cyan('›')
+              : '';
             output.push(this.formatListrMessage(line, outputSymbol, level + 1));
           });
       }

@@ -1,5 +1,6 @@
 import { TerminalUtils } from '../utils/terminal';
 import { MessageFormatter } from '../formatters';
+import { LogConfiguration } from '../config';
 
 /**
  * Handles visual rendering of animated spinners.
@@ -76,6 +77,7 @@ export class SpinnerRenderer {
   }
 
   static shouldAnimate(): boolean {
-    return TerminalUtils.supportsColor() && !!process.stdout.isTTY;
+    const config = LogConfiguration.getConfig();
+    return config.showIcons && TerminalUtils.supportsColor() && !!process.stdout.isTTY;
   }
 }
