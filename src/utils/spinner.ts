@@ -45,18 +45,6 @@ export interface SpinnerOptions {
   timestampFormat?: TimestampFormat;
 }
 
-interface SpinnerInstance {
-  start?: () => void;
-  stop?: () => void;
-  clear?: () => void;
-  succeed?: () => void;
-  fail?: () => void;
-  warn?: () => void;
-  info?: () => void;
-  render?: () => void;
-  text?: string;
-}
-
 interface ListrRenderer {
   end?: () => void;
 }
@@ -77,7 +65,6 @@ interface TaskInfo {
   resolver?: () => void;
   rejecter?: (error: Error) => void;
   title: string;
-  spinner?: SpinnerInstance;
 }
 
 /**
@@ -110,30 +97,22 @@ export class SpinnerUtils {
   private static currentActiveIndex = 0;
 
   /**
-   * Start a named spinner with the specified options.
+   * Start a named multi-spinner task with the specified options.
+   * Used for complex task orchestration with Listr2.
    *
    * @param key - Unique identifier for this spinner
    * @param options - Spinner configuration options
    * @returns Listr instance for the spinner
    */
   static start(key: string, options: SpinnerOptions = {}): Listr {
-    // Stop existing task with same key
     SpinnerUtils.stop(key);
 
     const title = options.text || 'Processing...';
 
     if (!SpinnerUtils.supportsSpinners()) {
-      // Fallback: just store the task info without actually showing spinner
       const mockListr = { run: () => Promise.resolve() } as Listr;
       SpinnerUtils.tasks.set(key, { listr: mockListr, title });
       return mockListr;
-    }
-
-    // Create the actual spinner instance for tracking
-    const spinnerInstance = SpinnerUtils.create(options);
-
-    if (spinnerInstance?.start) {
-      spinnerInstance.start();
     }
 
     const listr = new Listr(
@@ -166,17 +145,16 @@ export class SpinnerUtils {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
     ) as any;
 
-    SpinnerUtils.tasks.set(key, { listr, title, spinner: spinnerInstance });
+    SpinnerUtils.tasks.set(key, { listr, title });
 
-    // Start rotation if we have multiple spinners
     if (SpinnerUtils.tasks.size > 1) {
       SpinnerUtils.startRotation();
     }
 
-    // Start the task and handle cleanup
-    listr.run().finally(() => {
+    const runPromise = listr.run();
+
+    runPromise.finally(() => {
       SpinnerUtils.tasks.delete(key);
-      // Stop rotation if we have 1 or fewer spinners
       if (SpinnerUtils.tasks.size <= 1) {
         SpinnerUtils.stopRotation();
       }
@@ -186,34 +164,22 @@ export class SpinnerUtils {
   }
 
   /**
-   * Stop a named spinner without completion message.
+   * Stop a named multi-spinner without completion message.
    *
    * @param key - Unique identifier of the spinner to stop
    */
   static stop(key: string): void {
     const taskInfo = SpinnerUtils.tasks.get(key);
     if (taskInfo) {
-      // First, stop the listr2 renderer to prevent further updates
       const renderer = getListrRenderer(taskInfo.listr);
       if (renderer?.end) {
         renderer.end();
       }
 
-      // Clear the spinner display to prevent artifacts
-      if (taskInfo.spinner?.clear) taskInfo.spinner.clear();
-      if (taskInfo.spinner?.stop) taskInfo.spinner.stop();
-
-      // Resolve the promise to complete the task
       if (taskInfo.resolver) taskInfo.resolver();
-
-      // Clear the display and ensure clean state
-      if (process.stdout.isTTY) {
-        process.stdout.write('\u001b[2K\r'); // Clear current line and move cursor to beginning
-      }
     }
     SpinnerUtils.tasks.delete(key);
 
-    // Stop rotation if we have 1 or fewer spinners
     if (SpinnerUtils.tasks.size <= 1) {
       SpinnerUtils.stopRotation();
     }
@@ -236,7 +202,7 @@ export class SpinnerUtils {
   }
 
   /**
-   * Complete a spinner with success status.
+   * Complete a multi-spinner with success status.
    *
    * @param key - Unique identifier of the spinner
    * @param text - Optional success message
@@ -249,11 +215,6 @@ export class SpinnerUtils {
         taskInfo.listr.tasks[0].title = text;
       }
 
-      // Clear the spinner display to prevent artifacts
-      if (taskInfo.spinner?.clear) taskInfo.spinner.clear();
-      if (taskInfo.spinner?.stop) taskInfo.spinner.stop();
-
-      // Mark the task as completed - Listr2 will handle the final rendering
       if (taskInfo.resolver) taskInfo.resolver();
 
       return text;
@@ -262,7 +223,7 @@ export class SpinnerUtils {
   }
 
   /**
-   * Complete a spinner with failure status.
+   * Complete a multi-spinner with failure status.
    *
    * @param key - Unique identifier of the spinner
    * @param text - Optional failure message
@@ -275,11 +236,6 @@ export class SpinnerUtils {
         taskInfo.listr.tasks[0].title = text;
       }
 
-      // Clear the spinner display to prevent artifacts
-      if (taskInfo.spinner?.clear) taskInfo.spinner.clear();
-      if (taskInfo.spinner?.stop) taskInfo.spinner.stop();
-
-      // Mark the task as failed - Listr2 will handle the final rendering
       if (taskInfo.rejecter) {
         taskInfo.rejecter(new Error(text || 'Task failed'));
       }
@@ -290,27 +246,10 @@ export class SpinnerUtils {
   }
 
   /**
-   * Complete task with info (alias for succeed)
+   * Complete multi-spinner task with info (alias for succeed)
    */
   static info(key: string, text?: string): string | undefined {
     return SpinnerUtils.succeed(key, text);
-  }
-
-  /**
-   * Create a mock spinner for testing
-   */
-  static create(options: SpinnerOptions = {}): SpinnerInstance {
-    return {
-      text: options.text || '',
-      start: () => {},
-      stop: () => {},
-      succeed: () => {},
-      fail: () => {},
-      warn: () => {},
-      info: () => {},
-      clear: () => {},
-      render: () => {},
-    };
   }
 
   /**
@@ -322,31 +261,21 @@ export class SpinnerUtils {
   }
 
   /**
-   * Stop all active tasks
+   * Stop all active multi-spinner tasks
    */
   static stopAllSpinners(): void {
     for (const [, taskInfo] of SpinnerUtils.tasks.entries()) {
-      // First, stop the listr2 renderer to prevent further updates
       const renderer = getListrRenderer(taskInfo.listr);
       if (renderer?.end) {
         renderer.end();
       }
 
-      // Clear the spinner display to prevent artifacts
-      if (taskInfo.spinner?.clear) taskInfo.spinner.clear();
-      if (taskInfo.spinner?.stop) taskInfo.spinner.stop();
-
       if (taskInfo.resolver) taskInfo.resolver();
-    }
-
-    // Clear the display to ensure clean state
-    if (process.stdout.isTTY) {
-      process.stdout.write('\u001b[2K\r'); // Clear current line and move cursor to beginning
     }
 
     SpinnerUtils.tasks.clear();
     SpinnerUtils.stopRotation();
-    SpinnerUtils.currentActiveIndex = 0; // Reset rotation index
+    SpinnerUtils.currentActiveIndex = 0;
   }
 
   /**
@@ -399,7 +328,7 @@ export class SpinnerUtils {
    */
   static supportsSpinners(): boolean {
     return (
-      TerminalUtils.supportsColor() && process.stdout.isTTY && !process.env.DEVLOGR_OUTPUT_JSON
+      TerminalUtils.supportsColor() && !!process.stdout.isTTY && !process.env.DEVLOGR_OUTPUT_JSON
     );
   }
 

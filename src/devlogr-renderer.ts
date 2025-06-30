@@ -38,6 +38,7 @@ export class DevLogrRenderer implements ListrRenderer {
   >();
   private isCI: boolean;
   private lastOutput: string[] = [];
+  private isStopped = false; // Track if we've already stopped the spinner
 
   constructor(
     private readonly tasks: ListrTaskObject<any, typeof DevLogrRenderer>[],
@@ -81,8 +82,23 @@ export class DevLogrRenderer implements ListrRenderer {
   }
 
   public update(): void {
-    if (this.isCI) {
-      // In CI, skip rendering - individual task completions are handled separately
+    if (this.isCI || this.isStopped) {
+      // Skip if in CI or already stopped
+      return;
+    }
+
+    const allTasksComplete = this.tasks.every(
+      task => task.isCompleted() || task.hasFailed() || task.isSkipped()
+    );
+
+    if (allTasksComplete && this.spinner) {
+      this.isStopped = true;
+      this.spinner.stop();
+
+      if (this.updater && process.stdout.isTTY) {
+        this.updater('');
+        this.updater.done();
+      }
       return;
     }
 
@@ -99,12 +115,8 @@ export class DevLogrRenderer implements ListrRenderer {
     }
 
     if (this.isCI) {
-      // In CI, output final state
-      const finalOutput = this.createOutput({ done: true });
-      const outputLines = finalOutput.split('\n').filter(line => line.trim());
-      outputLines.forEach(line => console.log(line));
+      // In CI, tasks are output immediately on completion
     } else {
-      // In local environments, use log-update
       if (this.updater) {
         this.updater(this.createOutput({ done: true }));
         this.updater.done();
@@ -124,10 +136,10 @@ export class DevLogrRenderer implements ListrRenderer {
 
   private setupTaskEventListeners(task: ListrTaskObject<any, typeof DevLogrRenderer>): void {
     if (this.isCI) {
-      // CI: Only update on completion/failure to avoid noise
+      // CI: Output immediately on completion/failure, don't defer to end()
       task.on(ListrTaskEventType.STATE, () => {
         if (task.isCompleted() || task.hasFailed()) {
-          this.update();
+          this.outputTaskCompletion(task);
         }
       });
     } else {
@@ -137,6 +149,50 @@ export class DevLogrRenderer implements ListrRenderer {
       task.on(ListrTaskEventType.TITLE, triggerUpdate);
       task.on(ListrTaskEventType.OUTPUT, triggerUpdate);
     }
+  }
+
+  private outputTaskCompletion(task: ListrTaskObject<any, typeof DevLogrRenderer>): void {
+    // In CI, output the completed task immediately to avoid duplicates
+    const taskOutput = this.renderSingleTask(task, 0, true);
+    if (taskOutput.trim()) {
+      console.log(taskOutput);
+    }
+  }
+
+  private renderSingleTask(
+    task: ListrTaskObject<any, typeof DevLogrRenderer>,
+    level: number,
+    done = false
+  ): string {
+    if (!task.isEnabled()) {
+      return '';
+    }
+
+    let symbol: string;
+    let title = task.title;
+
+    if (task.isStarted() && !task.isCompleted() && !task.hasFailed() && !done) {
+      // Loading animation - blue color
+      const spinnerSymbol = this.spinner ? this.spinner.fetch() : '⠋';
+      symbol = ChalkUtils.getChalkInstance(this.options.useColors).blue(spinnerSymbol);
+    } else if (task.isCompleted()) {
+      // Success - green color
+      symbol = ChalkUtils.getChalkInstance(this.options.useColors).green('✔');
+    } else if (task.hasFailed()) {
+      // Error - red color
+      symbol = ChalkUtils.getChalkInstance(this.options.useColors).red('✖');
+    } else if (task.isSkipped() && task.message.skip) {
+      // Skipped - yellow/orange color
+      symbol = ChalkUtils.getChalkInstance(this.options.useColors).yellow('◯');
+      title = typeof task.message.skip === 'string' ? `${title} -> ${task.message.skip}` : title;
+    } else if (task.isStarted() && done) {
+      // Task was interrupted - gray color
+      symbol = ChalkUtils.getChalkInstance(this.options.useColors).gray('❯');
+    } else {
+      symbol = ' ';
+    }
+
+    return title ? this.formatListrMessage(title, symbol, level) : '';
   }
 
   private createOutput(options: { done?: boolean } = {}): string {
