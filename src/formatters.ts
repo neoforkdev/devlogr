@@ -37,7 +37,7 @@ export class MessageFormatter {
     const config = LogConfiguration.getConfig();
     const theme = ThemeProvider.getTheme(level, undefined, config.supportsUnicode);
     const maxPrefixLength = PrefixTracker.getMaxLength();
-    const shouldShowEmojis = EmojiUtils.supportsEmoji();
+    const shouldShowEmojis = EmojiUtils.shouldShowEmojis();
 
     const customTheme: LogTheme = {
       symbol: messagePrefix,
@@ -91,7 +91,7 @@ export class MessageFormatter {
     messagePart: string; // "message text"
   } {
     const config = LogConfiguration.getConfig();
-    const shouldShowEmojis = EmojiUtils.supportsEmoji();
+    const shouldShowEmojis = EmojiUtils.shouldShowEmojis();
 
     // Map icon types to appropriate themes and symbols
     const iconMapping = {
@@ -145,7 +145,7 @@ export class MessageFormatter {
   ): string {
     const config = LogConfiguration.getConfig();
     const theme = ThemeProvider.getTheme(level, undefined, config.supportsUnicode);
-    const shouldShowEmojis = EmojiUtils.supportsEmoji();
+    const shouldShowEmojis = EmojiUtils.shouldShowEmojis();
 
     // Use the custom icon if provided, otherwise fall back to theme default
     const finalIcon = customIcon || theme.symbol;

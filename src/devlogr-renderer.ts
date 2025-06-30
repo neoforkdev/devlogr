@@ -12,7 +12,7 @@ import { TimestampFormat } from './types';
 import { ChalkUtils } from './utils/chalk';
 import { TerminalUtils } from './utils';
 import { LogConfiguration } from './config';
-import { StringUtils } from './utils';
+import { StringUtils, EmojiUtils } from './utils';
 
 export interface DevLogrRendererOptions {
   useColors?: boolean;
@@ -279,10 +279,13 @@ export class DevLogrRenderer implements ListrRenderer {
     // Handle indentation for nested tasks - add spaces before the symbol only
     const indentedSymbol = level > 0 ? `${'  '.repeat(level)}${symbol}` : symbol;
 
+    // Strip emojis from message if user preference is disabled
+    const processedMessage = EmojiUtils.shouldShowEmojis() ? message : EmojiUtils.format(message);
+
     // Use centralized formatting - MessageFormatter handles proper component ordering
     // Format: [Timestamp] [Level] [Prefix] [IndentedSymbol] [Message]
     return MessageFormatter.formatWithPrefix(
-      message,
+      processedMessage,
       indentedSymbol,
       this.options.level,
       this.options.prefix
@@ -302,14 +305,24 @@ export class DevLogrRenderer implements ListrRenderer {
     const status = this.getTaskStatus(task);
     const now = new Date().toISOString();
 
+    // Strip emojis from task data if user preference is disabled
+    const processedTitle = EmojiUtils.shouldShowEmojis()
+      ? task.title
+      : EmojiUtils.format(task.title);
+    const processedOutput = task.output
+      ? EmojiUtils.shouldShowEmojis()
+        ? task.output
+        : EmojiUtils.format(task.output)
+      : undefined;
+
     return {
       level: status === 'failed' ? 'error' : 'info',
       message: `Task ${status}`,
       task: {
-        title: task.title,
+        title: processedTitle,
         status,
         level,
-        ...(task.output && { output: task.output }),
+        ...(processedOutput && { output: processedOutput }),
         ...(status === 'completed' && { duration: this.getTaskDuration(task) }),
       },
       prefix: this.options.prefix,

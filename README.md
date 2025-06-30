@@ -193,20 +193,18 @@ npm run docs:serve  # serve locally
 
 Configure behavior via env vars:
 
-| Variable                             | Description                       | Example       |
-| ------------------------------------ | --------------------------------- | ------------- |
-| `DEVLOGR_LOG_LEVEL`                  | Minimum log level (`debug`, etc.) | `debug`       |
-| `DEVLOGR_OUTPUT_JSON`                | Structured JSON logs              | `true`        |
-| `DEVLOGR_SHOW_TIMESTAMP`             | Enables timestamps                | `true`/`iso`  |
-| `DEVLOGR_SHOW_PREFIX`                | Show level prefixes & logger name | `true`        |
-| `DEVLOGR_DISABLE_CI_DETECTION`       | Disable automatic CI optimization | `true`        |
-| `DEVLOGR_NO_COLOR`                   | Disable colors                    | `true`        |
-| `DEVLOGR_FORCE_COLOR`                | Force colors                      | `true`        |
-| `DEVLOGR_NO_EMOJI`                   | Disable emojis                    | `true`        |
-| `DEVLOGR_NO_UNICODE`                 | ASCII-only mode                   | `true`        |
-| `DEVLOGR_UNICODE`                    | Force Unicode support             | `true`/`auto` |
-| `DEVLOGR_NO_ICONS`                   | Hide all icons                    | `true`        |
-| `NO_COLOR`, `NO_EMOJI`, `NO_UNICODE` | Global disable standards          | `1`           |
+| Variable                             | Description                       | Example      |
+| ------------------------------------ | --------------------------------- | ------------ |
+| `DEVLOGR_LOG_LEVEL`                  | Minimum log level (`debug`, etc.) | `debug`      |
+| `DEVLOGR_OUTPUT_JSON`                | Structured JSON logs              | `true`       |
+| `DEVLOGR_SHOW_TIMESTAMP`             | Show timestamps                   | `true`/`iso` |
+| `DEVLOGR_SHOW_PREFIX`                | Show level prefixes & logger name | `true`       |
+| `DEVLOGR_SHOW_COLOR`                 | Enable colors                     | `true`       |
+| `DEVLOGR_SHOW_EMOJI`                 | Enable emojis                     | `true`       |
+| `DEVLOGR_SHOW_UNICODE`               | Enable Unicode symbols            | `true`       |
+| `DEVLOGR_SHOW_ICONS`                 | Show all icons                    | `true`       |
+| `DEVLOGR_DISABLE_CI_DETECTION`       | Disable automatic CI optimization | `true`       |
+| `NO_COLOR`, `NO_EMOJI`, `NO_UNICODE` | Global disable standards          | `1`          |
 
 ---
 
