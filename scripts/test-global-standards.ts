@@ -5,12 +5,18 @@
  * Run this script to verify that NO_COLOR, NO_EMOJI, and NO_UNICODE work correctly
  */
 
-const { createLogger } = require('../dist/logger.js');
-const { TerminalUtils } = require('../dist/utils/terminal.js');
-const { EmojiUtils } = require('../dist/utils/emoji.js');
+import { Logger } from '../src/logger';
+import { TerminalUtils } from '../src/utils';
+import { EmojiUtils } from '../src/utils/emoji';
+
+interface TestCase {
+  name: string;
+  setup: () => void;
+  expected: string;
+}
 
 // Helper to clear environment
-function clearEnv() {
+function clearEnv(): void {
   delete process.env.NO_COLOR;
   delete process.env.NO_EMOJI;
   delete process.env.NO_UNICODE;
@@ -23,7 +29,7 @@ function clearEnv() {
 }
 
 // Test cases
-const tests = [
+const tests: TestCase[] = [
   {
     name: 'Default behavior (no env vars)',
     setup: () => clearEnv(),
@@ -99,7 +105,7 @@ tests.forEach((test, index) => {
   );
 
   // Create a logger and test actual output
-  const logger = createLogger('TEST');
+  const logger = new Logger('TEST');
   console.log(`   Sample output:`);
   logger.info('Hello 🚀 World ℹ✓');
 });
