@@ -15,7 +15,7 @@ interface FormatOptions {
   showTimestamp?: boolean;
   useColors?: boolean;
   timestampFormat?: TimestampFormat;
-  stripEmojis?: boolean;
+  showEmojis?: boolean;
   includeLevel?: boolean;
   includePrefix?: boolean;
 }
@@ -37,7 +37,7 @@ export class MessageFormatter {
     const config = LogConfiguration.getConfig();
     const theme = ThemeProvider.getTheme(level, undefined, config.supportsUnicode);
     const maxPrefixLength = PrefixTracker.getMaxLength();
-    const shouldStripEmojis = !EmojiUtils.supportsEmoji();
+    const shouldShowEmojis = EmojiUtils.supportsEmoji();
 
     const customTheme: LogTheme = {
       symbol: messagePrefix,
@@ -55,7 +55,7 @@ export class MessageFormatter {
       showTimestamp: config.showTimestamp,
       useColors: config.useColors,
       timestampFormat: config.timestampFormat,
-      stripEmojis: shouldStripEmojis,
+      showEmojis: shouldShowEmojis,
       includeLevel: config.showPrefix,
       includePrefix: config.showPrefix,
     });
@@ -91,11 +91,11 @@ export class MessageFormatter {
     messagePart: string; // "message text"
   } {
     const config = LogConfiguration.getConfig();
-    const shouldStripEmojis = !EmojiUtils.supportsEmoji();
+    const shouldShowEmojis = EmojiUtils.supportsEmoji();
 
     // Map icon types to appropriate themes and symbols
     const iconMapping = {
-      running: { level: 'task', symbol: shouldStripEmojis ? '...' : '⠋' },
+      running: { level: 'task', symbol: shouldShowEmojis ? '⠋' : '...' },
       success: { level: 'success', symbol: undefined }, // Use theme default
       error: { level: 'error', symbol: undefined },
       warning: { level: 'warn', symbol: undefined },
@@ -107,7 +107,7 @@ export class MessageFormatter {
     const theme = ThemeProvider.getTheme(actualLevel, undefined, config.supportsUnicode);
 
     const iconSymbol = mapping.symbol || theme.symbol;
-    const finalIcon = shouldStripEmojis ? EmojiUtils.forceStripEmojis(iconSymbol) : iconSymbol;
+    const finalIcon = shouldShowEmojis ? iconSymbol : EmojiUtils.forceStripEmojis(iconSymbol);
 
     const fullText = this.format({
       level: actualLevel,
@@ -119,7 +119,7 @@ export class MessageFormatter {
       showTimestamp: config.showTimestamp,
       useColors: config.useColors,
       timestampFormat: config.timestampFormat,
-      stripEmojis: shouldStripEmojis,
+      showEmojis: shouldShowEmojis,
       includeLevel: config.showPrefix,
       includePrefix: config.showPrefix,
     });
@@ -145,11 +145,11 @@ export class MessageFormatter {
   ): string {
     const config = LogConfiguration.getConfig();
     const theme = ThemeProvider.getTheme(level, undefined, config.supportsUnicode);
-    const shouldStripEmojis = !EmojiUtils.supportsEmoji();
+    const shouldShowEmojis = EmojiUtils.supportsEmoji();
 
     // Use the custom icon if provided, otherwise fall back to theme default
     const finalIcon = customIcon || theme.symbol;
-    const displayIcon = shouldStripEmojis ? EmojiUtils.forceStripEmojis(finalIcon) : finalIcon;
+    const displayIcon = shouldShowEmojis ? finalIcon : EmojiUtils.forceStripEmojis(finalIcon);
 
     // Apply blue color specifically to animated spinner icons
     const blueIcon = config.useColors
@@ -173,7 +173,7 @@ export class MessageFormatter {
       showTimestamp: config.showTimestamp,
       useColors: config.useColors,
       timestampFormat: config.timestampFormat,
-      stripEmojis: shouldStripEmojis,
+      showEmojis: shouldShowEmojis,
       includeLevel: config.showPrefix,
       includePrefix: config.showPrefix,
     });
@@ -236,7 +236,7 @@ export class MessageFormatter {
       showTimestamp = false,
       useColors = false,
       timestampFormat = TimestampFormat.TIME,
-      stripEmojis = false,
+      showEmojis = true,
       includeLevel = true,
       includePrefix = true,
     } = options;
@@ -264,7 +264,7 @@ export class MessageFormatter {
       parts.push(colorFn(theme.symbol));
     }
     if (message) {
-      parts.push(this.formatMessageWithTheme(level, theme, message, args, useColors, stripEmojis));
+      parts.push(this.formatMessageWithTheme(level, theme, message, args, useColors, showEmojis));
     }
 
     return parts.join(' ').trim();
@@ -291,21 +291,21 @@ export class MessageFormatter {
     message: string,
     args: unknown[],
     useColors: boolean,
-    stripEmojis: boolean
+    showEmojis: boolean
   ): string {
     const colorFn = useColors ? theme.color : (text: string) => text;
     const styledMessage = this.styleMessage(level, message, colorFn, useColors);
-    const finalMessage = stripEmojis ? EmojiUtils.forceStripEmojis(styledMessage) : styledMessage;
+    const finalMessage = showEmojis ? styledMessage : EmojiUtils.forceStripEmojis(styledMessage);
 
-    // Process arguments to strip emojis if needed
-    const processedArgs = stripEmojis
-      ? args.map(arg => {
+    // Process arguments to show/hide emojis as needed
+    const processedArgs = showEmojis
+      ? args
+      : args.map(arg => {
           if (typeof arg === 'string') {
             return EmojiUtils.forceStripEmojis(arg);
           }
           return arg;
-        })
-      : args;
+        });
 
     const formattedArgs = StringUtils.formatArgs(processedArgs);
     return `${finalMessage}${formattedArgs}`;
@@ -364,9 +364,9 @@ export class MessageFormatter {
     message: string,
     args: unknown[],
     useColors: boolean,
-    stripEmojis = false
+    showEmojis = true
   ): string {
-    return this.formatMessageWithTheme(level, theme, message, args, useColors, stripEmojis);
+    return this.formatMessageWithTheme(level, theme, message, args, useColors, showEmojis);
   }
 
   static formatSpinnerPrefixWithLevel(
@@ -402,7 +402,7 @@ export class MessageFormatter {
     maxPrefixLength: number,
     useColors: boolean,
     timestampFormat: TimestampFormat = TimestampFormat.TIME,
-    stripEmojis = false
+    showEmojis = true
   ): string {
     return this.format({
       level,
@@ -414,7 +414,7 @@ export class MessageFormatter {
       showTimestamp: true,
       useColors,
       timestampFormat,
-      stripEmojis,
+      showEmojis,
       includeLevel: true,
       includePrefix: true,
     });
