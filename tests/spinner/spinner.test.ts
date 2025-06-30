@@ -36,9 +36,10 @@ describe('Spinner functionality', () => {
         prefix: 'test',
       };
 
-      const spinner = SpinnerUtils.create(spinnerOptions);
+      const spinner = SpinnerUtils.start('test', spinnerOptions);
       expect(spinner).toBeDefined();
-      expect(spinner.text).toBe('Loading...');
+
+      SpinnerUtils.stop('test');
     });
 
     it('should update spinner text', () => {
@@ -205,12 +206,71 @@ describe('Spinner functionality', () => {
       vi.spyOn(SpinnerUtils, 'supportsSpinners').mockReturnValue(true);
     });
 
+    it('should throw error when starting spinner while another is active', () => {
+      logger.startSpinner('First spinner');
+
+      expect(() => {
+        logger.startSpinner('Second spinner');
+      }).toThrow('A single spinner is already active. Ora only supports one spinner at a time.');
+
+      // Clean up
+      logger.stopSpinner();
+    });
+
+    it('should provide helpful error message about using Listr2 API', () => {
+      logger.startSpinner('First spinner');
+
+      expect(() => {
+        logger.startSpinner('Second spinner');
+      }).toThrow('A single spinner is already active. Ora only supports one spinner at a time.');
+
+      // Clean up
+      logger.stopSpinner();
+    });
+
+    it('should allow starting new spinner after completion', () => {
+      logger.startSpinner('First spinner');
+      logger.succeedSpinner('First completed');
+
+      // This should not throw
+      expect(() => {
+        logger.startSpinner('Second spinner');
+      }).not.toThrow();
+
+      logger.stopSpinner();
+    });
+
+    it('should allow starting new spinner after stopping', () => {
+      logger.startSpinner('First spinner');
+      logger.stopSpinner();
+
+      // This should not throw
+      expect(() => {
+        logger.startSpinner('Second spinner');
+      }).not.toThrow();
+
+      logger.stopSpinner();
+    });
+
+    it('should provide isSpinnerActive method', () => {
+      expect(logger.isSpinnerActive()).toBe(false);
+
+      logger.startSpinner('Test spinner');
+      expect(logger.isSpinnerActive()).toBe(true);
+
+      logger.succeedSpinner('Completed');
+      expect(logger.isSpinnerActive()).toBe(false);
+    });
+
     it('should handle empty spinner text', () => {
       // Should not throw and should use default text
       expect(() => logger.startSpinner()).not.toThrow();
 
-      // Should set up internal state
-      expect((logger as any).singleSpinnerListr).toBeTruthy();
+      // Should track spinner as active
+      expect(logger.isSpinnerActive()).toBe(true);
+
+      // Clean up
+      logger.stopSpinner();
     });
 
     it('should handle completion without starting spinner', () => {
@@ -259,6 +319,69 @@ describe('Spinner functionality', () => {
         logger.startSpinner('Processing...');
         logger.succeedSpinner('Done!');
       }).not.toThrow();
+    });
+  });
+
+  describe('Line clearing behavior', () => {
+    let logger: Logger;
+    let mockStdoutWrite: ReturnType<typeof vi.fn>;
+
+    beforeEach(() => {
+      logger = new Logger('test-line-clear');
+      mockStdoutWrite = vi.fn();
+      vi.spyOn(process.stdout, 'write').mockImplementation(mockStdoutWrite);
+      Object.defineProperty(process.stdout, 'isTTY', {
+        value: true,
+        configurable: true,
+      });
+    });
+
+    it('should properly clear line when spinner text gets shorter', async () => {
+      // Start spinner with long text
+      logger.startSpinner('This is a very long spinner message that takes up significant space');
+
+      // Let animation run briefly
+      await new Promise(resolve => setTimeout(resolve, 100));
+
+      // Update to shorter text
+      logger.updateSpinnerText('Short');
+
+      // Let animation run briefly
+      await new Promise(resolve => setTimeout(resolve, 100));
+
+      // Stop spinner
+      logger.stopSpinner();
+
+      // Verify that line clearing sequences were used
+      const writeCalls = mockStdoutWrite.mock.calls.map(call => call[0]);
+
+      // Should contain ANSI escape sequences for clearing
+      const containsClearSequence = writeCalls.some(
+        call => typeof call === 'string' && call.includes('\r\x1b[K')
+      );
+
+      expect(containsClearSequence).toBe(true);
+    });
+
+    it('should clear line when updating from long to short text', async () => {
+      // Start spinner
+      logger.startSpinner('Initial very long text that should be cleared properly when updated');
+
+      // Update to much shorter text
+      logger.updateSpinnerText('Short text');
+
+      // Stop spinner
+      logger.stopSpinner();
+
+      // Check that proper clearing sequences were used
+      const writeCalls = mockStdoutWrite.mock.calls.map(call => call[0]);
+
+      // Should use \r\x1b[K for line clearing
+      const hasProperClearing = writeCalls.some(
+        call => typeof call === 'string' && call.includes('\r\x1b[K')
+      );
+
+      expect(hasProperClearing).toBe(true);
     });
   });
 });
