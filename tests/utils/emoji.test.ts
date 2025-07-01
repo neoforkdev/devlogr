@@ -11,7 +11,7 @@ describe('Logger Emoji Handling', () => {
       NO_COLOR: process.env.NO_COLOR,
       DEVLOGR_NO_COLOR: process.env.DEVLOGR_NO_COLOR,
       NO_EMOJI: process.env.NO_EMOJI,
-      DEVLOGR_NO_EMOJI: process.env.DEVLOGR_NO_EMOJI,
+      DEVLOGR_SHOW_EMOJI: process.env.DEVLOGR_SHOW_EMOJI,
       DEVLOGR_OUTPUT_JSON: process.env.DEVLOGR_OUTPUT_JSON,
       DEVLOGR_FORCE_COLOR: process.env.DEVLOGR_FORCE_COLOR,
     };
@@ -97,8 +97,8 @@ describe('Logger Emoji Handling', () => {
       consoleSpy.mockRestore();
     });
 
-    it('should strip emojis when DEVLOGR_NO_COLOR=true', () => {
-      process.env.DEVLOGR_NO_COLOR = 'true';
+    it('should strip emojis when DEVLOGR_SHOW_EMOJI=false', () => {
+      process.env.DEVLOGR_SHOW_EMOJI = 'false';
       const logger = createLogger('TEST');
 
       const consoleSpy = vi.spyOn(console, 'log').mockImplementation(() => {});
@@ -136,8 +136,8 @@ describe('Logger Emoji Handling', () => {
       consoleSpy.mockRestore();
     });
 
-    it('should strip emojis when DEVLOGR_NO_EMOJI=1', () => {
-      process.env.DEVLOGR_NO_EMOJI = '1';
+    it('should strip emojis when DEVLOGR_SHOW_EMOJI=false', () => {
+      process.env.DEVLOGR_SHOW_EMOJI = 'false';
       const logger = createLogger('TEST');
 
       const consoleSpy = vi.spyOn(console, 'log').mockImplementation(() => {});

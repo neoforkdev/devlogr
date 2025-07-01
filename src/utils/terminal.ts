@@ -245,14 +245,14 @@ export class TerminalUtils {
    * @returns True if emoji can be displayed, false otherwise
    */
   static supportsEmoji(): boolean {
-    // Check for explicit disable flags
-    if (process.env.NO_EMOJI !== undefined || process.env.DEVLOGR_NO_EMOJI === 'true') {
+    // Check for explicit disable flags (global standards)
+    if (process.env.NO_EMOJI !== undefined) {
       return false;
     }
 
-    // If explicitly enabled
-    if (process.env.DEVLOGR_EMOJI === 'true') {
-      return true;
+    // Check for devlogr-specific show emoji setting
+    if (process.env.DEVLOGR_SHOW_EMOJI !== undefined) {
+      return process.env.DEVLOGR_SHOW_EMOJI === 'true' || process.env.DEVLOGR_SHOW_EMOJI === '1';
     }
 
     // CI environments: let dynamic detection decide

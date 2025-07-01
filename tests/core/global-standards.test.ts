@@ -15,7 +15,7 @@ describe('Global Environment Variable Standards', () => {
       'NO_UNICODE',
       'FORCE_COLOR',
       'DEVLOGR_NO_COLOR',
-      'DEVLOGR_NO_EMOJI',
+      'DEVLOGR_SHOW_EMOJI',
       'DEVLOGR_NO_UNICODE',
       'DEVLOGR_FORCE_COLOR',
       'DEVLOGR_UNICODE',
@@ -80,7 +80,7 @@ describe('Global Environment Variable Standards', () => {
 
     it('should take precedence over devlogr-specific emoji settings', () => {
       process.env.NO_EMOJI = '1';
-      process.env.DEVLOGR_NO_EMOJI = 'false'; // This shouldn't matter
+      process.env.DEVLOGR_SHOW_EMOJI = 'true'; // This shouldn't matter
       expect(EmojiUtils.supportsEmoji()).toBe(false);
     });
 
@@ -155,7 +155,7 @@ describe('Global Environment Variable Standards', () => {
       expect(TerminalUtils.supportsColor()).toBe(false);
 
       // Test NO_EMOJI precedence
-      process.env.DEVLOGR_NO_EMOJI = 'false';
+      process.env.DEVLOGR_SHOW_EMOJI = 'true';
       process.env.NO_EMOJI = '1';
       expect(EmojiUtils.supportsEmoji()).toBe(false);
 
@@ -178,7 +178,7 @@ describe('Global Environment Variable Standards', () => {
     it('should work correctly with mixed global and devlogr settings', () => {
       // Global disables color, devlogr enables emoji
       process.env.NO_COLOR = '1';
-      process.env.DEVLOGR_NO_EMOJI = 'false';
+      process.env.DEVLOGR_SHOW_EMOJI = 'true';
 
       expect(TerminalUtils.supportsColor()).toBe(false);
       expect(EmojiUtils.supportsEmoji()).toBe(false); // Should be false due to NO_COLOR

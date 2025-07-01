@@ -49,7 +49,7 @@ describe('PLAIN Level Alignment', () => {
   });
 
   it('should align PLAIN level with other levels when icons are disabled', () => {
-    setupTestEnvironment(false, true, true); // showTimestamp=false, showPrefix=true, noIcons=true
+    setupTestEnvironment(false, true, true); // showTimestamp=false, showPrefix=true, hideIcons=true
     const logger = createLogger('TEST');
 
     logger.task('This is a TASK message');

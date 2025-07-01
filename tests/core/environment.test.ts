@@ -20,7 +20,7 @@ describe('Logger Environment Variables', () => {
       NO_EMOJI: process.env.NO_EMOJI,
       DEVLOGR_NO_EMOJI: process.env.DEVLOGR_NO_EMOJI,
       DEVLOGR_SHOW_TIMESTAMP: process.env.DEVLOGR_SHOW_TIMESTAMP,
-      DEVLOGR_NO_ICONS: process.env.DEVLOGR_NO_ICONS,
+      DEVLOGR_SHOW_ICONS: process.env.DEVLOGR_SHOW_ICONS,
     };
 
     // Setup secure test environment with default non-CI behavior
@@ -321,32 +321,32 @@ describe('Logger Environment Variables', () => {
   });
 
   describe('Icon Environment Variables', () => {
-    it('should respect DEVLOGR_NO_ICONS environment variable', () => {
-      process.env.DEVLOGR_NO_ICONS = 'true';
+    it('should respect DEVLOGR_SHOW_ICONS=false environment variable', () => {
+      process.env.DEVLOGR_SHOW_ICONS = 'false';
       const config = LogConfiguration.getConfig();
       expect(config.showIcons).toBe(false);
     });
 
-    it('should respect DEVLOGR_NO_ICONS=1 environment variable', () => {
-      process.env.DEVLOGR_NO_ICONS = '1';
-      const config = LogConfiguration.getConfig();
-      expect(config.showIcons).toBe(false);
-    });
-
-    it('should show icons by default when DEVLOGR_NO_ICONS is not set', () => {
-      delete process.env.DEVLOGR_NO_ICONS;
+    it('should respect DEVLOGR_SHOW_ICONS=true environment variable', () => {
+      process.env.DEVLOGR_SHOW_ICONS = 'true';
       const config = LogConfiguration.getConfig();
       expect(config.showIcons).toBe(true);
     });
 
-    it('should show icons when DEVLOGR_NO_ICONS is set to false', () => {
-      process.env.DEVLOGR_NO_ICONS = 'false';
+    it('should respect DEVLOGR_SHOW_ICONS=1 environment variable', () => {
+      process.env.DEVLOGR_SHOW_ICONS = '1';
       const config = LogConfiguration.getConfig();
       expect(config.showIcons).toBe(true);
     });
 
-    it('should hide icons in log output when DEVLOGR_NO_ICONS=true', () => {
-      process.env.DEVLOGR_NO_ICONS = 'true';
+    it('should show icons by default when DEVLOGR_SHOW_ICONS is not set', () => {
+      delete process.env.DEVLOGR_SHOW_ICONS;
+      const config = LogConfiguration.getConfig();
+      expect(config.showIcons).toBe(true);
+    });
+
+    it('should hide icons in log output when DEVLOGR_SHOW_ICONS=false', () => {
+      process.env.DEVLOGR_SHOW_ICONS = 'false';
       const logger = createLogger('TEST');
 
       const consoleSpy = vi.spyOn(console, 'log').mockImplementation(() => {});
@@ -366,8 +366,8 @@ describe('Logger Environment Variables', () => {
       consoleSpy.mockRestore();
     });
 
-    it('should remove icon padding when DEVLOGR_NO_ICONS=true and DEVLOGR_SHOW_PREFIX=true', () => {
-      process.env.DEVLOGR_NO_ICONS = 'true';
+    it('should remove icon padding when DEVLOGR_SHOW_ICONS=false and DEVLOGR_SHOW_PREFIX=true', () => {
+      process.env.DEVLOGR_SHOW_ICONS = 'false';
       process.env.DEVLOGR_SHOW_PREFIX = 'true';
       const logger = createLogger('TEST');
 
@@ -411,8 +411,8 @@ describe('Logger Environment Variables', () => {
       consoleSpy.mockRestore();
     });
 
-    it('should respect DEVLOGR_NO_EMOJI environment variable', () => {
-      process.env.DEVLOGR_NO_EMOJI = '1';
+    it('should respect DEVLOGR_SHOW_EMOJI=false environment variable', () => {
+      process.env.DEVLOGR_SHOW_EMOJI = 'false';
       const logger = createLogger('TEST');
 
       const consoleSpy = vi.spyOn(console, 'log').mockImplementation(() => {});

@@ -17,7 +17,7 @@
 export function setupTestEnvironment(
   showTimestamp = false,
   showPrefix = false,
-  noIcons = false,
+  hideIcons = false,
   useColors = true,
   logLevel?: string,
   outputJson = false
@@ -25,7 +25,7 @@ export function setupTestEnvironment(
   // Clear all DevLogr environment variables
   delete process.env.DEVLOGR_SHOW_TIMESTAMP;
   delete process.env.DEVLOGR_SHOW_PREFIX;
-  delete process.env.DEVLOGR_NO_ICONS;
+  delete process.env.DEVLOGR_SHOW_ICONS;
   delete process.env.DEVLOGR_NO_COLOR;
   delete process.env.NO_COLOR;
   delete process.env.DEVLOGR_LOG_LEVEL;
@@ -38,7 +38,7 @@ export function setupTestEnvironment(
   // Apply test-specific environment configuration
   if (showTimestamp) process.env.DEVLOGR_SHOW_TIMESTAMP = 'true';
   if (showPrefix) process.env.DEVLOGR_SHOW_PREFIX = 'true';
-  if (noIcons) process.env.DEVLOGR_NO_ICONS = 'true';
+  if (hideIcons) process.env.DEVLOGR_SHOW_ICONS = 'false';
   if (useColors === false) process.env.NO_COLOR = '1';
   if (logLevel) process.env.DEVLOGR_LOG_LEVEL = logLevel;
   if (outputJson) process.env.DEVLOGR_OUTPUT_JSON = 'true';
