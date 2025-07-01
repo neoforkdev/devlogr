@@ -318,7 +318,7 @@ export class DevLogrRenderer implements ListrRenderer {
     // Strip emojis from task data if user preference is disabled
     const processedTitle = EmojiUtils.shouldShowEmojis()
       ? task.title
-      : EmojiUtils.format(task.title);
+      : EmojiUtils.format(task.title || '');
     const processedOutput = task.output
       ? EmojiUtils.shouldShowEmojis()
         ? task.output
