@@ -143,13 +143,13 @@ describe('CI Detection', () => {
       expect(TerminalUtils.supportsEmoji()).toBe(false);
     });
 
-    it('should not support emoji when DEVLOGR_NO_EMOJI is set', () => {
-      process.env = { DEVLOGR_NO_EMOJI: 'true' };
+    it('should not support emoji when DEVLOGR_SHOW_EMOJI is false', () => {
+      process.env = { DEVLOGR_SHOW_EMOJI: 'false' };
       expect(TerminalUtils.supportsEmoji()).toBe(false);
     });
 
     it('should support emoji when explicitly enabled', () => {
-      process.env = { DEVLOGR_EMOJI: 'true' };
+      process.env = { DEVLOGR_SHOW_EMOJI: 'true' };
       expect(TerminalUtils.supportsEmoji()).toBe(true);
     });
 
@@ -174,7 +174,7 @@ describe('CI Detection', () => {
         CI: 'true',
         DEVLOGR_SHOW_PREFIX: 'false',
         DEVLOGR_SHOW_TIMESTAMP: 'false',
-        DEVLOGR_NO_ICONS: 'false',
+        DEVLOGR_SHOW_ICONS: 'true',
       };
       const config = LogConfiguration.getConfig();
 
@@ -250,12 +250,12 @@ describe('CI Detection', () => {
     });
 
     it('should prioritize explicit disable over CI detection', () => {
-      process.env = { CI: 'true', DEVLOGR_NO_EMOJI: 'true' };
+      process.env = { CI: 'true', DEVLOGR_SHOW_EMOJI: 'false' };
       expect(TerminalUtils.supportsEmoji()).toBe(false);
     });
 
     it('should prioritize explicit enable over CI detection', () => {
-      process.env = { CI: 'true', DEVLOGR_EMOJI: 'true' };
+      process.env = { CI: 'true', DEVLOGR_SHOW_EMOJI: 'true' };
       expect(TerminalUtils.supportsEmoji()).toBe(true);
     });
   });

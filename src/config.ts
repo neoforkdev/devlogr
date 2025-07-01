@@ -141,6 +141,11 @@ export class LogConfiguration {
    * Checks if emojis should be shown in output, considering both environment variables and CI detection
    */
   private static shouldShowEmojis(ciEmojis: boolean): boolean {
+    // Check global standards first (NO_COLOR and NO_EMOJI should disable emojis)
+    if (process.env.NO_COLOR !== undefined || process.env.NO_EMOJI !== undefined) {
+      return false;
+    }
+
     const showEmojisValue = process.env[this.ENV_SHOW_EMOJI];
 
     // Environment variable takes precedence

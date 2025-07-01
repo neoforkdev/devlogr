@@ -16,7 +16,7 @@ describe('SafeStringUtils', () => {
     delete process.env.DEVLOGR_NO_UNICODE;
     delete process.env.DEVLOGR_UNICODE;
     delete process.env.NO_EMOJI;
-    delete process.env.DEVLOGR_NO_EMOJI;
+    delete process.env.DEVLOGR_SHOW_EMOJI;
     SafeStringUtils.resetCache();
   });
 
